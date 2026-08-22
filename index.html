@@ -110,11 +110,11 @@ document.getElementById('app').innerHTML=`<div class="panel"><h2>Create Auction<
           </div>
           <div style="min-width:260px;flex:1;max-width:430px">
             <label>Fulfillment status</label>
-            <select id="fs-${o.order_id}">
+            <select id="fs-${o.order_id}" onchange="updateFulfillment('${o.order_id}', ${needsTracking||o.tracking_number?'true':'false'})">
               ${['pending','ready_for_pickup','shipped','completed'].map(s=>`<option value="${s}" ${o.fulfillment_status===s?'selected':''}>${statusLabel(s)}</option>`).join('')}
             </select>
             ${needsTracking||o.tracking_number?`<label>Tracking number</label><input id="trk-${o.order_id}" value="${esc(o.tracking_number||'')}" placeholder="Optional tracking number">`:''}
-            <button class="primary saveFulfillmentBtn" style="margin-top:10px" data-order-id="${o.order_id}" data-has-tracking="${needsTracking||o.tracking_number?'true':'false'}">Save fulfillment</button>
+            <div class="muted" style="margin-top:8px">Changes save automatically.</div>
           </div>
         </div>
       </div>`;
@@ -126,10 +126,12 @@ document.getElementById('app').innerHTML=`<div class="panel"><h2>Create Auction<
 }
 
 async function updateFulfillment(orderId,hasTracking){
-  const status=document.getElementById('fs-'+orderId)?.value||'pending';
+  const select=document.getElementById('fs-'+orderId);
+  const status=select?.value||'pending';
+  if(select) select.disabled=true;
   const tracking=hasTracking?(document.getElementById('trk-'+orderId)?.value||''):null;
   const {error}=await sb.rpc('admin_update_fulfillment',{p_order_id:orderId,p_status:status,p_tracking_number:tracking});
-  if(error){alert('Could not save fulfillment: '+error.message);return}
+  if(error){if(select)select.disabled=false;alert('Could not save fulfillment: '+error.message);return}
   const {data:check,error:checkErr}=await sb.rpc('admin_fulfillment_orders');
   if(checkErr){alert('Saved, but could not refresh the fulfillment list.');return}
   const saved=(check||[]).find(x=>x.order_id===orderId);
@@ -138,28 +140,12 @@ async function updateFulfillment(orderId,hasTracking){
   }else{
     alert('The save request completed, but the status did not change. Please try again.');
   }
+  if(select)select.disabled=false;
   await renderAdmin();
 }
 
 async function createAuction(){const title=aTitle.value.trim(),start=Number(aStart.value),end=aEnd.value;if(!title||!end||Number.isNaN(start))return alert('Enter title, starting bid, and end time.');const row={title,category_id:aCat.value,condition:aCondition.value.trim(),description:aDesc.value.trim(),starting_bid:start,current_bid:start,starts_at:new Date().toISOString(),ends_at:new Date(end).toISOString(),status:'live',shipping_available:aShipOn.checked,shipping_price:aShipOn.checked?Number(aShip.value||0):null,pickup_available:aPickup.checked,pickup_instructions:aPickup.checked?aPickupInfo.value.trim():null};const{data:a,error}=await sb.from('auctions').insert(row).select('id').single();if(error)return alert(error.message);for(let i=0;i<pendingPhotos.length;i++){const f=pendingPhotos[i],raw=(f.name.split('.').pop()||'jpg').toLowerCase(),ext=raw.replace(/[^a-z0-9]/g,'')||'jpg',path=`${a.id}/${String(i).padStart(2,'0')}-${crypto.randomUUID()}.${ext}`;const{error:upErr}=await sb.storage.from('auction-images').upload(path,f,{contentType:f.type||undefined,upsert:false});if(upErr){alert(`Auction published, but photo ${i+1} failed: ${upErr.message}`);continue}const{error:dbErr}=await sb.from('auction_photos').insert({auction_id:a.id,storage_path:path,sort_order:i});if(dbErr)alert(`Photo ${i+1} uploaded but could not be attached: ${dbErr.message}`)}pendingPhotos=[];await loadData();alert('Auction published.');renderAdmin()}
 
-document.addEventListener('click', async (event)=>{
-  const btn=event.target.closest('.saveFulfillmentBtn');
-  if(!btn)return;
-  event.preventDefault();
-  const orderId=btn.dataset.orderId;
-  const hasTracking=btn.dataset.hasTracking==='true';
-  btn.disabled=true;
-  const oldText=btn.textContent;
-  btn.textContent='Saving...';
-  try{
-    await updateFulfillment(orderId,hasTracking);
-  }catch(err){
-    alert('Could not save fulfillment: '+(err?.message||String(err)));
-  }finally{
-    btn.disabled=false;
-    btn.textContent=oldText;
-  }
-});
+
 
 boot();</script></body></html>
