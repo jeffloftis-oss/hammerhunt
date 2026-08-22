@@ -180,6 +180,26 @@ function openAuthChoice(){document.getElementById('modalbox').innerHTML='<h2>Ham
 function openSignUp(){document.getElementById('modalbox').innerHTML='<h2>Create Account</h2><label>Display name</label><input id="suName"><label>Email</label><input id="suEmail" type="email"><label>Password</label><input id="suPass" type="password" minlength="6"><button id="suBtn" class="good" style="margin-top:12px">Create My Account</button><div id="suMsg"></div><div style="margin-top:14px"><button class="light" onclick="openAuthChoice()">Back</button></div>';document.getElementById('modal').classList.add('show');document.getElementById('suBtn').onclick=async()=>{const name=document.getElementById('suName').value.trim(),email=document.getElementById('suEmail').value.trim(),password=document.getElementById('suPass').value,msg=document.getElementById('suMsg');if(!email||!password){msg.innerHTML='<div class="err">Enter email and password.</div>';return}msg.innerHTML='<div class="notice">Creating account…</div>';const{data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:'https://www.hammerhunt.com',data:{display_name:name||email.split('@')[0]}}});if(error){msg.innerHTML='<div class="err">'+esc(error.message)+'</div>';return}if(data.session){msg.innerHTML='<div class="ok">Account created and signed in.</div>';setTimeout(async()=>{closeModal();await boot()},500)}else msg.innerHTML='<div class="ok">Account created. Check your email for the confirmation message, then come back and sign in.</div>'}}
 function openSignIn(){document.getElementById('modalbox').innerHTML='<h2>Sign In</h2><label>Email</label><input id="siEmail" type="email"><label>Password</label><input id="siPass" type="password"><button id="siBtn" style="margin-top:12px">Sign In</button><div id="siMsg"></div><div style="margin-top:14px"><button class="light" onclick="openAuthChoice()">Back</button></div>';document.getElementById('modal').classList.add('show');document.getElementById('siBtn').onclick=async()=>{const email=document.getElementById('siEmail').value.trim(),password=document.getElementById('siPass').value,msg=document.getElementById('siMsg');if(!email||!password){msg.innerHTML='<div class="err">Enter email and password.</div>';return}msg.innerHTML='<div class="notice">Signing in…</div>';const{error}=await sb.auth.signInWithPassword({email,password});if(error){msg.innerHTML='<div class="err">'+esc(error.message)+'</div>';return}closeModal();await boot()}}
 async function cardSetup(){if(!session)return openSignIn();const r=await fetch(SUPA+'/functions/v1/create-card-setup-checkout',{method:'POST',headers:{Authorization:'Bearer '+session.access_token,apikey:KEY,'Content-Type':'application/json'},body:'{}'});const j=await r.json().catch(()=>({}));if(!r.ok||!j.url)return alert(j.error||'Unable to start Stripe setup.');location.href=j.url}
+
+function onPhotoPick(event){
+  const files=Array.from(event?.target?.files||[]).filter(f=>f.type?.startsWith('image/')).slice(0,10);
+  pendingPhotos=files;
+  const preview=document.getElementById('photoPreview');
+  if(!preview)return;
+  preview.innerHTML='';
+  files.forEach((file,i)=>{
+    const box=document.createElement('div');
+    box.className='preview';
+    const img=document.createElement('img');
+    img.alt=`Auction photo ${i+1}`;
+    const url=URL.createObjectURL(file);
+    img.src=url;
+    img.onload=()=>URL.revokeObjectURL(url);
+    box.appendChild(img);
+    preview.appendChild(box);
+  });
+}
+
 async function renderAdmin(){
 if(!profile?.is_admin){document.getElementById('app').innerHTML='<div class="err">Admin access required.</div>';return}
 const closed=auctions.filter(a=>!isOpen(a)).sort((a,b)=>new Date(b.ends_at)-new Date(a.ends_at));
