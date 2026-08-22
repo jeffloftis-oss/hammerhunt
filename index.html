@@ -8,12 +8,24 @@ if(location.hostname==='hammerhunt.com'){
 /* HammerHunt hybrid marketplace refresh */
 body{background:#f7f7f4}.top{max-width:1180px}.brand{letter-spacing:.5px}.hero{background:linear-gradient(135deg,#171717,#353535);border-radius:20px;padding:30px;box-shadow:0 12px 30px #00000014}.hero h1{font-size:clamp(34px,6vw,56px);letter-spacing:-1.5px}.grid{grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px}.card{border-radius:16px;box-shadow:0 5px 18px #0000000d;transition:.15s ease}.card:hover{transform:translateY(-2px);box-shadow:0 12px 30px #00000014}.photo{height:205px;position:relative;overflow:hidden;background:#eceae4}.photo img{width:100%;height:100%;object-fit:cover;display:block}.photo .fallback{height:100%;display:flex;align-items:center;justify-content:center;font-weight:950;color:#8b8c89}.photoCount{position:absolute;right:10px;bottom:10px;background:#171717cc;color:white;border-radius:999px;padding:5px 8px;font-size:11px;font-weight:900}.category{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:#8d7738;font-weight:900}.priceRow{display:flex;align-items:end;justify-content:space-between;gap:12px}.countdown{font-variant-numeric:tabular-nums;font-weight:900}.goldBtn{background:#d9a514;color:#171717}.goldBtn:hover{background:#f4c542}.galleryMain{height:min(52vh,430px);background:#111;position:relative}.galleryMain img{width:100%;height:100%;object-fit:contain;display:block}.galleryFallback{height:100%;display:flex;align-items:center;justify-content:center;background:#eceae4;color:#8b8c89;font-size:22px;font-weight:950}.galleryNav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:0;background:#171717cc;color:#fff;font-size:22px}.galleryNav.prev{left:12px}.galleryNav.next{right:12px}.thumbs{display:flex;gap:8px;padding:10px 14px;overflow:auto;background:#f7f6f2}.thumb{width:68px;height:54px;flex:0 0 auto;border:2px solid transparent;border-radius:8px;overflow:hidden;padding:0;background:#ddd}.thumb.active{border-color:#d9a514}.thumb img{width:100%;height:100%;object-fit:cover}.detailGrid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}.bidBox{background:#f7f6f2;border:1px solid var(--line);border-radius:14px;padding:15px}.bigPrice{font-size:36px;font-weight:950}.photoPicker{border:2px dashed #d4d0c6;border-radius:14px;padding:16px;background:#fbfaf7;margin-bottom:14px}.previewGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:10px;margin-top:12px}.preview{aspect-ratio:1;border-radius:10px;overflow:hidden;background:#e9e7e0}.preview img{width:100%;height:100%;object-fit:cover}.closedList{display:grid;gap:8px}.closedRow{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;border-top:1px solid var(--line);padding:10px 0}.closedRow img{width:64px;height:50px;object-fit:cover;border-radius:8px;background:#eee}@media(max-width:700px){.detailGrid{grid-template-columns:1fr}.galleryMain{height:320px}.closedRow{grid-template-columns:54px 1fr}.closedRow .closedPrice{grid-column:2}.grid{grid-template-columns:1fr}}
 </style></head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal"><div id="modalbox" class="modalbox"></div></div>
-<script type="module">import{createClient}from'https://esm.sh/@supabase/supabase-js@2';const SUPA='https://cboodkfcfvshsxirpkxt.supabase.co';const KEY='sb_publishable_VDsMnqHeYHajdKendarwww_hMX9fMM2';const sb=createClient(SUPA,KEY,{
+<script type="module">import{createClient}from'https://esm.sh/@supabase/supabase-js@2';const SUPA='https://cboodkfcfvshsxirpkxt.supabase.co';const KEY='sb_publishable_VDsMnqHeYHajdKendarwww_hMX9fMM2';const hhStorage={
+  getItem:key=>{
+    try{return window.localStorage.getItem('hammerhunt:'+key)}catch(e){return null}
+  },
+  setItem:(key,value)=>{
+    try{window.localStorage.setItem('hammerhunt:'+key,value)}catch(e){}
+  },
+  removeItem:key=>{
+    try{window.localStorage.removeItem('hammerhunt:'+key)}catch(e){}
+  }
+};
+const sb=createClient(SUPA,KEY,{
   auth:{
     persistSession:true,
     autoRefreshToken:true,
     detectSessionInUrl:true,
-    storage:window.localStorage
+    storage:hhStorage,
+    storageKey:'hammerhunt-auth'
   }
 });let session=null,profile=null,categories=[],auctions=[],currentView='auctions',activeAuctionId=null,realtimeChannel=null,photosByAuction={},galleryIndex=0,pendingPhotos=[];const clockWall=Date.now(),clockPerf=performance.now();const nowMs=()=>clockWall+(performance.now()-clockPerf);let expiryCheckRunning=false;const money=n=>'$'+Number(n||0).toFixed(2);const esc=s=>String(s??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));const remain=d=>{let x=new Date(d).getTime()-nowMs();if(x<=0)return'Ended';let h=Math.floor(x/36e5),m=Math.floor((x%36e5)/6e4),sec=Math.floor((x%6e4)/1e3);return h>=24?Math.floor(h/24)+'d '+(h%24)+'h':h>0?h+'h '+m+'m '+sec+'s':m+'m '+sec+'s'};const isOpen=a=>a.status!=='ended'&&new Date(a.ends_at).getTime()>nowMs();const photosFor=id=>photosByAuction[id]||[];const photoUrl=p=>sb.storage.from('auction-images').getPublicUrl(p.storage_path).data.publicUrl;window.showView=showView;window.openAuthChoice=openAuthChoice;window.openSignIn=openSignIn;window.openSignUp=openSignUp;window.closeModal=()=>{activeAuctionId=null;document.getElementById('modal').classList.remove('show')};window.signOutNow=async()=>{await sb.auth.signOut();session=null;profile=null;await boot()};window.cardSetup=cardSetup;window.createAuction=createAuction;window.openAuction=openAuction;window.placeNextBid=placeNextBid;window.galleryMove=galleryMove;window.galleryPick=galleryPick;window.onPhotoPick=onPhotoPick;window.winnerCheckout=winnerCheckout;window.updateFulfillment=updateFulfillment;
 function tickCountdowns(){
@@ -86,7 +98,24 @@ function startRealtime(){if(realtimeChannel)return;realtimeChannel=sb.channel('h
 async function pollAuctions(){if(document.hidden)return;const before=JSON.stringify(auctions.map(x=>[x.id,x.current_bid,x.ends_at,x.status,photosFor(x.id).length]));await loadData();await finalizeExpiredAuctions();const after=JSON.stringify(auctions.map(x=>[x.id,x.current_bid,x.ends_at,x.status,photosFor(x.id).length]));if(before!==after){if(currentView==='auctions')renderAuctions();if(currentView==='admin')renderAdmin();if(activeAuctionId)openAuction(activeAuctionId,true)}}
 setInterval(pollAuctions,3000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)pollAuctions()});
 async function boot(){
-const{data:{session:s}}=await sb.auth.getSession();session=s;
+let s=null;
+const cached=hhStorage.getItem('hammerhunt-auth');
+if(cached){
+  try{
+    const parsed=JSON.parse(cached);
+    const access_token=parsed?.access_token||parsed?.currentSession?.access_token;
+    const refresh_token=parsed?.refresh_token||parsed?.currentSession?.refresh_token;
+    if(access_token&&refresh_token){
+      const {data:setData}=await sb.auth.setSession({access_token,refresh_token});
+      s=setData?.session||null;
+    }
+  }catch(e){}
+}
+if(!s){
+  const {data}=await sb.auth.getSession();
+  s=data?.session||null;
+}
+session=s;
 if(session){const{data:p}=await sb.from('profiles').select('*').eq('id',session.user.id).single();profile=p}else profile=null;
 const b=document.getElementById('authBtn');b.textContent=session?'Sign Out':'Sign In';b.onclick=session?window.signOutNow:openAuthChoice;
 document.getElementById('adminNav').classList.toggle('hidden',!profile?.is_admin);
