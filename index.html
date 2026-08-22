@@ -128,20 +128,26 @@ document.getElementById('app').innerHTML=`<div class="panel"><h2>Create Auction<
 async function updateFulfillment(orderId,hasTracking){
   const select=document.getElementById('fs-'+orderId);
   const status=select?.value||'pending';
-  if(select) select.disabled=true;
   const tracking=hasTracking?(document.getElementById('trk-'+orderId)?.value||''):null;
-  const {error}=await sb.rpc('admin_update_fulfillment',{p_order_id:orderId,p_status:status,p_tracking_number:tracking});
-  if(error){if(select)select.disabled=false;alert('Could not save fulfillment: '+error.message);return}
-  const {data:check,error:checkErr}=await sb.rpc('admin_fulfillment_orders');
-  if(checkErr){alert('Saved, but could not refresh the fulfillment list.');return}
-  const saved=(check||[]).find(x=>x.order_id===orderId);
-  if(saved?.fulfillment_status===status){
+  if(select)select.disabled=true;
+  try{
+    const r=await fetch(SUPA+'/functions/v1/admin-update-fulfillment',{
+      method:'POST',
+      headers:{
+        Authorization:'Bearer '+session.access_token,
+        apikey:KEY,
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({order_id:orderId,status,tracking_number:tracking})
+    });
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(j.error||'Unable to save fulfillment');
     alert('Fulfillment saved: '+status.replaceAll('_',' ')+'.');
-  }else{
-    alert('The save request completed, but the status did not change. Please try again.');
+    await renderAdmin();
+  }catch(err){
+    alert('Could not save fulfillment: '+(err?.message||String(err)));
+    if(select)select.disabled=false;
   }
-  if(select)select.disabled=false;
-  await renderAdmin();
 }
 
 async function createAuction(){const title=aTitle.value.trim(),start=Number(aStart.value),end=aEnd.value;if(!title||!end||Number.isNaN(start))return alert('Enter title, starting bid, and end time.');const row={title,category_id:aCat.value,condition:aCondition.value.trim(),description:aDesc.value.trim(),starting_bid:start,current_bid:start,starts_at:new Date().toISOString(),ends_at:new Date(end).toISOString(),status:'live',shipping_available:aShipOn.checked,shipping_price:aShipOn.checked?Number(aShip.value||0):null,pickup_available:aPickup.checked,pickup_instructions:aPickup.checked?aPickupInfo.value.trim():null};const{data:a,error}=await sb.from('auctions').insert(row).select('id').single();if(error)return alert(error.message);for(let i=0;i<pendingPhotos.length;i++){const f=pendingPhotos[i],raw=(f.name.split('.').pop()||'jpg').toLowerCase(),ext=raw.replace(/[^a-z0-9]/g,'')||'jpg',path=`${a.id}/${String(i).padStart(2,'0')}-${crypto.randomUUID()}.${ext}`;const{error:upErr}=await sb.storage.from('auction-images').upload(path,f,{contentType:f.type||undefined,upsert:false});if(upErr){alert(`Auction published, but photo ${i+1} failed: ${upErr.message}`);continue}const{error:dbErr}=await sb.from('auction_photos').insert({auction_id:a.id,storage_path:path,sort_order:i});if(dbErr)alert(`Photo ${i+1} uploaded but could not be attached: ${dbErr.message}`)}pendingPhotos=[];await loadData();alert('Auction published.');renderAdmin()}
