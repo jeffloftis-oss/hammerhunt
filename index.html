@@ -110,11 +110,11 @@ document.getElementById('app').innerHTML=`<div class="panel"><h2>Create Auction<
           </div>
           <div style="min-width:260px;flex:1;max-width:430px">
             <label>Fulfillment status</label>
-            <select id="fs-${o.order_id}" onchange="updateFulfillment('${o.order_id}', ${needsTracking||o.tracking_number?'true':'false'})">
+            <select id="fs-${o.order_id}" class="fulfillmentStatus" data-order-id="${o.order_id}" data-has-tracking="${needsTracking||o.tracking_number?'true':'false'}">
               ${['pending','ready_for_pickup','shipped','completed'].map(s=>`<option value="${s}" ${o.fulfillment_status===s?'selected':''}>${statusLabel(s)}</option>`).join('')}
             </select>
             ${needsTracking||o.tracking_number?`<label>Tracking number</label><input id="trk-${o.order_id}" value="${esc(o.tracking_number||'')}" placeholder="Optional tracking number">`:''}
-            <div class="muted" style="margin-top:8px">Changes save automatically.</div>
+            <div id="save-msg-${o.order_id}" class="muted" style="margin-top:8px">Changes save automatically.</div>
           </div>
         </div>
       </div>`;
@@ -123,13 +123,23 @@ document.getElementById('app').innerHTML=`<div class="panel"><h2>Create Auction<
 </div>
 
 <div class="panel"><div class="row"><h2 style="margin:0">Closed Auctions</h2><span class="status">${closed.length}</span></div><div class="closedList">${closed.length?closed.map(a=>{const p=photosFor(a.id)[0],o=byAuction[a.id];return `<div class="closedRow">${p?`<img src="${photoUrl(p)}">`:'<div></div>'}<div><b>${esc(a.title)}</b><div class="muted">Ended ${new Date(a.ends_at).toLocaleString()}${o?` · ${o.payment_status==='paid'?'Paid':'Awaiting payment'} · ${esc(o.fulfillment_method||'No fulfillment selected')}`:''}</div></div><div class="closedPrice"><b>${money(a.current_bid)}</b></div></div>`}).join(''):'<div class="muted" style="margin-top:10px">No closed auctions yet.</div>'}</div></div>`;
+
+document.querySelectorAll('.fulfillmentStatus').forEach(sel=>{
+  sel.addEventListener('change', async ()=>{
+    const orderId=sel.dataset.orderId;
+    const hasTracking=sel.dataset.hasTracking==='true';
+    await updateFulfillment(orderId,hasTracking);
+  });
+});
 }
 
 async function updateFulfillment(orderId,hasTracking){
   const select=document.getElementById('fs-'+orderId);
+  const msg=document.getElementById('save-msg-'+orderId);
   const status=select?.value||'pending';
   const tracking=hasTracking?(document.getElementById('trk-'+orderId)?.value||''):null;
   if(select)select.disabled=true;
+  if(msg){msg.textContent='Saving...';msg.style.fontWeight='800'}
   try{
     const r=await fetch(SUPA+'/functions/v1/admin-update-fulfillment',{
       method:'POST',
@@ -142,10 +152,10 @@ async function updateFulfillment(orderId,hasTracking){
     });
     const j=await r.json().catch(()=>({}));
     if(!r.ok)throw new Error(j.error||'Unable to save fulfillment');
-    alert('Fulfillment saved: '+status.replaceAll('_',' ')+'.');
-    await renderAdmin();
+    if(msg){msg.textContent='Saved: '+status.replaceAll('_',' ');msg.style.fontWeight='900'}
+    if(select)select.disabled=false;
   }catch(err){
-    alert('Could not save fulfillment: '+(err?.message||String(err)));
+    if(msg){msg.textContent='Save failed: '+(err?.message||String(err));msg.style.fontWeight='900'}
     if(select)select.disabled=false;
   }
 }
