@@ -11,7 +11,16 @@ async function refreshLiveAuction(payload){if(payload?.new?.id){const i=auctions
 async function finalizeExpiredAuctions(){
 const expired=auctions.filter(a=>a.status!=='ended'&&new Date(a.ends_at)<=new Date());
 if(!expired.length)return;
-for(const a of expired){try{await sb.rpc('finalize_auction',{p_auction_id:a.id})}catch(e){}}
+for(const a of expired){
+  try{
+    await sb.rpc('finalize_auction',{p_auction_id:a.id});
+    fetch(SUPA+'/functions/v1/notify-auction-winner',{
+      method:'POST',
+      headers:{apikey:KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({auction_id:a.id})
+    }).catch(()=>{});
+  }catch(e){}
+}
 await loadData()
 }
 async function verifyWinnerPayment(sessionId){
