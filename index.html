@@ -144,8 +144,12 @@ if(paid){
 const fs=w.fulfillment_status||'pending';
 const label={pending:'PAID · PROCESSING',ready_for_pickup:'PAID · READY FOR PICKUP',shipped:'PAID · SHIPPED',completed:'PAID · COMPLETED'}[fs]||'PAID';
 const detail=w.fulfillment_method==='shipping'
-  ? (fs==='shipped'&&w.tracking_number?`Tracking: ${esc(w.tracking_number)}`:'Shipping selected.')
-  : (fs==='ready_for_pickup'?(a.pickup_instructions?`Pickup: ${esc(a.pickup_instructions)}`:'Ready for pickup.'):'Local pickup selected.');
+  ? (fs==='shipped'&&w.tracking_number
+      ? `Tracking: <a href="https://www.google.com/search?q=${encodeURIComponent(w.tracking_number)}" target="_blank" rel="noopener">${esc(w.tracking_number)}</a>`
+      : 'Shipping selected.')
+  : (fs==='ready_for_pickup'
+      ? (a.pickup_instructions?`Pickup: ${esc(a.pickup_instructions)}`:'Ready for pickup.')
+      : 'Local pickup selected.');
 actions=`<div class="ok"><b>${label}</b><div class="muted" style="margin-top:6px">${detail}</div></div>`;
 }
 else{
