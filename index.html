@@ -535,7 +535,51 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-sh
   .bidCurrent{font-size:38px}
 }
 
-</style></head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="modalbox" class="modalbox"></div></div>
+</style>
+<style>
+/* HammerHunt compact auction modal polish */
+@media (min-width: 900px) {
+  .auction-modal,
+  .auction-modal-content,
+  .modal-content,
+  [class*="auction"][class*="modal"] > div {
+    max-width: 980px !important;
+  }
+
+  .auction-modal-content,
+  .modal-content {
+    width: min(78vw, 980px) !important;
+    max-height: 88vh !important;
+  }
+
+  .auction-modal .main-photo,
+  .auction-modal .gallery-main,
+  .auction-modal .modal-main-image,
+  .modal-content .main-photo,
+  .modal-content .gallery-main,
+  .modal-content .modal-main-image {
+    height: 340px !important;
+    max-height: 340px !important;
+    object-fit: contain !important;
+  }
+
+  .auction-modal img[class*="main"],
+  .modal-content img[class*="main"] {
+    max-height: 340px !important;
+    object-fit: contain !important;
+  }
+
+  .auction-modal .thumbnails,
+  .auction-modal .thumbnail-strip,
+  .modal-content .thumbnails,
+  .modal-content .thumbnail-strip {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+}
+</style>
+
+</head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="modalbox" class="modalbox"></div></div>
 <script type="module">import{createClient}from'https://esm.sh/@supabase/supabase-js@2';const SUPA='https://cboodkfcfvshsxirpkxt.supabase.co';const KEY='sb_publishable_VDsMnqHeYHajdKendarwww_hMX9fMM2';const hhStorage={
   getItem:key=>{
     try{return window.localStorage.getItem('hammerhunt:'+key)}catch(e){return null}
