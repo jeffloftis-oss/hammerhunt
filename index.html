@@ -897,6 +897,225 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-sh
 }
 </style>
 
+
+<style>
+/* HammerHunt Admin dashboard polish */
+.adminShell{
+  display:grid;
+  gap:18px;
+}
+.adminHero{
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  align-items:flex-start;
+  padding:22px;
+  border-radius:20px;
+  background:linear-gradient(135deg,#111827,#253149);
+  color:#fff;
+  box-shadow:0 16px 36px rgba(17,24,39,.14);
+}
+.adminHero h2{margin:0 0 5px;font-size:30px}
+.adminHero .muted{color:#cbd5e1}
+.adminHeroStats{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.adminStat{
+  padding:8px 11px;
+  border-radius:12px;
+  background:#ffffff12;
+  border:1px solid #ffffff18;
+  font-size:12px;
+  font-weight:900;
+}
+.adminGrid{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:18px;
+  align-items:start;
+}
+.adminCard{
+  background:#fff;
+  border:1px solid var(--hh-line,#e7e4dc);
+  border-radius:18px;
+  box-shadow:0 8px 26px rgba(16,24,40,.06);
+  overflow:hidden;
+}
+.adminCardHead{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  padding:17px 18px;
+  border-bottom:1px solid #ece9e1;
+}
+.adminCardHead h3{margin:0;font-size:19px}
+.adminCardBody{padding:18px}
+.adminSectionTitle{
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.9px;
+  color:#8b6c15;
+  margin:4px 0 10px;
+}
+.adminDivider{
+  height:1px;
+  background:#ece9e1;
+  margin:18px 0;
+}
+.adminFormGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.adminFormGrid .full{grid-column:1/-1}
+.adminToggleRow{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.adminToggle{
+  flex:1;
+  min-width:180px;
+  padding:12px;
+  border:1px solid #e3dfd4;
+  border-radius:13px;
+  background:#faf9f5;
+}
+.adminToggle label{margin:0}
+.adminPublish{
+  width:100%;
+  min-height:48px;
+  margin-top:14px;
+  border-radius:13px!important;
+}
+.fulfillmentQueue{
+  display:grid;
+  gap:12px;
+}
+.fulfillmentItem{
+  border:1px solid #e5e1d7;
+  border-radius:15px;
+  padding:14px;
+  background:#fff;
+}
+.fulfillmentItem.needsAction{
+  border-color:#efcf61;
+  background:#fffdf5;
+}
+.fulfillmentItem.done{
+  opacity:.78;
+  background:#fafafa;
+}
+.fulfillmentTop{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+}
+.fulfillmentBuyer{
+  font-size:12px;
+  color:#667085;
+  margin-top:3px;
+}
+.fulfillmentFacts{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:12px;
+}
+.fulfillmentFact{
+  padding:9px 10px;
+  border-radius:10px;
+  background:#f7f7f5;
+}
+.fulfillmentFact .muted{display:block;margin-bottom:2px}
+.manageFilters{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.manageFilter{
+  border:1px solid #dedbd3;
+  background:#fff;
+  color:#344054;
+  border-radius:999px;
+  padding:8px 12px;
+  font-size:12px;
+  font-weight:850;
+}
+.manageFilter.active{
+  background:#111827;
+  color:#fff;
+  border-color:#111827;
+}
+.manageAuctionList{
+  display:grid;
+  gap:10px;
+  margin-top:14px;
+}
+.manageAuctionRow{
+  display:grid;
+  grid-template-columns:72px 1fr auto;
+  gap:12px;
+  align-items:center;
+  padding:12px;
+  border:1px solid #ebe7dd;
+  border-radius:14px;
+  background:#fff;
+}
+.manageAuctionRow.live{
+  border-color:#b8e2c7;
+  background:#fbfffc;
+}
+.manageAuctionRow img{
+  width:72px;
+  height:58px;
+  object-fit:cover;
+  border-radius:9px;
+}
+.manageAuctionMeta{
+  font-size:12px;
+  color:#667085;
+  margin-top:4px;
+  line-height:1.45;
+}
+.manageAuctionActions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:9px;
+}
+.dangerGhost{
+  background:#fff5f4!important;
+  color:#b42318!important;
+  border:1px solid #f4c7c3!important;
+}
+.adminWide{grid-column:1/-1}
+.adminEmpty{
+  color:#667085;
+  padding:10px 0 4px;
+  font-size:13px;
+}
+@media(max-width:900px){
+  .adminGrid{grid-template-columns:1fr}
+  .adminHero{display:block}
+  .adminHeroStats{justify-content:flex-start;margin-top:12px}
+}
+@media(max-width:700px){
+  .adminFormGrid{grid-template-columns:1fr}
+  .adminFormGrid .full{grid-column:auto}
+  .fulfillmentFacts{grid-template-columns:1fr}
+  .manageAuctionRow{grid-template-columns:58px 1fr}
+  .manageAuctionRow img{width:58px;height:50px}
+  .manageAuctionRow > :last-child{grid-column:2}
+}
+</style>
+
 </head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="modalbox" class="modalbox"></div></div>
 <script type="module">import{createClient}from'https://esm.sh/@supabase/supabase-js@2';const SUPA='https://cboodkfcfvshsxirpkxt.supabase.co';const KEY='sb_publishable_VDsMnqHeYHajdKendarwww_hMX9fMM2';const hhStorage={
   getItem:key=>{
@@ -917,12 +1136,13 @@ const sb=createClient(SUPA,KEY,{
     storage:hhStorage,
     storageKey:'hammerhunt-auth'
   }
-});let session=null,profile=null,categories=[],auctions=[],currentView='auctions',activeAuctionId=null,realtimeChannel=null,photosByAuction={},galleryIndex=0,pendingPhotos=[],marketplaceQuery='',marketplaceCategory='all',photoViewerAuctionId=null,photoViewerIndex=0;const nowMs=()=>new Date().getTime();let expiryCheckRunning=false;const money=n=>'$'+Number(n||0).toFixed(2);const esc=s=>String(s??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));const remain=d=>{const endMs=Date.parse(String(d));const currentMs=new Date().getTime();let x=endMs-currentMs;if(!Number.isFinite(x)||x<=0)return'Ended';let h=Math.floor(x/3600000),m=Math.floor((x%3600000)/60000),sec=Math.floor((x%60000)/1000);return h>=24?Math.floor(h/24)+'d '+(h%24)+'h':h>0?h+'h '+m+'m '+sec+'s':m+'m '+sec+'s'};const isOpen=a=>a.status!=='ended'&&new Date(a.ends_at).getTime()>nowMs();const photosFor=id=>photosByAuction[id]||[];const photoUrl=p=>sb.storage.from('auction-images').getPublicUrl(p.storage_path).data.publicUrl;window.showView=showView;window.openAuthChoice=openAuthChoice;window.openSignIn=openSignIn;window.openSignUp=openSignUp;
+});let session=null,profile=null,categories=[],auctions=[],currentView='auctions',activeAuctionId=null,realtimeChannel=null,photosByAuction={},galleryIndex=0,pendingPhotos=[],marketplaceQuery='',marketplaceCategory='all',photoViewerAuctionId=null,photoViewerIndex=0,adminAuctionFilter='all';const nowMs=()=>new Date().getTime();let expiryCheckRunning=false;const money=n=>'$'+Number(n||0).toFixed(2);const esc=s=>String(s??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));const remain=d=>{const endMs=Date.parse(String(d));const currentMs=new Date().getTime();let x=endMs-currentMs;if(!Number.isFinite(x)||x<=0)return'Ended';let h=Math.floor(x/3600000),m=Math.floor((x%3600000)/60000),sec=Math.floor((x%60000)/1000);return h>=24?Math.floor(h/24)+'d '+(h%24)+'h':h>0?h+'h '+m+'m '+sec+'s':m+'m '+sec+'s'};const isOpen=a=>a.status!=='ended'&&new Date(a.ends_at).getTime()>nowMs();const photosFor=id=>photosByAuction[id]||[];const photoUrl=p=>sb.storage.from('auction-images').getPublicUrl(p.storage_path).data.publicUrl;window.showView=showView;window.openAuthChoice=openAuthChoice;window.openSignIn=openSignIn;window.openSignUp=openSignUp;
 window.setMarketplaceQuery=v=>{marketplaceQuery=String(v||'');renderAuctions()};
 window.setMarketplaceCategory=v=>{marketplaceCategory=String(v||'all');renderAuctions()};
 window.openPhotoViewer=openPhotoViewer;
 window.photoViewerMove=photoViewerMove;
-window.photoViewerPick=photoViewerPick;window.closeModal=()=>{
+window.photoViewerPick=photoViewerPick;
+window.setAdminAuctionFilter=v=>{adminAuctionFilter=String(v||'all');renderAdmin()};window.closeModal=()=>{
   activeAuctionId=null;
   photoViewerAuctionId=null;
   const box=document.getElementById('modalbox');
@@ -1347,73 +1567,182 @@ function onPhotoPick(event){
 
 async function renderAdmin(){
 if(!profile?.is_admin){document.getElementById('app').innerHTML='<div class="err">Admin access required.</div>';return}
-const closed=auctions.filter(a=>!isOpen(a)).sort((a,b)=>new Date(b.ends_at)-new Date(a.ends_at));
+
 const {data:fulfill,error:fErr}=await sb.rpc('admin_fulfillment_orders');
 const orders=fulfill||[];
 const byAuction=Object.fromEntries(orders.map(o=>[o.auction_id,o]));
 const statusLabel=s=>({pending:'Pending',ready_for_pickup:'Ready for pickup',shipped:'Shipped',completed:'Completed'}[s]||s||'Pending');
 
-document.getElementById('app').innerHTML=`<div class="panel"><h2>Create Auction</h2><div class="photoPicker"><b>Auction Photos</b><div class="muted">Upload up to 10 photos. The first image becomes the cover photo.</div><input id="aPhotos" type="file" accept="image/*" multiple style="margin-top:10px" onchange="onPhotoPick(event)"><div id="photoPreview" class="previewGrid"></div></div><div class="formgrid"><div><label>Title</label><input id="aTitle"></div><div><label>Category</label><select id="aCat">${categories.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></div><div><label>Condition</label><input id="aCondition"></div><div><label>Starting bid ($)</label><input id="aStart" type="number" min="0" step="5"></div><div class="full"><label>Description</label><textarea id="aDesc"></textarea></div><div><label>Duration (minutes)</label><input id="aDuration" type="number" min="1" step="1" value="10"></div><div><label>Shipping price ($)</label><input id="aShip" type="number" min="0" step="0.01" value="0"></div><div><label><input id="aShipOn" type="checkbox" checked style="width:auto"> Shipping available</label></div><div><label><input id="aPickup" type="checkbox" style="width:auto"> Local pickup available</label></div><div class="full"><label>Pickup instructions</label><input id="aPickupInfo"></div></div><button class="goldBtn" style="margin-top:12px;padding:12px 15px;border:0;border-radius:9px;font-weight:900" onclick="createAuction()">Publish Auction</button></div>
+const liveAuctions=auctions.filter(isOpen);
+const endedAuctions=auctions.filter(a=>!isOpen(a));
+const needsActionOrders=orders.filter(o=>o.payment_status==='paid'&&(o.fulfillment_status||'pending')!=='completed');
+const completedOrders=orders.filter(o=>o.payment_status==='paid'&&(o.fulfillment_status||'pending')==='completed');
 
-<div class="panel">
-  <div class="row"><div><h2 style="margin:0">Fulfillment</h2><div class="muted">Paid winners and next actions</div></div><span class="status">${orders.length}</span></div>
-  ${fErr?`<div class="err">${esc(fErr.message)}</div>`:''}
-  <div style="margin-top:12px">
-    ${orders.length?orders.map(o=>{
-      const paid=o.payment_status==='paid';
-      const method=o.fulfillment_method||'not selected';
-      const needsTracking=method==='shipping'&&paid&&o.fulfillment_status!=='completed';
-      return `<div class="panel" style="box-shadow:none;margin:10px 0;background:#faf9f5">
-        <div class="row wrap">
-          <div>
-            <b style="font-size:16px">${esc(o.auction_title)}</b>
-            <div class="muted">${esc(o.winner_name||'Winner')} · ${esc(o.winner_email||'')}</div>
-          </div>
-          <span class="status ${paid?'approved':''}">${paid?'PAID':'UNPAID'}</span>
+const filteredAuctions=auctions
+  .slice()
+  .sort((a,b)=>new Date(b.starts_at||b.ends_at)-new Date(a.starts_at||a.ends_at))
+  .filter(a=>{
+    if(adminAuctionFilter==='live')return isOpen(a);
+    if(adminAuctionFilter==='ended')return !isOpen(a);
+    return true;
+  });
+
+document.getElementById('app').innerHTML=`
+<div class="adminShell">
+  <section class="adminHero">
+    <div>
+      <h2>Admin Dashboard</h2>
+      <div class="muted">Create auctions, manage fulfillment, and keep the marketplace moving.</div>
+    </div>
+    <div class="adminHeroStats">
+      <div class="adminStat">${liveAuctions.length} live</div>
+      <div class="adminStat">${needsActionOrders.length} fulfillment action${needsActionOrders.length===1?'':'s'}</div>
+      <div class="adminStat">${endedAuctions.length} ended</div>
+    </div>
+  </section>
+
+  <div class="adminGrid">
+    <section class="adminCard">
+      <div class="adminCardHead">
+        <div><h3>Create Auction</h3><div class="muted">Build and publish a new listing</div></div>
+      </div>
+      <div class="adminCardBody">
+        <div class="adminSectionTitle">Auction photos</div>
+        <div class="photoPicker">
+          <b>Upload up to 10 photos</b>
+          <div class="muted">The first image becomes the cover photo.</div>
+          <input id="aPhotos" type="file" accept="image/*" multiple style="margin-top:10px" onchange="onPhotoPick(event)">
+          <div id="photoPreview" class="previewGrid"></div>
         </div>
-        <div class="row wrap" style="margin-top:10px;align-items:flex-start">
-          <div>
-            <div><b>Winning bid:</b> ${money(o.winning_bid)}</div>
-            <div><b>Total due:</b> ${money(o.total_due||o.winning_bid)}</div>
-            <div><b>Method:</b> ${esc(method)}</div>
-            ${o.pickup_instructions&&method==='pickup'?`<div class="muted">Pickup: ${esc(o.pickup_instructions)}</div>`:''}
-          </div>
-          <div style="min-width:260px;flex:1;max-width:430px">
-            <label>Fulfillment status</label>
-            <select id="fs-${o.order_id}" class="fulfillmentStatus" data-order-id="${o.order_id}" data-has-tracking="${needsTracking||o.tracking_number?'true':'false'}">
-              ${['pending','ready_for_pickup','shipped','completed'].map(s=>`<option value="${s}" ${o.fulfillment_status===s?'selected':''}>${statusLabel(s)}</option>`).join('')}
-            </select>
-            ${needsTracking||o.tracking_number?`<label>Tracking number</label><input id="trk-${o.order_id}" class="trackingNumber" data-order-id="${o.order_id}" value="${esc(o.tracking_number||'')}" placeholder="Optional tracking number">`:''}
-            <div id="save-msg-${o.order_id}" class="muted" style="margin-top:8px">Changes save automatically.</div>
-          </div>
+
+        <div class="adminDivider"></div>
+        <div class="adminSectionTitle">Listing details</div>
+
+        <div class="adminFormGrid">
+          <div><label>Title</label><input id="aTitle"></div>
+          <div><label>Category</label><select id="aCat">${categories.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></div>
+          <div><label>Condition</label><input id="aCondition"></div>
+          <div><label>Starting bid ($)</label><input id="aStart" type="number" min="0" step="5"></div>
+          <div class="full"><label>Description</label><textarea id="aDesc"></textarea></div>
+          <div><label>Duration (minutes)</label><input id="aDuration" type="number" min="1" step="1" value="10"></div>
+          <div><label>Shipping price ($)</label><input id="aShip" type="number" min="0" step="0.01" value="0"></div>
         </div>
-      </div>`;
-    }).join(''):'<div class="muted">No winner orders yet.</div>'}
+
+        <div class="adminDivider"></div>
+        <div class="adminSectionTitle">Fulfillment options</div>
+
+        <div class="adminToggleRow">
+          <div class="adminToggle"><label><input id="aShipOn" type="checkbox" checked style="width:auto"> Shipping available</label></div>
+          <div class="adminToggle"><label><input id="aPickup" type="checkbox" style="width:auto"> Local pickup available</label></div>
+        </div>
+        <label>Pickup instructions</label>
+        <input id="aPickupInfo" placeholder="Optional pickup directions or hours">
+
+        <button class="goldBtn adminPublish" onclick="createAuction()">Publish Auction</button>
+      </div>
+    </section>
+
+    <section class="adminCard">
+      <div class="adminCardHead">
+        <div><h3>Fulfillment Queue</h3><div class="muted">Paid winners and next actions</div></div>
+        <span class="accountCount">${needsActionOrders.length}</span>
+      </div>
+      <div class="adminCardBody">
+        ${fErr?`<div class="err">${esc(fErr.message)}</div>`:''}
+        <div class="fulfillmentQueue">
+          ${orders.length?orders.map(o=>{
+            const paid=o.payment_status==='paid';
+            const fs=o.fulfillment_status||'pending';
+            const method=o.fulfillment_method||'not selected';
+            const needsTracking=method==='shipping'&&paid&&fs!=='completed';
+            const done=paid&&fs==='completed';
+            const needsAction=paid&&!done;
+            return `<div class="fulfillmentItem ${needsAction?'needsAction':''} ${done?'done':''}">
+              <div class="fulfillmentTop">
+                <div>
+                  <b>${esc(o.auction_title)}</b>
+                  <div class="fulfillmentBuyer">${esc(o.winner_name||'Winner')} · ${esc(o.winner_email||'')}</div>
+                </div>
+                <span class="status ${paid?'approved':''}">${paid?'PAID':'UNPAID'}</span>
+              </div>
+
+              <div class="fulfillmentFacts">
+                <div class="fulfillmentFact"><span class="muted">Winning bid</span><b>${money(o.winning_bid)}</b></div>
+                <div class="fulfillmentFact"><span class="muted">Total due</span><b>${money(o.total_due||o.winning_bid)}</b></div>
+                <div class="fulfillmentFact"><span class="muted">Method</span><b>${esc(method)}</b></div>
+              </div>
+
+              ${o.pickup_instructions&&method==='pickup'?`<div class="muted" style="margin-top:9px">Pickup: ${esc(o.pickup_instructions)}</div>`:''}
+
+              <label>Fulfillment status</label>
+              <select id="fs-${o.order_id}" class="fulfillmentStatus" data-order-id="${o.order_id}" data-has-tracking="${needsTracking||o.tracking_number?'true':'false'}">
+                ${['pending','ready_for_pickup','shipped','completed'].map(s=>`<option value="${s}" ${fs===s?'selected':''}>${statusLabel(s)}</option>`).join('')}
+              </select>
+
+              ${needsTracking||o.tracking_number?`<label>Tracking number</label><input id="trk-${o.order_id}" class="trackingNumber" data-order-id="${o.order_id}" value="${esc(o.tracking_number||'')}" placeholder="Optional tracking number">`:''}
+              <div id="save-msg-${o.order_id}" class="muted" style="margin-top:7px">Changes save automatically.</div>
+            </div>`;
+          }).join(''):'<div class="adminEmpty">No winner orders yet.</div>'}
+        </div>
+      </div>
+    </section>
+
+    <section class="adminCard adminWide">
+      <div class="adminCardHead">
+        <div><h3>Manage Auctions</h3><div class="muted">Live and historical listings</div></div>
+        <div class="manageFilters">
+          <button class="manageFilter ${adminAuctionFilter==='all'?'active':''}" onclick="setAdminAuctionFilter('all')">All ${auctions.length}</button>
+          <button class="manageFilter ${adminAuctionFilter==='live'?'active':''}" onclick="setAdminAuctionFilter('live')">Live ${liveAuctions.length}</button>
+          <button class="manageFilter ${adminAuctionFilter==='ended'?'active':''}" onclick="setAdminAuctionFilter('ended')">Ended ${endedAuctions.length}</button>
+        </div>
+      </div>
+      <div class="adminCardBody">
+        <div class="manageAuctionList">
+          ${filteredAuctions.length?filteredAuctions.map(a=>{
+            const p=photosFor(a.id)[0],o=byAuction[a.id],ended=!isOpen(a);
+            return `<div class="manageAuctionRow ${ended?'':'live'}">
+              ${p?`<img src="${photoUrl(p)}" alt="${esc(a.title)}">`:'<div></div>'}
+              <div>
+                <div class="row" style="justify-content:flex-start;gap:8px;flex-wrap:wrap">
+                  <b>${esc(a.title)}</b>
+                  <span class="status ${ended?'':'approved'}">${ended?'ENDED':'LIVE'}</span>
+                </div>
+                <div class="manageAuctionMeta">
+                  ${ended?'Ended':'Ends'} ${new Date(a.ends_at).toLocaleString()}
+                  ${o?` · ${o.payment_status==='paid'?'Paid':'Awaiting payment'} · ${esc(o.fulfillment_method||'No fulfillment selected')}`:''}
+                </div>
+                <div class="manageAuctionActions">
+                  <button class="light adminEditAuctionBtn" data-auction-id="${a.id}">Edit</button>
+                  ${ended?`<button class="adminRelistAuctionBtn" data-auction-id="${a.id}" style="background:#087443">Relist</button>`:''}
+                  <button class="dangerGhost adminDeleteAuctionBtn" data-auction-id="${a.id}">Delete</button>
+                </div>
+              </div>
+              <div class="accountPrice">${money(a.current_bid)}</div>
+            </div>`;
+          }).join(''):'<div class="adminEmpty">No auctions match this filter.</div>'}
+        </div>
+      </div>
+    </section>
   </div>
-</div>
+</div>`;
 
-<div class="panel"><div class="row"><h2 style="margin:0">Manage Auctions</h2><span class="status">${auctions.length}</span></div><div class="closedList">${
-auctions.length?auctions.slice().sort((a,b)=>new Date(b.starts_at||b.ends_at)-new Date(a.starts_at||a.ends_at)).map(a=>{const p=photosFor(a.id)[0],o=byAuction[a.id],ended=!isOpen(a);return `<div class="closedRow">${p?`<img src="${photoUrl(p)}">`:'<div></div>'}<div><b>${esc(a.title)}</b><div class="muted">${ended?'Ended':'Ends'} ${new Date(a.ends_at).toLocaleString()}${o?` · ${o.payment_status==='paid'?'Paid':'Awaiting payment'} · ${esc(o.fulfillment_method||'No fulfillment selected')}`:''}</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="light adminEditAuctionBtn" data-auction-id="${a.id}" style="padding:7px 10px">Edit</button>${ended?`<button class="adminRelistAuctionBtn" data-auction-id="${a.id}" style="padding:7px 10px;background:#087443">Relist</button>`:''}<button class="adminDeleteAuctionBtn" data-auction-id="${a.id}" style="padding:7px 10px;background:#b42318">Delete</button></div></div><div class="closedPrice"><b>${money(a.current_bid)}</b></div></div>`}).join(''):'<div class="muted" style="margin-top:10px">No auctions yet.</div>'}</div></div>`;
 document.querySelectorAll('.fulfillmentStatus').forEach(sel=>{
-  sel.addEventListener('change', async ()=>{
+  sel.addEventListener('change',async()=>{
     const orderId=sel.dataset.orderId;
     const hasTracking=sel.dataset.hasTracking==='true';
     await updateFulfillment(orderId,hasTracking);
   });
 });
+
 document.querySelectorAll('.trackingNumber').forEach(inp=>{
-  inp.addEventListener('change', async ()=>{
-    await updateFulfillment(inp.dataset.orderId,true);
-  });
-  inp.addEventListener('blur', async ()=>{
-    await updateFulfillment(inp.dataset.orderId,true);
-  });
+  inp.addEventListener('change',async()=>{await updateFulfillment(inp.dataset.orderId,true)});
+  inp.addEventListener('blur',async()=>{await updateFulfillment(inp.dataset.orderId,true)});
 });
+
 document.querySelectorAll('.adminEditAuctionBtn').forEach(btn=>btn.addEventListener('click',()=>openEditAuction(btn.dataset.auctionId)));
 document.querySelectorAll('.adminRelistAuctionBtn').forEach(btn=>btn.addEventListener('click',()=>openRelistAuction(btn.dataset.auctionId)));
 document.querySelectorAll('.adminDeleteAuctionBtn').forEach(btn=>btn.addEventListener('click',()=>deleteAuction(btn.dataset.auctionId)));
 }
-
 
 function openEditAuction(id){
   const a=auctions.find(x=>x.id===id); if(!a)return;
