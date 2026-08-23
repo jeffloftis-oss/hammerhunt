@@ -121,6 +121,52 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-sh
   .categoryScroller{margin-top:10px}
 }
 
+
+/* Populated marketplace refinement */
+.card{
+  display:flex;
+  flex-direction:column;
+  min-height:100%;
+}
+.photo{
+  height:auto;
+  aspect-ratio:4/3;
+  position:relative;
+  overflow:hidden;
+  background:#ece9e2;
+}
+.photo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.pad{
+  display:flex;
+  flex-direction:column;
+  flex:1;
+}
+.priceRow{margin-top:auto}
+.card .goldBtn{min-height:42px}
+.countdown{
+  display:inline-block;
+  padding:4px 7px;
+  border-radius:8px;
+  background:#fff4ef;
+  color:#b42318;
+  min-width:72px;
+}
+.countdown.urgent{
+  background:#fee4e2;
+  color:#b42318;
+  box-shadow:0 0 0 1px #fecdca inset;
+}
+.countdown.finalMinute{
+  background:#b42318;
+  color:#fff;
+  box-shadow:0 0 0 1px #912018 inset,0 4px 12px rgba(180,35,24,.18);
+}
+
 </style></head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal"><div id="modalbox" class="modalbox"></div></div>
 <script type="module">import{createClient}from'https://esm.sh/@supabase/supabase-js@2';const SUPA='https://cboodkfcfvshsxirpkxt.supabase.co';const KEY='sb_publishable_VDsMnqHeYHajdKendarwww_hMX9fMM2';const hhStorage={
   getItem:key=>{
@@ -147,8 +193,12 @@ window.setMarketplaceCategory=v=>{marketplaceCategory=String(v||'all');renderAuc
 function tickCountdowns(){
 let expired=false;
 document.querySelectorAll('[data-ends-at]').forEach(el=>{
+  const endMs=new Date(el.dataset.endsAt).getTime();
+  const left=endMs-nowMs();
   el.textContent=remain(el.dataset.endsAt);
-  if(new Date(el.dataset.endsAt).getTime()<=nowMs())expired=true;
+  el.classList.toggle('urgent',left>0&&left<=300000);
+  el.classList.toggle('finalMinute',left>0&&left<=60000);
+  if(left<=0)expired=true;
 });
 if(activeAuctionId){
   const a=auctions.find(x=>x.id===activeAuctionId);
@@ -254,7 +304,7 @@ function renderAuctions(){
       <span class="marketSearchIcon">⌕</span>
       <input aria-label="Search auctions" placeholder="Search auctions, descriptions, condition..." value="${esc(marketplaceQuery)}" oninput="setMarketplaceQuery(this.value)">
     </div>
-    <div class="resultMeta">${filtered.length} ${filtered.length===1?'auction':'auctions'} shown</div>
+    ${open.length ? `${open.length?`<div class="resultMeta">${filtered.length} ${filtered.length===1?'auction':'auctions'} shown</div>`:''}` : ''}
   </div>`;
 
   const catNames=categories.map(c=>c.name).filter(Boolean);
