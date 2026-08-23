@@ -579,6 +579,81 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-sh
 }
 </style>
 
+
+<style>
+/* HammerHunt desktop auction modal — gallery left, bidding right */
+@media (min-width: 800px) {
+  .auctionDetailModal{
+    width:min(86vw,1080px)!important;
+    max-width:1080px!important;
+    max-height:86vh!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1.35fr) minmax(330px,.65fr)!important;
+    grid-template-rows:minmax(0,1fr) auto!important;
+    overflow:hidden!important;
+    padding:0!important;
+  }
+
+  .auctionDetailModal > .auctionCloseX{
+    position:absolute!important;
+    top:12px!important;
+    right:12px!important;
+    margin:0!important;
+    float:none!important;
+    z-index:300!important;
+  }
+
+  .auctionDetailModal > .galleryMain{
+    grid-column:1!important;
+    grid-row:1!important;
+    height:auto!important;
+    min-height:430px!important;
+    max-height:none!important;
+    border-radius:20px 0 0 0!important;
+  }
+
+  .auctionDetailModal > .thumbs{
+    grid-column:1!important;
+    grid-row:2!important;
+    min-height:76px!important;
+    padding:10px 14px!important;
+    border-radius:0 0 0 20px!important;
+  }
+
+  .auctionDetailModal > .auctionDetailInner{
+    grid-column:2!important;
+    grid-row:1 / span 2!important;
+    overflow:auto!important;
+    max-height:86vh!important;
+    padding:28px 22px 24px!important;
+    background:#fff!important;
+  }
+
+  .auctionDetailModal .detailGrid{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:18px!important;
+  }
+
+  .auctionDetailModal .bidBox{
+    position:static!important;
+    width:100%!important;
+  }
+
+  .auctionDetailModal .bidCurrent{
+    font-size:40px!important;
+  }
+}
+
+@media (max-width: 799px) {
+  .auctionDetailModal{
+    width:min(96vw,680px)!important;
+    max-height:92vh!important;
+    overflow:auto!important;
+  }
+}
+</style>
+
 </head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="modalbox" class="modalbox"></div></div>
 <script type="module">import{createClient}from'https://esm.sh/@supabase/supabase-js@2';const SUPA='https://cboodkfcfvshsxirpkxt.supabase.co';const KEY='sb_publishable_VDsMnqHeYHajdKendarwww_hMX9fMM2';const hhStorage={
   getItem:key=>{
