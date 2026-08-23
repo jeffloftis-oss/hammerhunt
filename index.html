@@ -1,4 +1,3 @@
-
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111827"><title>HammerHunt</title><script>
 if(location.hostname==='hammerhunt.com'){
   location.replace('https://www.hammerhunt.com'+location.pathname+location.search+location.hash);
@@ -249,7 +248,7 @@ document.getElementById('app').innerHTML=`<div class="panel"><h2>Create Auction<
 </div>
 
 <div class="panel"><div class="row"><h2 style="margin:0">Manage Auctions</h2><span class="status">${auctions.length}</span></div><div class="closedList">${
-auctions.length?auctions.slice().sort((a,b)=>new Date(b.starts_at||b.ends_at)-new Date(a.starts_at||a.ends_at)).map(a=>{const p=photosFor(a.id)[0],o=byAuction[a.id],ended=!isOpen(a);return `<div class="closedRow">${p?`<img src="${photoUrl(p)}">`:'<div></div>'}<div><b>${esc(a.title)}</b><div class="muted">${ended?'Ended':'Ends'} ${new Date(a.ends_at).toLocaleString()}${o?` · ${o.payment_status==='paid'?'Paid':'Awaiting payment'} · ${esc(o.fulfillment_method||'No fulfillment selected')}`:''}</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="light adminEditAuctionBtn" data-auction-id="${a.id}" style="padding:7px 10px">Edit</button><button class="adminDeleteAuctionBtn" data-auction-id="${a.id}" style="padding:7px 10px;background:#b42318">Delete</button></div></div><div class="closedPrice"><b>${money(a.current_bid)}</b></div></div>`}).join(''):'<div class="muted" style="margin-top:10px">No auctions yet.</div>'}</div></div>`;
+auctions.length?auctions.slice().sort((a,b)=>new Date(b.starts_at||b.ends_at)-new Date(a.starts_at||a.ends_at)).map(a=>{const p=photosFor(a.id)[0],o=byAuction[a.id],ended=!isOpen(a);return `<div class="closedRow">${p?`<img src="${photoUrl(p)}">`:'<div></div>'}<div><b>${esc(a.title)}</b><div class="muted">${ended?'Ended':'Ends'} ${new Date(a.ends_at).toLocaleString()}${o?` · ${o.payment_status==='paid'?'Paid':'Awaiting payment'} · ${esc(o.fulfillment_method||'No fulfillment selected')}`:''}</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="light adminEditAuctionBtn" data-auction-id="${a.id}" style="padding:7px 10px">Edit</button>${ended?`<button class="adminRelistAuctionBtn" data-auction-id="${a.id}" style="padding:7px 10px;background:#087443">Relist</button>`:''}<button class="adminDeleteAuctionBtn" data-auction-id="${a.id}" style="padding:7px 10px;background:#b42318">Delete</button></div></div><div class="closedPrice"><b>${money(a.current_bid)}</b></div></div>`}).join(''):'<div class="muted" style="margin-top:10px">No auctions yet.</div>'}</div></div>`;
 document.querySelectorAll('.fulfillmentStatus').forEach(sel=>{
   sel.addEventListener('change', async ()=>{
     const orderId=sel.dataset.orderId;
@@ -258,6 +257,7 @@ document.querySelectorAll('.fulfillmentStatus').forEach(sel=>{
   });
 });
 document.querySelectorAll('.adminEditAuctionBtn').forEach(btn=>btn.addEventListener('click',()=>openEditAuction(btn.dataset.auctionId)));
+document.querySelectorAll('.adminRelistAuctionBtn').forEach(btn=>btn.addEventListener('click',()=>openRelistAuction(btn.dataset.auctionId)));
 document.querySelectorAll('.adminDeleteAuctionBtn').forEach(btn=>btn.addEventListener('click',()=>deleteAuction(btn.dataset.auctionId)));
 }
 
@@ -266,6 +266,7 @@ function openEditAuction(id){
   const a=auctions.find(x=>x.id===id); if(!a)return;
   const mins=Math.max(1,Math.round((new Date(a.ends_at).getTime()-Date.now())/60000));
   document.getElementById('modalbox').innerHTML=`<h2>Edit Auction</h2>
+  ${a.status==='ended'?'<div class="notice"><b>This auction has ended.</b> Editing will not reopen it. Use Relist to create a fresh auction.</div>':''}
   <label>Title</label><input id="eTitle" value="${esc(a.title)}">
   <label>Condition</label><input id="eCondition" value="${esc(a.condition||'')}">
   <label>Description</label><textarea id="eDesc">${esc(a.description||'')}</textarea>
@@ -278,12 +279,73 @@ function openEditAuction(id){
   document.getElementById('modal').classList.add('show');
   document.getElementById('saveEditAuction').onclick=async()=>{
     const duration=Math.max(1,Number(document.getElementById('eDuration').value||1));
-    const patch={title:document.getElementById('eTitle').value.trim(),condition:document.getElementById('eCondition').value.trim(),description:document.getElementById('eDesc').value.trim(),ends_at:new Date(Date.now()+duration*60000).toISOString(),shipping_available:document.getElementById('eShipOn').checked,shipping_price:document.getElementById('eShipOn').checked?Number(document.getElementById('eShip').value||0):null,pickup_available:document.getElementById('ePickup').checked,pickup_instructions:document.getElementById('ePickup').checked?document.getElementById('ePickupInfo').value.trim():null};
+    const patch={title:document.getElementById('eTitle').value.trim(),condition:document.getElementById('eCondition').value.trim(),description:document.getElementById('eDesc').value.trim(),ends_at:a.status==='ended'?a.ends_at:new Date(Date.now()+duration*60000).toISOString(),shipping_available:document.getElementById('eShipOn').checked,shipping_price:document.getElementById('eShipOn').checked?Number(document.getElementById('eShip').value||0):null,pickup_available:document.getElementById('ePickup').checked,pickup_instructions:document.getElementById('ePickup').checked?document.getElementById('ePickupInfo').value.trim():null};
     const {error}=await sb.from('auctions').update(patch).eq('id',id);
     if(error)return alert(error.message);
     closeModal(); await loadData(); renderAdmin();
   };
 }
+
+function openRelistAuction(id){
+  const a=auctions.find(x=>x.id===id); if(!a)return;
+  document.getElementById('modalbox').innerHTML=`<h2>Relist Auction</h2>
+    <div class="notice">This creates a brand-new auction. Old bids, winner history, orders, and payments remain attached to the original listing.</div>
+    <label>Title</label><input id="rTitle" value="${esc(a.title)}">
+    <label>Starting bid</label><input id="rStart" type="number" min="0" step="5" value="${Number(a.starting_bid||a.current_bid||0)}">
+    <label>Duration (minutes)</label><input id="rDuration" type="number" min="1" step="1" value="10">
+    <label>Condition</label><input id="rCondition" value="${esc(a.condition||'')}">
+    <label>Description</label><textarea id="rDesc">${esc(a.description||'')}</textarea>
+    <label>Shipping price</label><input id="rShip" type="number" min="0" step="0.01" value="${Number(a.shipping_price||0)}">
+    <label><input id="rShipOn" type="checkbox" style="width:auto" ${a.shipping_available?'checked':''}> Shipping available</label>
+    <label><input id="rPickup" type="checkbox" style="width:auto" ${a.pickup_available?'checked':''}> Local pickup available</label>
+    <label>Pickup instructions</label><input id="rPickupInfo" value="${esc(a.pickup_instructions||'')}">
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button id="saveRelistAuction" class="good">Create Relisted Auction</button>
+      <button class="light" onclick="closeModal()">Cancel</button>
+    </div>`;
+  document.getElementById('modal').classList.add('show');
+
+  document.getElementById('saveRelistAuction').onclick=async()=>{
+    const duration=Math.max(1,Number(document.getElementById('rDuration').value||1));
+    const start=Number(document.getElementById('rStart').value||0);
+    const now=Date.now();
+    const row={
+      title:document.getElementById('rTitle').value.trim(),
+      category_id:a.category_id,
+      condition:document.getElementById('rCondition').value.trim(),
+      description:document.getElementById('rDesc').value.trim(),
+      starting_bid:start,
+      current_bid:start,
+      starts_at:new Date(now).toISOString(),
+      ends_at:new Date(now+duration*60000).toISOString(),
+      status:'live',
+      shipping_available:document.getElementById('rShipOn').checked,
+      shipping_price:document.getElementById('rShipOn').checked?Number(document.getElementById('rShip').value||0):null,
+      pickup_available:document.getElementById('rPickup').checked,
+      pickup_instructions:document.getElementById('rPickup').checked?document.getElementById('rPickupInfo').value.trim():null
+    };
+    if(!row.title)return alert('Enter a title.');
+    const {data:newAuction,error}=await sb.from('auctions').insert(row).select('id').single();
+    if(error)return alert(error.message);
+
+    // Copy photo records to the new auction. Storage files can be shared by path.
+    const oldPhotos=photosFor(id);
+    if(oldPhotos.length){
+      const photoRows=oldPhotos.map((p,i)=>({
+        auction_id:newAuction.id,
+        storage_path:p.storage_path,
+        sort_order:i
+      }));
+      await sb.from('auction_photos').insert(photoRows);
+    }
+
+    closeModal();
+    await loadData();
+    renderAdmin();
+    alert('Auction relisted.');
+  };
+}
+
 async function deleteAuction(id){
   const a=auctions.find(x=>x.id===id); if(!a)return;
   if(!confirm(`Delete "${a.title}"? This cannot be undone.`))return;
@@ -324,4 +386,3 @@ async function createAuction(){const title=aTitle.value.trim(),start=Number(aSta
 
 
 boot();</script></body></html>
-
