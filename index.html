@@ -795,6 +795,108 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-sh
 }
 </style>
 
+
+<style>
+/* HammerHunt My Account dashboard polish */
+.accountHero{
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  align-items:flex-start;
+  padding:22px;
+  border-radius:20px;
+  background:linear-gradient(135deg,#111827,#253149);
+  color:#fff;
+  box-shadow:0 16px 36px rgba(17,24,39,.14);
+  margin-bottom:18px;
+}
+.accountHero h2{margin:0 0 5px;font-size:30px}
+.accountHero .muted{color:#cbd5e1}
+.accountHeroActions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.accountHero .status{background:#ffffff14;color:#fff;border-color:#ffffff1f}
+.accountHero .status.approved{background:#dff7e8;color:#087443;border-color:#b8e2c7}
+.accountGrid{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:18px;
+  align-items:start;
+}
+.accountSection{
+  background:#fff;
+  border:1px solid var(--hh-line,#e7e4dc);
+  border-radius:18px;
+  box-shadow:0 8px 26px rgba(16,24,40,.06);
+  overflow:hidden;
+}
+.accountSectionHead{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  padding:17px 18px;
+  border-bottom:1px solid #ece9e1;
+}
+.accountSectionHead h3{margin:0;font-size:19px}
+.accountSectionBody{padding:4px 18px 16px}
+.accountCount{
+  min-width:28px;height:28px;border-radius:999px;
+  display:grid;place-items:center;padding:0 8px;
+  background:#f2f4f7;color:#475467;font-size:12px;font-weight:900;
+}
+.accountItem{
+  padding:15px 0;
+  border-bottom:1px solid #ece9e1;
+}
+.accountItem:last-child{border-bottom:0}
+.accountItemTop{
+  display:flex;justify-content:space-between;gap:14px;align-items:flex-start;
+}
+.accountItemTitle{font-size:15px;font-weight:900;line-height:1.3}
+.accountMeta{font-size:12px;color:#667085;margin-top:4px;line-height:1.45}
+.accountPrice{font-size:18px;font-weight:950;white-space:nowrap}
+.accountItemActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.accountEmpty{
+  padding:22px 0;color:#667085;font-size:13px;line-height:1.55;
+}
+.accountEmpty b{color:#344054}
+.activeBidCard{
+  padding:14px;
+  margin:12px 0 0;
+  border:1px solid #e6e0d2;
+  border-radius:14px;
+  background:linear-gradient(180deg,#fffdf8,#faf8f1);
+}
+.activeBidCard .countdown{
+  font-size:13px!important;
+  padding:4px 7px!important;
+}
+.historyRow{
+  display:grid;
+  grid-template-columns:1fr auto auto;
+  gap:12px;
+  align-items:center;
+  padding:13px 0;
+  border-bottom:1px solid #ece9e1;
+}
+.historyRow:last-child{border-bottom:0}
+.historyStatus{
+  font-size:11px;font-weight:900;text-transform:uppercase;
+  letter-spacing:.5px;color:#087443;
+}
+.securityCard{
+  padding:15px 0;
+}
+.securityCard p{margin:4px 0 12px}
+.accountWide{grid-column:1/-1}
+@media(max-width:800px){
+  .accountGrid{grid-template-columns:1fr}
+  .accountHero{display:block}
+  .accountHeroActions{justify-content:flex-start;margin-top:12px}
+  .historyRow{grid-template-columns:1fr auto}
+  .historyRow .historyStatus{grid-column:1/-1}
+}
+</style>
+
 </head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="modalbox" class="modalbox"></div></div>
 <script type="module">import{createClient}from'https://esm.sh/@supabase/supabase-js@2';const SUPA='https://cboodkfcfvshsxirpkxt.supabase.co';const KEY='sb_publishable_VDsMnqHeYHajdKendarwww_hMX9fMM2';const hhStorage={
   getItem:key=>{
@@ -1037,54 +1139,149 @@ function galleryMove(d){const pics=photosFor(activeAuctionId);if(!pics.length)re
 function galleryPick(i){galleryIndex=i;openAuction(activeAuctionId,true)}
 async function placeNextBid(id){const btn=document.getElementById('bidBtn');if(btn){btn.disabled=true;btn.textContent='Submitting bid…'}const{data,error}=await sb.rpc('place_next_bid',{p_auction_id:id});if(error){alert(error.message);await pollAuctions();return}const placed=Array.isArray(data)&&data[0]?(data[0].new_current_bid??data[0].amount):null;await loadData();closeModal();renderAuctions();alert(placed!=null?`Bid placed at ${money(placed)}.`:'Bid placed successfully.')}
 async function renderAccount(){
-if(!session){document.getElementById('app').innerHTML='<div class="panel"><h2>My Account</h2><p>Create an account or sign in to bid.</p><div class="row" style="justify-content:flex-start"><button onclick="openSignUp()">Create Account</button><button class="light" onclick="openSignIn()">Sign In</button></div></div>';return}
+if(!session){
+  document.getElementById('app').innerHTML='<div class="panel"><h2>My Account</h2><p>Create an account or sign in to bid.</p><div class="row" style="justify-content:flex-start"><button onclick="openSignUp()">Create Account</button><button class="light" onclick="openSignIn()">Sign In</button></div></div>';
+  return;
+}
+
 const[{data:bids},{data:wins}]=await Promise.all([
-sb.from('bids').select('*,auctions(title,current_bid,ends_at,status)').order('created_at',{ascending:false}),
-sb.from('orders').select('id,auction_id,winner_user_id,winning_bid,payment_status,fulfillment_method,shipping_price,total_amount,total_due,fulfillment_status,tracking_number,fulfilled_at,auctions(title,shipping_available,shipping_price,pickup_available,pickup_instructions)').eq('winner_user_id',session.user.id).order('created_at',{ascending:false})
+  sb.from('bids').select('*,auctions(id,title,current_bid,ends_at,status,categories(name))').order('created_at',{ascending:false}),
+  sb.from('orders').select('id,auction_id,winner_user_id,winning_bid,payment_status,fulfillment_method,shipping_price,total_amount,total_due,fulfillment_status,tracking_number,fulfilled_at,created_at,auctions(title,shipping_available,shipping_price,pickup_available,pickup_instructions)').eq('winner_user_id',session.user.id).order('created_at',{ascending:false})
 ]);
-const winHtml=wins?.length?wins.map(w=>{
-const a=w.auctions||{},paid=w.payment_status==='paid';
-let actions='';
-if(paid){
-const fs=w.fulfillment_status||'pending';
-const label={pending:'PAID · PROCESSING',ready_for_pickup:'PAID · READY FOR PICKUP',shipped:'PAID · SHIPPED',completed:'PAID · COMPLETED'}[fs]||'PAID';
-const detail=w.fulfillment_method==='shipping'
-  ? (fs==='shipped'&&w.tracking_number
-      ? `Tracking: <a href="https://www.google.com/search?q=${encodeURIComponent(w.tracking_number)}" target="_blank" rel="noopener">${esc(w.tracking_number)}</a>`
-      : 'Shipping selected.')
-  : (fs==='ready_for_pickup'
-      ? (a.pickup_instructions?`Pickup: ${esc(a.pickup_instructions)}`:'Ready for pickup.')
-      : 'Local pickup selected.');
-actions=`<div class="ok"><b>${label}</b><div class="muted" style="margin-top:6px">${detail}</div></div>`;
+
+const now=Date.now();
+const latestBidByAuction=new Map();
+for(const b of (bids||[])){
+  if(!latestBidByAuction.has(b.auction_id))latestBidByAuction.set(b.auction_id,b);
 }
-else{
-const opts=[];
-if(a.shipping_available)opts.push(`<button class="goldBtn winnerCheckoutBtn" data-auction-id="${w.auction_id}" data-method="shipping" style="padding:10px 12px;border:0;border-radius:9px;font-weight:900">Pay & Ship ${money(Number(w.winning_bid)+Number(a.shipping_price||0))}</button>`);
-if(a.pickup_available)opts.push(`<button class="good winnerCheckoutBtn" data-auction-id="${w.auction_id}" data-method="pickup">Pay & Pick Up ${money(w.winning_bid)}</button>`);
-actions=`<div class="notice"><b>You won this auction.</b> Choose fulfillment and complete payment.</div><div class="row" style="justify-content:flex-start;flex-wrap:wrap">${opts.join('')}</div>${a.pickup_available&&a.pickup_instructions?`<div class="muted" style="margin-top:8px">Pickup: ${esc(a.pickup_instructions)}</div>`:''}`;
-}
-return `<div style="padding:14px 0;border-bottom:1px solid var(--line)"><div class="row"><div><b>${esc(a.title||'Auction')}</b><div class="muted">Winning bid ${money(w.winning_bid)}</div></div><span class="status ${paid?'approved':''}">${paid?({pending:'PAID',ready_for_pickup:'READY FOR PICKUP',shipped:'SHIPPED',completed:'COMPLETED'}[w.fulfillment_status||'pending']||'PAID'):'YOU WON'}</span></div>${actions}</div>`
-}).join(''):'<p class="muted">No past wins yet.</p>';
-document.getElementById('app').innerHTML=`<div class="panel"><div class="row"><div><h2 style="margin:0">My Account</h2><p class="muted">${esc(session.user.email)}</p></div><span class="status ${profile?.payment_verified?'approved':''}">${profile?.payment_verified?'BID APPROVED':'PAYMENT REQUIRED'}</span></div>${!profile?.payment_verified?'<div class="notice">A valid payment method is required before any bid is accepted.</div><button class="good" onclick="cardSetup()">Add Payment Method</button>':'<div class="ok">Your account is approved to bid.</div>'}</div><div class="panel"><h2>My Bids</h2>${bids?.length?bids.map(b=>`<div><b>${esc(b.auctions?.title||'Auction')}</b> — ${money(b.amount)}</div>`).join(''):'<p class="muted">No bids yet.</p>'}</div><div class="panel"><h2>Wins & Checkout</h2>${winHtml}</div>`
-;
+const activeBids=[...latestBidByAuction.values()].filter(b=>{
+  const a=b.auctions||{};
+  return a.status!=='ended'&&new Date(a.ends_at).getTime()>now;
+});
+
+const openWins=(wins||[]).filter(w=>(w.payment_status!=='paid')||((w.fulfillment_status||'pending')!=='completed'));
+const history=(wins||[]).filter(w=>w.payment_status==='paid'&&(w.fulfillment_status||'pending')==='completed');
+
+const activeBidHtml=activeBids.length?activeBids.map(b=>{
+  const a=b.auctions||{};
+  const leading=Number(b.amount||0)>=Number(a.current_bid||0);
+  return `<div class="activeBidCard">
+    <div class="accountItemTop">
+      <div>
+        <div class="category">${esc(a.categories?.name||'Auction')}</div>
+        <div class="accountItemTitle">${esc(a.title||'Auction')}</div>
+        <div class="accountMeta">${leading?'You are currently at the top bid.':'Another bidder is currently ahead.'}</div>
+      </div>
+      <span class="status ${leading?'approved':''}">${leading?'LEADING':'OUTBID'}</span>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <div><div class="muted">YOUR LAST BID</div><div class="accountPrice">${money(b.amount)}</div></div>
+      <div style="text-align:right"><div class="muted">CURRENT BID</div><div class="accountPrice">${money(a.current_bid)}</div></div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div class="countdown" data-ends-at="${a.ends_at}">${remain(a.ends_at)}</div>
+      <button class="goldBtn" onclick="openAuction('${b.auction_id}')">View & Bid</button>
+    </div>
+  </div>`;
+}).join(''):`<div class="accountEmpty"><b>No active bids right now.</b><br>When you bid on a live auction, it will appear here until the auction ends.</div>`;
+
+const openWinHtml=openWins.length?openWins.map(w=>{
+  const a=w.auctions||{},paid=w.payment_status==='paid',fs=w.fulfillment_status||'pending';
+  let actionHtml='';
+  let statusText='YOU WON';
+
+  if(!paid){
+    const opts=[];
+    if(a.shipping_available)opts.push(`<button class="goldBtn winnerCheckoutBtn" data-auction-id="${w.auction_id}" data-method="shipping">Pay & Ship ${money(Number(w.winning_bid)+Number(a.shipping_price||0))}</button>`);
+    if(a.pickup_available)opts.push(`<button class="good winnerCheckoutBtn" data-auction-id="${w.auction_id}" data-method="pickup">Pay & Pick Up ${money(w.winning_bid)}</button>`);
+    actionHtml=`<div class="notice" style="margin:10px 0 0"><b>Payment needed.</b> Choose how you want to receive the item and complete checkout.</div><div class="accountItemActions">${opts.join('')}</div>`;
+  }else{
+    statusText={pending:'PROCESSING',ready_for_pickup:'READY FOR PICKUP',shipped:'SHIPPED',completed:'COMPLETED'}[fs]||'PAID';
+    const detail=w.fulfillment_method==='shipping'
+      ? (fs==='shipped'&&w.tracking_number?`Tracking: <a href="https://www.google.com/search?q=${encodeURIComponent(w.tracking_number)}" target="_blank" rel="noopener">${esc(w.tracking_number)}</a>`:'Shipping selected.')
+      : (fs==='ready_for_pickup'?(a.pickup_instructions?`Pickup: ${esc(a.pickup_instructions)}`:'Ready for pickup.'):'Local pickup selected.');
+    actionHtml=`<div class="ok" style="margin:10px 0 0"><b>${statusText}</b><div class="muted" style="margin-top:5px">${detail}</div></div>`;
+  }
+
+  return `<div class="accountItem">
+    <div class="accountItemTop">
+      <div><div class="accountItemTitle">${esc(a.title||'Auction')}</div><div class="accountMeta">Winning bid ${money(w.winning_bid)}</div></div>
+      <span class="status ${paid?'approved':''}">${statusText}</span>
+    </div>
+    ${actionHtml}
+  </div>`;
+}).join(''):`<div class="accountEmpty"><b>Nothing needs your attention.</b><br>New wins and fulfillment updates will appear here.</div>`;
+
+const historyHtml=history.length?history.map(w=>{
+  const a=w.auctions||{};
+  const method=w.fulfillment_method==='shipping'?'Shipped':'Local pickup';
+  return `<div class="historyRow">
+    <div><div class="accountItemTitle">${esc(a.title||'Auction')}</div><div class="accountMeta">${method}</div></div>
+    <div class="accountPrice">${money(w.total_due||w.total_amount||w.winning_bid)}</div>
+    <div class="historyStatus">Completed</div>
+  </div>`;
+}).join(''):`<div class="accountEmpty"><b>No completed purchases yet.</b></div>`;
+
+document.getElementById('app').innerHTML=`
+  <section class="accountHero">
+    <div>
+      <h2>My Account</h2>
+      <div class="muted">${esc(session.user.email)}</div>
+    </div>
+    <div class="accountHeroActions">
+      <span class="status ${profile?.payment_verified?'approved':''}">${profile?.payment_verified?'BID APPROVED':'PAYMENT REQUIRED'}</span>
+      <button class="light" onclick="openForgotPassword('${esc(session.user.email)}')">Security</button>
+    </div>
+  </section>
+
+  ${!profile?.payment_verified?`<div class="notice"><b>Complete bidder setup.</b> Add a valid payment method before placing bids.<div style="margin-top:10px"><button class="good" onclick="cardSetup()">Add Payment Method</button></div></div>`:''}
+
+  <div class="accountGrid">
+    <section class="accountSection">
+      <div class="accountSectionHead"><h3>Active Bids</h3><span class="accountCount">${activeBids.length}</span></div>
+      <div class="accountSectionBody">${activeBidHtml}</div>
+    </section>
+
+    <section class="accountSection">
+      <div class="accountSectionHead"><h3>Wins / Action Needed</h3><span class="accountCount">${openWins.length}</span></div>
+      <div class="accountSectionBody">${openWinHtml}</div>
+    </section>
+
+    <section class="accountSection accountWide">
+      <div class="accountSectionHead"><h3>Purchase History</h3><span class="accountCount">${history.length}</span></div>
+      <div class="accountSectionBody">${historyHtml}</div>
+    </section>
+
+    <section class="accountSection accountWide">
+      <div class="accountSectionHead"><h3>Account & Security</h3></div>
+      <div class="accountSectionBody">
+        <div class="securityCard">
+          <div class="accountItemTitle">Password & sign-in</div>
+          <p class="accountMeta">Use a password-reset link anytime you need to change your password or regain access.</p>
+          <button class="light" onclick="openForgotPassword('${esc(session.user.email)}')">Reset Password</button>
+        </div>
+      </div>
+    </section>
+  </div>`;
+
 document.querySelectorAll('.winnerCheckoutBtn').forEach(btn=>{
-  btn.addEventListener('click', async ()=>{
+  btn.addEventListener('click',async()=>{
     const auctionId=btn.dataset.auctionId;
     const method=btn.dataset.method;
     btn.disabled=true;
     const oldText=btn.textContent;
     btn.textContent='Opening checkout...';
-    try{
-      await winnerCheckout(auctionId,method);
-    }catch(err){
+    try{await winnerCheckout(auctionId,method)}
+    catch(err){
       alert('Unable to start checkout: '+(err?.message||String(err)));
       btn.disabled=false;
       btn.textContent=oldText;
     }
   });
 });
-
+tickCountdowns();
 }
+
 function openAuthChoice(){document.getElementById('modalbox').innerHTML='<h2>HammerHunt Account</h2><p>Choose what you want to do.</p><div class="row" style="justify-content:flex-start"><button onclick="openSignUp()">Create Account</button><button class="light" onclick="openSignIn()">Sign In</button></div><div style="margin-top:14px"><button class="light" onclick="closeModal()">Close</button></div>';document.getElementById('modal').classList.add('show')}
 function openSignUp(){document.getElementById('modalbox').innerHTML='<h2>Create Account</h2><label>Display name</label><input id="suName" autocomplete="name"><label>Email</label><input id="suEmail" type="email" autocomplete="email"><label>Password</label><input id="suPass" type="password" minlength="6" autocomplete="new-password"><div class="muted" style="margin-top:6px">Use at least 6 characters.</div><button id="suBtn" class="good" style="margin-top:12px">Create My Account</button><div id="suMsg"></div><div style="margin-top:14px"><button class="light" onclick="openAuthChoice()">Back</button></div>';document.getElementById('modal').classList.add('show');document.getElementById('suBtn').onclick=async()=>{const name=document.getElementById('suName').value.trim(),email=document.getElementById('suEmail').value.trim(),password=document.getElementById('suPass').value,msg=document.getElementById('suMsg');if(!email||!password){msg.innerHTML='<div class="err">Enter email and password.</div>';return}if(password.length<6){msg.innerHTML='<div class="err">Password must be at least 6 characters.</div>';return}msg.innerHTML='<div class="notice">Creating account…</div>';const{data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:'https://www.hammerhunt.com',data:{display_name:name||email.split('@')[0]}}});if(error){msg.innerHTML='<div class="err">'+esc(error.message)+'</div>';return}if(data.session){msg.innerHTML='<div class="ok">Account created and signed in.</div>';setTimeout(async()=>{closeModal();await boot()},500);return}const identities=data?.user?.identities;if(Array.isArray(identities)&&identities.length===0){msg.innerHTML='<div class="notice"><b>An account may already exist for this email.</b><div style="margin-top:6px">Try signing in, or reset the password if you do not remember it.</div><div class="row" style="justify-content:flex-start;margin-top:10px"><button class="light" onclick="openSignIn()">Sign In</button><button class="light" onclick="openForgotPassword(\''+esc(email)+'\')">Forgot Password</button></div></div>';return}msg.innerHTML='<div class="ok"><b>Check your email to confirm your account.</b><div style="margin-top:6px">After confirming, return to HammerHunt and sign in.</div></div>'}}
 function openSignIn(){document.getElementById('modalbox').innerHTML='<h2>Sign In</h2><label>Email</label><input id="siEmail" type="email" autocomplete="email"><label>Password</label><input id="siPass" type="password" autocomplete="current-password"><button id="siBtn" style="margin-top:12px">Sign In</button><button class="light" style="margin-top:8px;width:100%" onclick="openForgotPassword(document.getElementById(\'siEmail\')?.value||\'\')">Forgot Password?</button><div id="siMsg"></div><div style="margin-top:14px"><button class="light" onclick="openAuthChoice()">Back</button></div>';document.getElementById('modal').classList.add('show');document.getElementById('siBtn').onclick=async()=>{const email=document.getElementById('siEmail').value.trim(),password=document.getElementById('siPass').value,msg=document.getElementById('siMsg');if(!email||!password){msg.innerHTML='<div class="err">Enter email and password.</div>';return}msg.innerHTML='<div class="notice">Signing in…</div>';const{error}=await sb.auth.signInWithPassword({email,password});if(error){msg.innerHTML='<div class="err">'+esc(error.message)+'<div style="margin-top:8px"><button class="light" onclick="openForgotPassword(\''+esc(email)+'\')">Reset Password</button></div></div>';return}closeModal();await boot()}}
