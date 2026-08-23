@@ -1,3 +1,8 @@
+
+
+
+
+
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111827"><title>HammerHunt</title><script>
 if(location.hostname==='hammerhunt.com'){
   location.replace('https://www.hammerhunt.com'+location.pathname+location.search+location.hash);
@@ -650,6 +655,82 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-sh
     width:min(96vw,680px)!important;
     max-height:92vh!important;
     overflow:auto!important;
+  }
+}
+</style>
+
+
+<style>
+/* HammerHunt bid-column visibility refinement */
+@media (min-width: 800px) {
+  .auctionDetailModal > .auctionDetailInner{
+    padding:22px 20px 18px!important;
+  }
+
+  .auctionDetailModal .detailGrid{
+    gap:12px!important;
+  }
+
+  .auctionDetailModal .detailGrid > div:first-child{
+    line-height:1.25!important;
+  }
+
+  .auctionDetailModal .detailGrid > div:first-child h2{
+    margin:3px 0 8px!important;
+    font-size:27px!important;
+  }
+
+  .auctionDetailModal .detailGrid > div:first-child p{
+    margin:7px 0!important;
+  }
+
+  .auctionDetailModal .bidBox{
+    padding:16px!important;
+    border-radius:16px!important;
+  }
+
+  .auctionDetailModal .bidCurrent{
+    font-size:38px!important;
+    margin:4px 0 10px!important;
+  }
+
+  .auctionDetailModal .bidTimeRow{
+    padding:9px 0!important;
+  }
+
+  .auctionDetailModal .fulfillmentPills{
+    margin-top:9px!important;
+    gap:6px!important;
+  }
+
+  .auctionDetailModal .fulfillmentPill{
+    padding:5px 8px!important;
+    font-size:11px!important;
+  }
+
+  .auctionDetailModal .bidNext{
+    margin-top:10px!important;
+    padding:10px 12px!important;
+  }
+
+  .auctionDetailModal .bidNextAmount{
+    font-size:22px!important;
+  }
+
+  .auctionDetailModal .bidState{
+    margin-top:9px!important;
+    padding:9px 11px!important;
+  }
+
+  .auctionDetailModal .bidPrimary{
+    min-height:46px!important;
+    margin-top:8px!important;
+  }
+
+  .auctionDetailModal .bidRule{
+    margin-top:8px!important;
+    padding:8px 9px!important;
+    line-height:1.35!important;
   }
 }
 </style>
