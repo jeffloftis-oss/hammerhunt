@@ -275,7 +275,100 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-sh
   .photoViewerNav{width:40px;height:40px;font-size:25px}
 }
 
-</style></head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal"><div id="modalbox" class="modalbox"></div></div>
+
+/* Auction detail modal polish */
+.modalbox{
+  position:relative;
+}
+.auctionDetailModal{
+  max-width:980px;
+  padding:0;
+  overflow:hidden;
+  border-radius:20px;
+  box-shadow:0 28px 80px rgba(0,0,0,.28);
+}
+.auctionCloseX{
+  position:absolute;
+  top:12px;
+  right:12px;
+  z-index:30;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  padding:0;
+  background:rgba(17,24,39,.86);
+  color:#fff;
+  font-size:26px;
+  line-height:1;
+  display:grid;
+  place-items:center;
+  box-shadow:0 8px 22px rgba(0,0,0,.22);
+}
+.auctionCloseX:hover{
+  background:#111827;
+  transform:translateY(-1px);
+}
+.auctionDetailBody{
+  padding:20px;
+}
+.auctionDetailModal .detailGrid{
+  grid-template-columns:minmax(0,1.35fr) minmax(290px,.65fr);
+  gap:24px;
+}
+.auctionDetailModal .bidBox{
+  position:sticky;
+  top:0;
+  align-self:start;
+  background:linear-gradient(180deg,#fffdf7,#f7f4e8);
+  border:1px solid #e4dcc6;
+  box-shadow:0 10px 24px rgba(16,24,40,.07);
+  padding:18px;
+}
+.auctionDetailModal .bigPrice{
+  font-size:42px;
+  letter-spacing:-1.5px;
+  margin:4px 0 8px;
+}
+.auctionDetailModal .galleryMain{
+  height:min(58vh,520px);
+}
+.auctionDetailModal .thumbs{
+  border-radius:0 0 14px 14px;
+}
+.auctionDetailModal .countdown{
+  background:#f2f4f7;
+  color:#344054;
+  box-shadow:none;
+}
+.auctionDetailModal .countdown.urgent{
+  background:#fff4e5;
+  color:#b54708;
+  box-shadow:0 0 0 1px #fedf89 inset;
+}
+.auctionDetailModal .countdown.finalMinute,
+.auctionDetailModal .countdown.antiSnipe{
+  background:#b42318;
+  color:#fff;
+  box-shadow:0 0 0 1px #912018 inset,0 4px 12px rgba(180,35,24,.18);
+}
+.auctionActionHint{
+  margin-top:10px;
+  font-size:12px;
+  line-height:1.45;
+  color:#667085;
+}
+@media(max-width:760px){
+  .auctionDetailModal{
+    width:min(96vw,680px);
+    max-height:94vh;
+  }
+  .auctionDetailBody{padding:14px}
+  .auctionDetailModal .detailGrid{grid-template-columns:1fr}
+  .auctionDetailModal .galleryMain{height:42vh}
+  .auctionDetailModal .bidBox{position:static}
+}
+
+</style></head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="modalbox" class="modalbox"></div></div>
 <script type="module">import{createClient}from'https://esm.sh/@supabase/supabase-js@2';const SUPA='https://cboodkfcfvshsxirpkxt.supabase.co';const KEY='sb_publishable_VDsMnqHeYHajdKendarwww_hMX9fMM2';const hhStorage={
   getItem:key=>{
     try{return window.localStorage.getItem('hammerhunt:'+key)}catch(e){return null}
@@ -300,14 +393,22 @@ window.setMarketplaceQuery=v=>{marketplaceQuery=String(v||'');renderAuctions()};
 window.setMarketplaceCategory=v=>{marketplaceCategory=String(v||'all');renderAuctions()};
 window.openPhotoViewer=openPhotoViewer;
 window.photoViewerMove=photoViewerMove;
-window.photoViewerPick=photoViewerPick;window.closeModal=()=>{activeAuctionId=null;document.getElementById('modal').classList.remove('show')};window.signOutNow=async()=>{await sb.auth.signOut();session=null;profile=null;await boot()};window.cardSetup=cardSetup;window.createAuction=createAuction;window.openAuction=openAuction;window.placeNextBid=placeNextBid;window.galleryMove=galleryMove;window.galleryPick=galleryPick;window.onPhotoPick=onPhotoPick;window.winnerCheckout=winnerCheckout;window.updateFulfillment=updateFulfillment;
+window.photoViewerPick=photoViewerPick;window.closeModal=()=>{
+  activeAuctionId=null;
+  photoViewerAuctionId=null;
+  const box=document.getElementById('modalbox');
+  if(box)box.className='modalbox';
+  document.getElementById('modal').classList.remove('show');
+};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')window.closeModal()});window.signOutNow=async()=>{await sb.auth.signOut();session=null;profile=null;await boot()};window.cardSetup=cardSetup;window.createAuction=createAuction;window.openAuction=openAuction;window.placeNextBid=placeNextBid;window.galleryMove=galleryMove;window.galleryPick=galleryPick;window.onPhotoPick=onPhotoPick;window.winnerCheckout=winnerCheckout;window.updateFulfillment=updateFulfillment;
 function tickCountdowns(){
 let expired=false;
 document.querySelectorAll('[data-ends-at]').forEach(el=>{
   const endMs=new Date(el.dataset.endsAt).getTime();
   const left=endMs-nowMs();
   el.textContent=remain(el.dataset.endsAt);
-  el.classList.toggle('urgent',left>0&&left<=300000);
+  el.classList.toggle('urgent',left>120000&&left<=300000);
+  el.classList.toggle('antiSnipe',left>0&&left<=120000);
   el.classList.toggle('finalMinute',left>0&&left<=60000);
   if(left<=0)expired=true;
 });
@@ -495,7 +596,7 @@ window.closePhotoViewer=()=>{
   document.getElementById('modal').classList.remove('show');
 };
 
-function openAuction(id,preserveGallery=false){activeAuctionId=id;const a=auctions.find(x=>x.id===id);if(!a)return;const pics=photosFor(id);if(!preserveGallery)galleryIndex=0;if(galleryIndex>=pics.length)galleryIndex=0;const ended=!isOpen(a);const next=Number(a.current_bid||0)+5;let action='';if(!session)action='<div class="notice">Sign in and add a payment method before bidding.</div><button onclick="openSignIn()">Sign In</button>';else if(!profile?.payment_verified)action='<div class="notice">A verified payment method is required before bidding.</div><button class="good" onclick="closeModal();showView(\'account\')">Add Payment Method</button>';else if(ended)action='<div class="notice">This auction has ended.</div>';else action=`<div class="ok">You are approved to bid.</div><button id="bidBtn" class="goldBtn" style="width:100%;padding:12px;border:0;border-radius:9px;font-weight:900" onclick="placeNextBid('${a.id}')">Place ${money(next)} Bid</button><p class="muted">Bids advance by $5. A bid in the final 2 minutes resets the clock to 2 minutes.</p>`;const cur=pics[galleryIndex];const gallery=`<div class="galleryMain">${cur?`<img src="${photoUrl(cur)}" alt="${esc(a.title)}">`:'<div class="galleryFallback">No photos yet</div>'}${pics.length>1?'<button class="galleryNav prev" onclick="galleryMove(-1)">‹</button><button class="galleryNav next" onclick="galleryMove(1)">›</button>':''}</div>${pics.length>1?`<div class="thumbs">${pics.map((p,i)=>`<button class="thumb ${i===galleryIndex?'active':''}" onclick="galleryPick(${i})"><img src="${photoUrl(p)}"></button>`).join('')}</div>`:''}`;document.getElementById('modalbox').innerHTML=`${gallery}<div style="padding:20px"><div class="detailGrid"><div><div class="category">${esc(a.categories?.name||'Auction')}</div><h2 style="font-size:28px;margin:5px 0 10px">${esc(a.title)}</h2>${a.condition?`<p><b>Condition:</b> ${esc(a.condition)}</p>`:''}${a.description?`<p>${esc(a.description)}</p>`:''}<p class="muted">${a.shipping_available?`Shipping ${money(a.shipping_price)}`:'No shipping'}${a.pickup_available?' • Pickup available':''}</p></div><div class="bidBox"><div class="muted">CURRENT BID</div><div class="bigPrice">${money(a.current_bid)}</div><div class="muted">TIME LEFT</div><div id="modalCountdown" class="countdown" data-ends-at="${a.ends_at}">${remain(a.ends_at)}</div>${action}</div></div><div style="margin-top:14px"><button class="light" onclick="closeModal()">Close</button></div></div>`;document.getElementById('modal').classList.add('show');tickCountdowns()}
+function openAuction(id,preserveGallery=false){activeAuctionId=id;const a=auctions.find(x=>x.id===id);if(!a)return;const pics=photosFor(id);if(!preserveGallery)galleryIndex=0;if(galleryIndex>=pics.length)galleryIndex=0;const ended=!isOpen(a);const next=Number(a.current_bid||0)+5;let action='';if(!session)action='<div class="notice">Sign in and add a payment method before bidding.</div><button onclick="openSignIn()">Sign In</button>';else if(!profile?.payment_verified)action='<div class="notice">A verified payment method is required before bidding.</div><button class="good" onclick="closeModal();showView(\'account\')">Add Payment Method</button>';else if(ended)action='<div class="notice">This auction has ended.</div>';else action=`<div class="ok">You are approved to bid.</div><button id="bidBtn" class="goldBtn" style="width:100%;padding:12px;border:0;border-radius:9px;font-weight:900" onclick="placeNextBid('${a.id}')">Place ${money(next)} Bid</button><p class="muted">Bids advance by $5. A bid in the final 2 minutes resets the clock to 2 minutes.</p>`;const cur=pics[galleryIndex];const gallery=`<div class="galleryMain">${cur?`<img src="${photoUrl(cur)}" alt="${esc(a.title)}">`:'<div class="galleryFallback">No photos yet</div>'}${pics.length>1?'<button class="galleryNav prev" onclick="galleryMove(-1)">‹</button><button class="galleryNav next" onclick="galleryMove(1)">›</button>':''}</div>${pics.length>1?`<div class="thumbs">${pics.map((p,i)=>`<button class="thumb ${i===galleryIndex?'active':''}" onclick="galleryPick(${i})"><img src="${photoUrl(p)}"></button>`).join('')}</div>`:''}`;document.getElementById('modalbox').innerHTML=`${gallery}<div style="padding:20px"><div class="detailGrid"><div><div class="category">${esc(a.categories?.name||'Auction')}</div><h2 style="font-size:28px;margin:5px 0 10px">${esc(a.title)}</h2>${a.condition?`<p><b>Condition:</b> ${esc(a.condition)}</p>`:''}${a.description?`<p>${esc(a.description)}</p>`:''}<p class="muted">${a.shipping_available?`Shipping ${money(a.shipping_price)}`:'No shipping'}${a.pickup_available?' • Pickup available':''}</p></div><div class="bidBox"><div class="muted">CURRENT BID</div><div class="bigPrice">${money(a.current_bid)}</div><div class="muted">TIME LEFT</div><div id="modalCountdown" class="countdown" data-ends-at="${a.ends_at}">${remain(a.ends_at)}</div>${action}</div></div><div style="margin-top:14px"></div></div>`;document.getElementById('modal').classList.add('show');tickCountdowns()}
 function galleryMove(d){const pics=photosFor(activeAuctionId);if(!pics.length)return;galleryIndex=(galleryIndex+d+pics.length)%pics.length;openAuction(activeAuctionId,true)}
 function galleryPick(i){galleryIndex=i;openAuction(activeAuctionId,true)}
 async function placeNextBid(id){const btn=document.getElementById('bidBtn');if(btn){btn.disabled=true;btn.textContent='Placing bid…'}const{data,error}=await sb.rpc('place_next_bid',{p_auction_id:id});if(error){alert(error.message);await pollAuctions();return}const placed=Array.isArray(data)&&data[0]?(data[0].new_current_bid??data[0].amount):null;await loadData();closeModal();renderAuctions();alert(placed!=null?`Bid placed at ${money(placed)}.`:'Bid placed successfully.')}
