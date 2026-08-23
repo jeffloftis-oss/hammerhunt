@@ -1182,7 +1182,7 @@ const sb=createClient(SUPA,KEY,{
     storage:hhStorage,
     storageKey:'hammerhunt-auth'
   }
-});let session=null,profile=null,categories=[],auctions=[],currentView='auctions',activeAuctionId=null,realtimeChannel=null,photosByAuction={},galleryIndex=0,pendingPhotos=[],marketplaceQuery='',marketplaceCategory='all',photoViewerAuctionId=null,photoViewerIndex=0,adminAuctionFilter='all',adminAuctionSearch='',adminFulfillmentSearch='';const nowMs=()=>new Date().getTime();let expiryCheckRunning=false;const money=n=>'$'+Number(n||0).toFixed(2);const esc=s=>String(s??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));const remain=d=>{const endMs=Date.parse(String(d));const currentMs=new Date().getTime();let x=endMs-currentMs;if(!Number.isFinite(x)||x<=0)return'Ended';let h=Math.floor(x/3600000),m=Math.floor((x%3600000)/60000),sec=Math.floor((x%60000)/1000);return h>=24?Math.floor(h/24)+'d '+(h%24)+'h':h>0?h+'h '+m+'m '+sec+'s':m+'m '+sec+'s'};const isOpen=a=>a.status!=='ended'&&new Date(a.ends_at).getTime()>nowMs();const photosFor=id=>photosByAuction[id]||[];const photoUrl=p=>sb.storage.from('auction-images').getPublicUrl(p.storage_path).data.publicUrl;window.showView=showView;window.openAuthChoice=openAuthChoice;window.openSignIn=openSignIn;window.openSignUp=openSignUp;
+});let session=null,profile=null,categories=[],auctions=[],currentView='auctions',activeAuctionId=null,realtimeChannel=null,photosByAuction={},galleryIndex=0,pendingPhotos=[],marketplaceQuery='',marketplaceCategory='all',photoViewerAuctionId=null,photoViewerIndex=0,adminAuctionFilter='current',adminAuctionSearch='',adminFulfillmentSearch='';const nowMs=()=>new Date().getTime();let expiryCheckRunning=false;const money=n=>'$'+Number(n||0).toFixed(2);const esc=s=>String(s??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));const remain=d=>{const endMs=Date.parse(String(d));const currentMs=new Date().getTime();let x=endMs-currentMs;if(!Number.isFinite(x)||x<=0)return'Ended';let h=Math.floor(x/3600000),m=Math.floor((x%3600000)/60000),sec=Math.floor((x%60000)/1000);return h>=24?Math.floor(h/24)+'d '+(h%24)+'h':h>0?h+'h '+m+'m '+sec+'s':m+'m '+sec+'s'};const isOpen=a=>a.status!=='ended'&&new Date(a.ends_at).getTime()>nowMs();const photosFor=id=>photosByAuction[id]||[];const photoUrl=p=>sb.storage.from('auction-images').getPublicUrl(p.storage_path).data.publicUrl;window.showView=showView;window.openAuthChoice=openAuthChoice;window.openSignIn=openSignIn;window.openSignUp=openSignUp;
 window.setMarketplaceQuery=v=>{marketplaceQuery=String(v||'');renderAuctions()};
 window.setMarketplaceCategory=v=>{marketplaceCategory=String(v||'all');renderAuctions()};
 window.openPhotoViewer=openPhotoViewer;
@@ -1619,13 +1619,20 @@ const orders=fulfill||[];
 const byAuction=Object.fromEntries(orders.map(o=>[o.auction_id,o]));
 const statusLabel=s=>({pending:'Pending',ready_for_pickup:'Ready for pickup',shipped:'Shipped',completed:'Completed'}[s]||s||'Pending');
 
+const completedOrders=orders.filter(o=>o.payment_status==='paid'&&(o.fulfillment_status||'pending')==='completed');
+const completedAuctionIds=new Set(completedOrders.map(o=>o.auction_id));
+const workingOrders=orders.filter(o=>!(o.payment_status==='paid'&&(o.fulfillment_status||'pending')==='completed'));
+
 const liveAuctions=auctions.filter(isOpen);
 const endedAuctions=auctions.filter(a=>!isOpen(a));
-const readyToFulfill=orders.filter(o=>o.payment_status==='paid'&&(o.fulfillment_status||'pending')!=='completed');
-const unpaidOrders=orders.filter(o=>o.payment_status!=='paid');
+const completedAuctions=auctions.filter(a=>completedAuctionIds.has(a.id));
+const currentAuctions=auctions.filter(a=>!completedAuctionIds.has(a.id));
+
+const readyToFulfill=workingOrders.filter(o=>o.payment_status==='paid'&&(o.fulfillment_status||'pending')!=='completed');
+const unpaidOrders=workingOrders.filter(o=>o.payment_status!=='paid');
 
 const fsq=adminFulfillmentSearch.trim().toLowerCase();
-const visibleOrders=orders.filter(o=>!fsq||[
+const visibleOrders=workingOrders.filter(o=>!fsq||[
   o.auction_title,o.winner_name,o.winner_email,o.payment_status,o.fulfillment_method,o.fulfillment_status
 ].some(v=>String(v||'').toLowerCase().includes(fsq)));
 
@@ -1634,8 +1641,11 @@ const filteredAuctions=auctions
   .slice()
   .sort((a,b)=>new Date(b.starts_at||b.ends_at)-new Date(a.starts_at||a.ends_at))
   .filter(a=>{
+    const isCompleted=completedAuctionIds.has(a.id);
+    if(adminAuctionFilter==='current'&&isCompleted)return false;
     if(adminAuctionFilter==='live'&&!isOpen(a))return false;
-    if(adminAuctionFilter==='ended'&&isOpen(a))return false;
+    if(adminAuctionFilter==='ended'&&(isOpen(a)||isCompleted))return false;
+    if(adminAuctionFilter==='completed'&&!isCompleted)return false;
     if(asq&&!String(a.title||'').toLowerCase().includes(asq)&&!String(a.description||'').toLowerCase().includes(asq))return false;
     return true;
   });
@@ -1651,7 +1661,7 @@ document.getElementById('app').innerHTML=`
       <div class="adminStat">${liveAuctions.length} live</div>
       <div class="adminStat">${readyToFulfill.length} ready to fulfill</div>
       <div class="adminStat">${unpaidOrders.length} unpaid</div>
-      <div class="adminStat">${endedAuctions.length} ended</div>
+      <div class="adminStat">${completedAuctions.length} completed</div>
     </div>
   </section>
 
@@ -1699,7 +1709,7 @@ document.getElementById('app').innerHTML=`
           <h3>Fulfillment Queue</h3>
           <div class="opsCountLine">${readyToFulfill.length} ready to fulfill · ${unpaidOrders.length} awaiting payment</div>
         </div>
-        <span class="accountCount">${orders.length}</span>
+        <span class="accountCount">${workingOrders.length}</span>
       </div>
       <div class="adminCardBody">
         ${fErr?`<div class="err">${esc(fErr.message)}</div>`:''}
@@ -1727,10 +1737,11 @@ document.getElementById('app').innerHTML=`
                     :`<span class="opsBadge unpaid">AWAITING PAYMENT</span>`}
                   </td>
                 </tr>`;
-              }).join(''):`<tr><td colspan="5" class="adminEmpty">No orders match this search.</td></tr>`}
+              }).join(''):`<tr><td colspan="5" class="adminEmpty">No active fulfillment items match this search.</td></tr>`}
             </tbody>
           </table>
         </div>
+        ${completedOrders.length?`<div class="opsCountLine" style="margin-top:10px">${completedOrders.length} completed order${completedOrders.length===1?'':'s'} hidden from this working queue.</div>`:''}
       </div>
     </section>
 
@@ -1738,9 +1749,10 @@ document.getElementById('app').innerHTML=`
       <div class="adminCardHead">
         <div><h3>Manage Auctions</h3><div class="opsCountLine">${filteredAuctions.length} shown</div></div>
         <div class="manageFilters">
-          <button class="manageFilter ${adminAuctionFilter==='all'?'active':''}" data-admin-filter="all">All ${auctions.length}</button>
+          <button class="manageFilter ${adminAuctionFilter==='current'?'active':''}" data-admin-filter="current">Current ${currentAuctions.length}</button>
           <button class="manageFilter ${adminAuctionFilter==='live'?'active':''}" data-admin-filter="live">Live ${liveAuctions.length}</button>
-          <button class="manageFilter ${adminAuctionFilter==='ended'?'active':''}" data-admin-filter="ended">Ended ${endedAuctions.length}</button>
+          <button class="manageFilter ${adminAuctionFilter==='ended'?'active':''}" data-admin-filter="ended">Ended ${endedAuctions.filter(a=>!completedAuctionIds.has(a.id)).length}</button>
+          <button class="manageFilter ${adminAuctionFilter==='completed'?'active':''}" data-admin-filter="completed">Completed ${completedAuctions.length}</button>
         </div>
       </div>
       <div class="adminCardBody">
@@ -1752,19 +1764,19 @@ document.getElementById('app').innerHTML=`
             <thead><tr><th></th><th>Auction</th><th>Status</th><th>Current bid</th><th>Payment / fulfillment</th><th style="text-align:right">Actions</th></tr></thead>
             <tbody>
               ${filteredAuctions.length?filteredAuctions.map(a=>{
-                const p=photosFor(a.id)[0],o=byAuction[a.id],ended=!isOpen(a);
+                const p=photosFor(a.id)[0],o=byAuction[a.id],ended=!isOpen(a),isCompleted=completedAuctionIds.has(a.id);
                 let ops='—';
-                if(o) ops=`${o.payment_status==='paid'?'Paid':'Unpaid'} · ${esc(o.fulfillment_method||'Not selected')}`;
+                if(o) ops=`${o.payment_status==='paid'?'Paid':'Unpaid'} · ${esc(o.fulfillment_method||'Not selected')}${isCompleted?' · Completed':''}`;
                 return `<tr>
                   <td>${p?`<img class="opsThumb" src="${photoUrl(p)}" alt="">`:''}</td>
                   <td><div class="opsTitle">${esc(a.title)}</div><div class="opsSub">${ended?'Ended':'Ends'} ${new Date(a.ends_at).toLocaleString()}</div></td>
-                  <td><span class="opsBadge ${ended?'':'live'}">${ended?'ENDED':'LIVE'}</span></td>
+                  <td><span class="opsBadge ${isCompleted?'paid':ended?'':'live'}">${isCompleted?'COMPLETED':ended?'ENDED':'LIVE'}</span></td>
                   <td class="opsMoney">${money(a.current_bid)}</td>
                   <td>${ops}</td>
                   <td><div class="opsActions">
-                    <button class="light adminEditAuctionBtn" data-auction-id="${a.id}">Edit</button>
+                    ${isCompleted?'':`<button class="light adminEditAuctionBtn" data-auction-id="${a.id}">Edit</button>`}
                     ${ended?`<button class="adminRelistAuctionBtn" data-auction-id="${a.id}" style="background:#087443">Relist</button>`:''}
-                    <button class="dangerGhost adminDeleteAuctionBtn" data-auction-id="${a.id}">Delete</button>
+                    ${isCompleted?'':`<button class="dangerGhost adminDeleteAuctionBtn" data-auction-id="${a.id}">Delete</button>`}
                   </div></td>
                 </tr>`;
               }).join(''):`<tr><td colspan="6" class="adminEmpty">No auctions match this filter.</td></tr>`}
