@@ -167,6 +167,114 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-sh
   box-shadow:0 0 0 1px #912018 inset,0 4px 12px rgba(180,35,24,.18);
 }
 
+
+/* Click-to-view marketplace photo gallery */
+.photo{cursor:zoom-in}
+.photoViewHint{
+  position:absolute;
+  left:10px;
+  bottom:10px;
+  z-index:3;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 9px;
+  border-radius:999px;
+  background:rgba(17,24,39,.82);
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.2px;
+  backdrop-filter:blur(6px);
+}
+.photoViewHint:before{content:"⌕";font-size:14px}
+.photoViewer{
+  width:min(920px,96vw);
+  padding:0;
+  overflow:hidden;
+  background:#111827;
+}
+.photoViewerHead{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+  padding:14px 16px;
+  background:#fff;
+  color:#111827;
+}
+.photoViewerHead h3{margin:0;font-size:18px}
+.photoViewerClose{
+  background:#eef1f4;
+  color:#111827;
+  border-radius:999px;
+  width:38px;height:38px;
+  padding:0;
+  font-size:20px;
+}
+.photoViewerMain{
+  height:min(68vh,650px);
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#0b0f17;
+}
+.photoViewerMain img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+.photoViewerNav{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:46px;height:46px;
+  border-radius:50%;
+  padding:0;
+  background:rgba(17,24,39,.78);
+  color:#fff;
+  font-size:30px;
+  line-height:1;
+  box-shadow:0 6px 18px rgba(0,0,0,.22);
+}
+.photoViewerNav.prev{left:14px}
+.photoViewerNav.next{right:14px}
+.photoViewerCount{
+  position:absolute;
+  right:14px;
+  bottom:14px;
+  background:rgba(17,24,39,.82);
+  color:#fff;
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:12px;
+  font-weight:900;
+}
+.photoViewerThumbs{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding:11px 14px;
+  background:#f7f6f2;
+}
+.photoViewerThumb{
+  width:82px;height:64px;
+  flex:0 0 auto;
+  padding:0;
+  border:2px solid transparent;
+  border-radius:9px;
+  overflow:hidden;
+  background:#ddd;
+}
+.photoViewerThumb.active{border-color:#d9a514}
+.photoViewerThumb img{width:100%;height:100%;object-fit:cover}
+@media(max-width:700px){
+  .photoViewerMain{height:58vh}
+  .photoViewerNav{width:40px;height:40px;font-size:25px}
+}
+
 </style></head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal"><div id="modalbox" class="modalbox"></div></div>
 <script type="module">import{createClient}from'https://esm.sh/@supabase/supabase-js@2';const SUPA='https://cboodkfcfvshsxirpkxt.supabase.co';const KEY='sb_publishable_VDsMnqHeYHajdKendarwww_hMX9fMM2';const hhStorage={
   getItem:key=>{
@@ -187,9 +295,12 @@ const sb=createClient(SUPA,KEY,{
     storage:hhStorage,
     storageKey:'hammerhunt-auth'
   }
-});let session=null,profile=null,categories=[],auctions=[],currentView='auctions',activeAuctionId=null,realtimeChannel=null,photosByAuction={},galleryIndex=0,pendingPhotos=[],marketplaceQuery='',marketplaceCategory='all';const nowMs=()=>new Date().getTime();let expiryCheckRunning=false;const money=n=>'$'+Number(n||0).toFixed(2);const esc=s=>String(s??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));const remain=d=>{const endMs=Date.parse(String(d));const currentMs=new Date().getTime();let x=endMs-currentMs;if(!Number.isFinite(x)||x<=0)return'Ended';let h=Math.floor(x/3600000),m=Math.floor((x%3600000)/60000),sec=Math.floor((x%60000)/1000);return h>=24?Math.floor(h/24)+'d '+(h%24)+'h':h>0?h+'h '+m+'m '+sec+'s':m+'m '+sec+'s'};const isOpen=a=>a.status!=='ended'&&new Date(a.ends_at).getTime()>nowMs();const photosFor=id=>photosByAuction[id]||[];const photoUrl=p=>sb.storage.from('auction-images').getPublicUrl(p.storage_path).data.publicUrl;window.showView=showView;window.openAuthChoice=openAuthChoice;window.openSignIn=openSignIn;window.openSignUp=openSignUp;
+});let session=null,profile=null,categories=[],auctions=[],currentView='auctions',activeAuctionId=null,realtimeChannel=null,photosByAuction={},galleryIndex=0,pendingPhotos=[],marketplaceQuery='',marketplaceCategory='all',photoViewerAuctionId=null,photoViewerIndex=0;const nowMs=()=>new Date().getTime();let expiryCheckRunning=false;const money=n=>'$'+Number(n||0).toFixed(2);const esc=s=>String(s??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));const remain=d=>{const endMs=Date.parse(String(d));const currentMs=new Date().getTime();let x=endMs-currentMs;if(!Number.isFinite(x)||x<=0)return'Ended';let h=Math.floor(x/3600000),m=Math.floor((x%3600000)/60000),sec=Math.floor((x%60000)/1000);return h>=24?Math.floor(h/24)+'d '+(h%24)+'h':h>0?h+'h '+m+'m '+sec+'s':m+'m '+sec+'s'};const isOpen=a=>a.status!=='ended'&&new Date(a.ends_at).getTime()>nowMs();const photosFor=id=>photosByAuction[id]||[];const photoUrl=p=>sb.storage.from('auction-images').getPublicUrl(p.storage_path).data.publicUrl;window.showView=showView;window.openAuthChoice=openAuthChoice;window.openSignIn=openSignIn;window.openSignUp=openSignUp;
 window.setMarketplaceQuery=v=>{marketplaceQuery=String(v||'');renderAuctions()};
-window.setMarketplaceCategory=v=>{marketplaceCategory=String(v||'all');renderAuctions()};window.closeModal=()=>{activeAuctionId=null;document.getElementById('modal').classList.remove('show')};window.signOutNow=async()=>{await sb.auth.signOut();session=null;profile=null;await boot()};window.cardSetup=cardSetup;window.createAuction=createAuction;window.openAuction=openAuction;window.placeNextBid=placeNextBid;window.galleryMove=galleryMove;window.galleryPick=galleryPick;window.onPhotoPick=onPhotoPick;window.winnerCheckout=winnerCheckout;window.updateFulfillment=updateFulfillment;
+window.setMarketplaceCategory=v=>{marketplaceCategory=String(v||'all');renderAuctions()};
+window.openPhotoViewer=openPhotoViewer;
+window.photoViewerMove=photoViewerMove;
+window.photoViewerPick=photoViewerPick;window.closeModal=()=>{activeAuctionId=null;document.getElementById('modal').classList.remove('show')};window.signOutNow=async()=>{await sb.auth.signOut();session=null;profile=null;await boot()};window.cardSetup=cardSetup;window.createAuction=createAuction;window.openAuction=openAuction;window.placeNextBid=placeNextBid;window.galleryMove=galleryMove;window.galleryPick=galleryPick;window.onPhotoPick=onPhotoPick;window.winnerCheckout=winnerCheckout;window.updateFulfillment=updateFulfillment;
 function tickCountdowns(){
 let expired=false;
 document.querySelectorAll('[data-ends-at]').forEach(el=>{
@@ -321,7 +432,7 @@ function renderAuctions(){
     html+='<div class="grid">'+filtered.map(a=>{
       const pics=photosFor(a.id),cover=pics[0];
       return `<article class="card" onclick="openAuction('${a.id}')">
-        <div class="photo">${cover?`<img src="${photoUrl(cover)}" alt="${esc(a.title)}">`:'<div class="fallback">HAMMERHUNT</div>'}${pics.length?`<span class="photoCount">${pics.length} photo${pics.length===1?'':'s'}</span>`:''}</div>
+        <div class="photo" onclick="event.stopPropagation();${pics.length?`openPhotoViewer('${a.id}',0)`:`openAuction('${a.id}')`}">${cover?`<img src="${photoUrl(cover)}" alt="${esc(a.title)}">`:'<div class="fallback">HAMMERHUNT</div>'}${pics.length?`<span class="photoViewHint">View photos</span><span class="photoCount">${pics.length} photo${pics.length===1?'':'s'}</span>`:''}</div>
         <div class="pad">
           <div class="category">${esc(a.categories?.name||'Auction')}</div>
           <div class="title">${esc(a.title)}</div>
@@ -339,6 +450,51 @@ function renderAuctions(){
   document.getElementById('app').innerHTML=html;
   tickCountdowns();
 }
+
+function openPhotoViewer(id,index=0){
+  const a=auctions.find(x=>x.id===id);
+  const pics=photosFor(id);
+  if(!a||!pics.length){openAuction(id);return}
+  photoViewerAuctionId=id;
+  photoViewerIndex=Math.max(0,Math.min(Number(index)||0,pics.length-1));
+  renderPhotoViewer();
+}
+function renderPhotoViewer(){
+  const a=auctions.find(x=>x.id===photoViewerAuctionId);
+  const pics=photosFor(photoViewerAuctionId);
+  if(!a||!pics.length)return;
+  if(photoViewerIndex>=pics.length)photoViewerIndex=0;
+  const cur=pics[photoViewerIndex];
+  const modal=document.getElementById('modal');
+  const box=document.getElementById('modalbox');
+  box.className='modalbox photoViewer';
+  box.innerHTML=`<div class="photoViewerHead">
+    <div><div class="category">${esc(a.categories?.name||'Auction')}</div><h3>${esc(a.title)}</h3></div>
+    <button class="photoViewerClose" onclick="closePhotoViewer()" aria-label="Close photo gallery">×</button>
+  </div>
+  <div class="photoViewerMain">
+    <img src="${photoUrl(cur)}" alt="${esc(a.title)} photo ${photoViewerIndex+1}">
+    ${pics.length>1?`<button class="photoViewerNav prev" onclick="photoViewerMove(-1)" aria-label="Previous photo">‹</button><button class="photoViewerNav next" onclick="photoViewerMove(1)" aria-label="Next photo">›</button>`:''}
+    <div class="photoViewerCount">${photoViewerIndex+1} / ${pics.length}</div>
+  </div>
+  ${pics.length>1?`<div class="photoViewerThumbs">${pics.map((p,i)=>`<button class="photoViewerThumb ${i===photoViewerIndex?'active':''}" onclick="photoViewerPick(${i})"><img src="${photoUrl(p)}" alt="Photo ${i+1}"></button>`).join('')}</div>`:''}
+  <div style="padding:12px 14px;background:#fff"><button class="goldBtn" style="width:100%" onclick="closePhotoViewer();openAuction('${a.id}')">View Auction & Bid</button></div>`;
+  modal.classList.add('show');
+}
+function photoViewerMove(dir){
+  const pics=photosFor(photoViewerAuctionId);
+  if(!pics.length)return;
+  photoViewerIndex=(photoViewerIndex+dir+pics.length)%pics.length;
+  renderPhotoViewer();
+}
+function photoViewerPick(i){photoViewerIndex=i;renderPhotoViewer()}
+window.closePhotoViewer=()=>{
+  photoViewerAuctionId=null;
+  const box=document.getElementById('modalbox');
+  box.className='modalbox';
+  document.getElementById('modal').classList.remove('show');
+};
+
 function openAuction(id,preserveGallery=false){activeAuctionId=id;const a=auctions.find(x=>x.id===id);if(!a)return;const pics=photosFor(id);if(!preserveGallery)galleryIndex=0;if(galleryIndex>=pics.length)galleryIndex=0;const ended=!isOpen(a);const next=Number(a.current_bid||0)+5;let action='';if(!session)action='<div class="notice">Sign in and add a payment method before bidding.</div><button onclick="openSignIn()">Sign In</button>';else if(!profile?.payment_verified)action='<div class="notice">A verified payment method is required before bidding.</div><button class="good" onclick="closeModal();showView(\'account\')">Add Payment Method</button>';else if(ended)action='<div class="notice">This auction has ended.</div>';else action=`<div class="ok">You are approved to bid.</div><button id="bidBtn" class="goldBtn" style="width:100%;padding:12px;border:0;border-radius:9px;font-weight:900" onclick="placeNextBid('${a.id}')">Place ${money(next)} Bid</button><p class="muted">Bids advance by $5. A bid in the final 2 minutes resets the clock to 2 minutes.</p>`;const cur=pics[galleryIndex];const gallery=`<div class="galleryMain">${cur?`<img src="${photoUrl(cur)}" alt="${esc(a.title)}">`:'<div class="galleryFallback">No photos yet</div>'}${pics.length>1?'<button class="galleryNav prev" onclick="galleryMove(-1)">‹</button><button class="galleryNav next" onclick="galleryMove(1)">›</button>':''}</div>${pics.length>1?`<div class="thumbs">${pics.map((p,i)=>`<button class="thumb ${i===galleryIndex?'active':''}" onclick="galleryPick(${i})"><img src="${photoUrl(p)}"></button>`).join('')}</div>`:''}`;document.getElementById('modalbox').innerHTML=`${gallery}<div style="padding:20px"><div class="detailGrid"><div><div class="category">${esc(a.categories?.name||'Auction')}</div><h2 style="font-size:28px;margin:5px 0 10px">${esc(a.title)}</h2>${a.condition?`<p><b>Condition:</b> ${esc(a.condition)}</p>`:''}${a.description?`<p>${esc(a.description)}</p>`:''}<p class="muted">${a.shipping_available?`Shipping ${money(a.shipping_price)}`:'No shipping'}${a.pickup_available?' • Pickup available':''}</p></div><div class="bidBox"><div class="muted">CURRENT BID</div><div class="bigPrice">${money(a.current_bid)}</div><div class="muted">TIME LEFT</div><div id="modalCountdown" class="countdown" data-ends-at="${a.ends_at}">${remain(a.ends_at)}</div>${action}</div></div><div style="margin-top:14px"><button class="light" onclick="closeModal()">Close</button></div></div>`;document.getElementById('modal').classList.add('show');tickCountdowns()}
 function galleryMove(d){const pics=photosFor(activeAuctionId);if(!pics.length)return;galleryIndex=(galleryIndex+d+pics.length)%pics.length;openAuction(activeAuctionId,true)}
 function galleryPick(i){galleryIndex=i;openAuction(activeAuctionId,true)}
