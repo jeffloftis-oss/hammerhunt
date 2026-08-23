@@ -242,7 +242,7 @@ document.getElementById('app').innerHTML=`<div class="panel"><h2>Create Auction<
             <select id="fs-${o.order_id}" class="fulfillmentStatus" data-order-id="${o.order_id}" data-has-tracking="${needsTracking||o.tracking_number?'true':'false'}">
               ${['pending','ready_for_pickup','shipped','completed'].map(s=>`<option value="${s}" ${o.fulfillment_status===s?'selected':''}>${statusLabel(s)}</option>`).join('')}
             </select>
-            ${needsTracking||o.tracking_number?`<label>Tracking number</label><input id="trk-${o.order_id}" value="${esc(o.tracking_number||'')}" placeholder="Optional tracking number">`:''}
+            ${needsTracking||o.tracking_number?`<label>Tracking number</label><input id="trk-${o.order_id}" class="trackingNumber" data-order-id="${o.order_id}" value="${esc(o.tracking_number||'')}" placeholder="Optional tracking number">`:''}
             <div id="save-msg-${o.order_id}" class="muted" style="margin-top:8px">Changes save automatically.</div>
           </div>
         </div>
@@ -258,6 +258,14 @@ document.querySelectorAll('.fulfillmentStatus').forEach(sel=>{
     const orderId=sel.dataset.orderId;
     const hasTracking=sel.dataset.hasTracking==='true';
     await updateFulfillment(orderId,hasTracking);
+  });
+});
+document.querySelectorAll('.trackingNumber').forEach(inp=>{
+  inp.addEventListener('change', async ()=>{
+    await updateFulfillment(inp.dataset.orderId,true);
+  });
+  inp.addEventListener('blur', async ()=>{
+    await updateFulfillment(inp.dataset.orderId,true);
   });
 });
 document.querySelectorAll('.adminEditAuctionBtn').forEach(btn=>btn.addEventListener('click',()=>openEditAuction(btn.dataset.auctionId)));
