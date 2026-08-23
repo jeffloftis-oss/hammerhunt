@@ -771,6 +771,30 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-sh
 }
 </style>
 
+
+<style>
+/* HammerHunt auction-detail title visibility fix */
+@media (min-width: 800px) {
+  .auctionDetailModal > .auctionDetailInner{
+    padding-top:42px!important;
+    scroll-padding-top:42px!important;
+  }
+
+  .auctionDetailModal .detailGrid > div:first-child{
+    flex:0 0 auto!important;
+    overflow:visible!important;
+  }
+
+  .auctionDetailModal .detailGrid > div:first-child .category{
+    margin-top:0!important;
+  }
+
+  .auctionDetailModal .detailGrid > div:first-child h2{
+    margin-top:5px!important;
+  }
+}
+</style>
+
 </head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="modalbox" class="modalbox"></div></div>
 <script type="module">import{createClient}from'https://esm.sh/@supabase/supabase-js@2';const SUPA='https://cboodkfcfvshsxirpkxt.supabase.co';const KEY='sb_publishable_VDsMnqHeYHajdKendarwww_hMX9fMM2';const hhStorage={
   getItem:key=>{
