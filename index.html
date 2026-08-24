@@ -1162,6 +1162,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-sh
 }
 </style>
 
+
+<style>
+.pickupLocationTag{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;background:#eef4ff;color:#344054;font-size:11px;font-weight:850}
+</style>
 </head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="modalbox" class="modalbox"></div></div>
 <script type="module">import{createClient}from'https://esm.sh/@supabase/supabase-js@2';const SUPA='https://cboodkfcfvshsxirpkxt.supabase.co';const KEY='sb_publishable_VDsMnqHeYHajdKendarwww_hMX9fMM2';const hhStorage={
   getItem:key=>{
@@ -1341,7 +1345,7 @@ function renderAuctions(){
             <div><div class="muted">CURRENT BID</div><div class="price">${money(a.current_bid)}</div></div>
             <div style="text-align:right"><div class="muted">TIME LEFT</div><div class="countdown" data-ends-at="${a.ends_at}">${remain(a.ends_at)}</div></div>
           </div>
-          <div class="muted" style="margin-top:8px">${a.shipping_available?`Shipping ${money(a.shipping_price)}`:'No shipping'}${a.pickup_available?' • Pickup available':''}</div>
+          <div class="muted" style="margin-top:8px">${a.shipping_available?`Shipping ${money(a.shipping_price)}`:'No shipping'}${a.pickup_available?` • Pickup: ${esc(a.pickup_location||'Location assigned at checkout')}`:''}</div>
           <button class="goldBtn" style="margin-top:12px;width:100%">View & Bid</button>
         </div>
       </article>`;
@@ -1400,7 +1404,7 @@ function openAuction(id,preserveGallery=false){activeAuctionId=id;const a=auctio
 if(!session)action=`<div class="bidNext"><div class="bidPanelLabel">NEXT BID</div><div class="bidNextAmount">${money(next)}</div></div><div class="bidState actionNeeded"><b>Sign in to bid.</b><br>Your account needs a verified payment method before a bid can be placed.</div><button class="bidPrimary" onclick="openSignIn()">Sign In to Bid</button>`;
 else if(!profile?.payment_verified)action=`<div class="bidNext"><div class="bidPanelLabel">NEXT BID</div><div class="bidNextAmount">${money(next)}</div></div><div class="bidState actionNeeded"><b>One step left.</b><br>Add a verified payment method to unlock bidding.</div><button class="good bidPrimary" onclick="closeModal();showView('account')">Add Payment Method</button>`;
 else if(ended)action='<div class="bidState closed"><b>Auction ended.</b><br>Bidding is closed for this item.</div>';
-else action=`<div class="bidNext"><div class="bidPanelLabel">YOUR NEXT BID</div><div class="bidNextAmount">${money(next)}</div></div><div class="bidState ready"><b>✓ Approved to bid</b></div><button id="bidBtn" class="goldBtn bidPrimary" onclick="placeNextBid('${a.id}')">Bid ${money(next)}</button><div class="bidRule"><span class="bidRuleIcon">2m</span><span>Bids increase by $5. Any bid placed with 2:00 or less remaining resets the auction clock to 2:00.</span></div>`;const cur=pics[galleryIndex];const gallery=`<div class="galleryMain">${cur?`<img src="${photoUrl(cur)}" alt="${esc(a.title)}">`:'<div class="galleryFallback">No photos yet</div>'}${pics.length>1?'<button class="galleryNav prev" onclick="galleryMove(-1)">‹</button><button class="galleryNav next" onclick="galleryMove(1)">›</button>':''}</div>${pics.length>1?`<div class="thumbs">${pics.map((p,i)=>`<button class="thumb ${i===galleryIndex?'active':''}" onclick="galleryPick(${i})"><img src="${photoUrl(p)}"></button>`).join('')}</div>`:''}`;const detailBox=document.getElementById('modalbox');detailBox.className='modalbox auctionDetailModal';detailBox.innerHTML=`<button class="auctionCloseX" onclick="closeModal()" aria-label="Close auction">×</button>${gallery}<div class="auctionDetailInner"><div class="detailGrid"><div><div class="category">${esc(a.categories?.name||'Auction')}</div><h2 style="font-size:28px;margin:5px 0 10px">${esc(a.title)}</h2>${a.condition?`<p><b>Condition:</b> ${esc(a.condition)}</p>`:''}${a.description?`<p>${esc(a.description)}</p>`:''}<p class="muted">${a.shipping_available?`Shipping ${money(a.shipping_price)}`:'No shipping'}${a.pickup_available?' • Pickup available':''}</p></div><div class="bidBox"><div class="bidPanelLabel">CURRENT BID</div><div class="bidCurrent">${money(a.current_bid)}</div><div class="bidTimeRow"><span class="bidPanelLabel">TIME LEFT</span><div id="modalCountdown" class="countdown" data-ends-at="${a.ends_at}">${remain(a.ends_at)}</div></div><div class="fulfillmentPills">${a.shipping_available?`<span class="fulfillmentPill">Shipping ${money(a.shipping_price)}</span>`:''}${a.pickup_available?'<span class="fulfillmentPill">Local pickup</span>':''}</div>${action}</div></div></div>`;document.getElementById('modal').classList.add('show');tickCountdowns()}
+else action=`<div class="bidNext"><div class="bidPanelLabel">YOUR NEXT BID</div><div class="bidNextAmount">${money(next)}</div></div><div class="bidState ready"><b>✓ Approved to bid</b></div><button id="bidBtn" class="goldBtn bidPrimary" onclick="placeNextBid('${a.id}')">Bid ${money(next)}</button><div class="bidRule"><span class="bidRuleIcon">2m</span><span>Bids increase by $5. Any bid placed with 2:00 or less remaining resets the auction clock to 2:00.</span></div>`;const cur=pics[galleryIndex];const gallery=`<div class="galleryMain">${cur?`<img src="${photoUrl(cur)}" alt="${esc(a.title)}">`:'<div class="galleryFallback">No photos yet</div>'}${pics.length>1?'<button class="galleryNav prev" onclick="galleryMove(-1)">‹</button><button class="galleryNav next" onclick="galleryMove(1)">›</button>':''}</div>${pics.length>1?`<div class="thumbs">${pics.map((p,i)=>`<button class="thumb ${i===galleryIndex?'active':''}" onclick="galleryPick(${i})"><img src="${photoUrl(p)}"></button>`).join('')}</div>`:''}`;const detailBox=document.getElementById('modalbox');detailBox.className='modalbox auctionDetailModal';detailBox.innerHTML=`<button class="auctionCloseX" onclick="closeModal()" aria-label="Close auction">×</button>${gallery}<div class="auctionDetailInner"><div class="detailGrid"><div><div class="category">${esc(a.categories?.name||'Auction')}</div><h2 style="font-size:28px;margin:5px 0 10px">${esc(a.title)}</h2>${a.condition?`<p><b>Condition:</b> ${esc(a.condition)}</p>`:''}${a.description?`<p>${esc(a.description)}</p>`:''}<p class="muted">${a.shipping_available?`Shipping ${money(a.shipping_price)}`:'No shipping'}${a.pickup_available?` • Pickup: ${esc(a.pickup_location||'Location assigned at checkout')}`:''}</p></div><div class="bidBox"><div class="bidPanelLabel">CURRENT BID</div><div class="bidCurrent">${money(a.current_bid)}</div><div class="bidTimeRow"><span class="bidPanelLabel">TIME LEFT</span><div id="modalCountdown" class="countdown" data-ends-at="${a.ends_at}">${remain(a.ends_at)}</div></div><div class="fulfillmentPills">${a.shipping_available?`<span class="fulfillmentPill">Shipping ${money(a.shipping_price)}</span>`:''}${a.pickup_available?`<span class="fulfillmentPill">Pickup · ${esc(a.pickup_location||'Location TBD')}</span>`:''}</div>${action}</div></div></div>`;document.getElementById('modal').classList.add('show');tickCountdowns()}
 function galleryMove(d){const pics=photosFor(activeAuctionId);if(!pics.length)return;galleryIndex=(galleryIndex+d+pics.length)%pics.length;openAuction(activeAuctionId,true)}
 function galleryPick(i){galleryIndex=i;openAuction(activeAuctionId,true)}
 async function placeNextBid(id){const btn=document.getElementById('bidBtn');if(btn){btn.disabled=true;btn.textContent='Submitting bid…'}const{data,error}=await sb.rpc('place_next_bid',{p_auction_id:id});if(error){alert(error.message);await pollAuctions();return}const placed=Array.isArray(data)&&data[0]?(data[0].new_current_bid??data[0].amount):null;await loadData();closeModal();renderAuctions();alert(placed!=null?`Bid placed at ${money(placed)}.`:'Bid placed successfully.')}
@@ -1412,7 +1416,7 @@ if(!session){
 
 const[{data:bids},{data:wins}]=await Promise.all([
   sb.from('bids').select('*,auctions(id,title,current_bid,ends_at,status,categories(name))').order('created_at',{ascending:false}),
-  sb.from('orders').select('id,auction_id,winner_user_id,winning_bid,payment_status,fulfillment_method,shipping_price,total_amount,total_due,fulfillment_status,tracking_number,fulfilled_at,created_at,auctions(title,shipping_available,shipping_price,pickup_available,pickup_instructions)').eq('winner_user_id',session.user.id).order('created_at',{ascending:false})
+  sb.from('orders').select('id,auction_id,winner_user_id,winning_bid,payment_status,fulfillment_method,shipping_price,total_amount,total_due,fulfillment_status,tracking_number,fulfilled_at,created_at,auctions(title,shipping_available,shipping_price,pickup_available,pickup_location,pickup_instructions)').eq('winner_user_id',session.user.id).order('created_at',{ascending:false})
 ]);
 
 const now=Date.now();
@@ -1459,7 +1463,7 @@ const openWinHtml=openWins.length?openWins.map(w=>{
   if(!paid){
     const opts=[];
     if(a.shipping_available)opts.push(`<button class="goldBtn winnerCheckoutBtn" data-auction-id="${w.auction_id}" data-method="shipping">Pay & Ship ${money(Number(w.winning_bid)+Number(a.shipping_price||0))}</button>`);
-    if(a.pickup_available)opts.push(`<button class="good winnerCheckoutBtn" data-auction-id="${w.auction_id}" data-method="pickup">Pay & Pick Up ${money(w.winning_bid)}</button>`);
+    if(a.pickup_available)opts.push(`<button class="good winnerCheckoutBtn" data-auction-id="${w.auction_id}" data-method="pickup">Pay & Pick Up · ${esc(a.pickup_location||'Pickup location')} ${money(w.winning_bid)}</button>`);
     actionHtml=`<div class="notice" style="margin:10px 0 0"><b>Payment needed.</b> Choose how you want to receive the item and complete checkout.</div><div class="accountItemActions">${opts.join('')}</div>`;
   }else{
     statusText={pending:'PROCESSING',ready_for_pickup:'READY FOR PICKUP',shipped:'SHIPPED',completed:'COMPLETED'}[fs]||'PAID';
@@ -1697,6 +1701,12 @@ document.getElementById('app').innerHTML=`
           <div class="adminToggle"><label><input id="aShipOn" type="checkbox" checked style="width:auto"> Shipping available</label></div>
           <div class="adminToggle"><label><input id="aPickup" type="checkbox" style="width:auto"> Local pickup available</label></div>
         </div>
+        <label>Pickup location</label>
+        <select id="aPickupLocation">
+          <option value="">Select pickup location</option>
+          <option value="Camden, TN">Camden, TN</option>
+          <option value="Rock Hill, SC">Rock Hill, SC</option>
+        </select>
         <label>Pickup instructions</label>
         <input id="aPickupInfo" placeholder="Optional pickup directions or hours">
         <button class="goldBtn adminPublish" onclick="createAuction()">Publish Auction</button>
@@ -1721,7 +1731,7 @@ document.getElementById('app').innerHTML=`
               ${visibleOrders.length?visibleOrders.map(o=>{
                 const paid=o.payment_status==='paid';
                 const fs=o.fulfillment_status||'pending';
-                const method=o.fulfillment_method||'Not selected';
+                const auctionForOrder=auctions.find(a=>a.id===o.auction_id); const method=o.fulfillment_method==='pickup'?`Pickup · ${auctionForOrder?.pickup_location||'Location TBD'}`:(o.fulfillment_method||'Not selected');
                 const needsTracking=method==='shipping'&&paid&&fs!=='completed';
                 return `<tr>
                   <td><div class="opsTitle">${esc(o.auction_title)}</div><div class="opsSub">${esc(o.winner_name||'Winner')} · ${esc(o.winner_email||'')}</div></td>
@@ -1828,12 +1838,20 @@ function openEditAuction(id){
   <label>Shipping price ($)</label><input id="eShip" type="number" min="0" step="0.01" value="${Number(a.shipping_price||0)}">
   <label><input id="eShipOn" type="checkbox" style="width:auto" ${a.shipping_available?'checked':''}> Shipping available</label>
   <label><input id="ePickup" type="checkbox" style="width:auto" ${a.pickup_available?'checked':''}> Local pickup available</label>
+  <label>Pickup location</label>
+  <select id="ePickupLocation">
+    <option value="">Select pickup location</option>
+    <option value="Camden, TN" ${a.pickup_location==='Camden, TN'?'selected':''}>Camden, TN</option>
+    <option value="Rock Hill, SC" ${a.pickup_location==='Rock Hill, SC'?'selected':''}>Rock Hill, SC</option>
+  </select>
   <label>Pickup instructions</label><input id="ePickupInfo" value="${esc(a.pickup_instructions||'')}">
   <div style="display:flex;gap:8px;margin-top:14px"><button id="saveEditAuction" class="good">Save Changes</button><button class="light" onclick="closeModal()">Cancel</button></div>`;
   document.getElementById('modal').classList.add('show');
   document.getElementById('saveEditAuction').onclick=async()=>{
     const duration=Math.max(1,Number(document.getElementById('eDuration').value||1));
-    const patch={title:document.getElementById('eTitle').value.trim(),condition:document.getElementById('eCondition').value.trim(),description:document.getElementById('eDesc').value.trim(),ends_at:a.status==='ended'?a.ends_at:new Date(Date.now()+duration*60000).toISOString(),shipping_available:document.getElementById('eShipOn').checked,shipping_price:document.getElementById('eShipOn').checked?Number(document.getElementById('eShip').value||0):null,pickup_available:document.getElementById('ePickup').checked,pickup_instructions:document.getElementById('ePickup').checked?document.getElementById('ePickupInfo').value.trim():null};
+    const pickupOn=document.getElementById('ePickup').checked,pickupLocation=document.getElementById('ePickupLocation').value;
+    if(pickupOn&&!pickupLocation)return alert('Choose Camden, TN or Rock Hill, SC for local pickup.');
+    const patch={title:document.getElementById('eTitle').value.trim(),condition:document.getElementById('eCondition').value.trim(),description:document.getElementById('eDesc').value.trim(),ends_at:a.status==='ended'?a.ends_at:new Date(Date.now()+duration*60000).toISOString(),shipping_available:document.getElementById('eShipOn').checked,shipping_price:document.getElementById('eShipOn').checked?Number(document.getElementById('eShip').value||0):null,pickup_available:pickupOn,pickup_location:pickupOn?pickupLocation:null,pickup_instructions:pickupOn?document.getElementById('ePickupInfo').value.trim():null};
     const {error}=await sb.from('auctions').update(patch).eq('id',id);
     if(error)return alert(error.message);
     closeModal(); await loadData(); renderAdmin();
@@ -1852,6 +1870,12 @@ function openRelistAuction(id){
     <label>Shipping price ($)</label><input id="rShip" type="number" min="0" step="0.01" value="${Number(a.shipping_price||0)}">
     <label><input id="rShipOn" type="checkbox" style="width:auto" ${a.shipping_available?'checked':''}> Shipping available</label>
     <label><input id="rPickup" type="checkbox" style="width:auto" ${a.pickup_available?'checked':''}> Local pickup available</label>
+    <label>Pickup location</label>
+    <select id="rPickupLocation">
+      <option value="">Select pickup location</option>
+      <option value="Camden, TN" ${a.pickup_location==='Camden, TN'?'selected':''}>Camden, TN</option>
+      <option value="Rock Hill, SC" ${a.pickup_location==='Rock Hill, SC'?'selected':''}>Rock Hill, SC</option>
+    </select>
     <label>Pickup instructions</label><input id="rPickupInfo" value="${esc(a.pickup_instructions||'')}">
     <div style="display:flex;gap:8px;margin-top:14px">
       <button id="saveRelistAuction" class="good">Create Relisted Auction</button>
@@ -1876,9 +1900,11 @@ function openRelistAuction(id){
       shipping_available:document.getElementById('rShipOn').checked,
       shipping_price:document.getElementById('rShipOn').checked?Number(document.getElementById('rShip').value||0):null,
       pickup_available:document.getElementById('rPickup').checked,
+      pickup_location:document.getElementById('rPickup').checked?document.getElementById('rPickupLocation').value:null,
       pickup_instructions:document.getElementById('rPickup').checked?document.getElementById('rPickupInfo').value.trim():null
     };
     if(!row.title)return alert('Enter a title.');
+    if(row.pickup_available&&!row.pickup_location)return alert('Choose Camden, TN or Rock Hill, SC for local pickup.');
     const {data:newAuction,error}=await sb.from('auctions').insert(row).select('id').single();
     if(error)return alert(error.message);
 
@@ -1935,7 +1961,7 @@ async function updateFulfillment(orderId,hasTracking){
   }
 }
 
-async function createAuction(){const title=aTitle.value.trim(),start=Number(aStart.value),duration=Number(aDuration.value);if(!title||Number.isNaN(start)||!Number.isFinite(duration)||duration<1)return alert('Enter title, starting bid, and duration in minutes.');const now=Date.now();const row={title,category_id:aCat.value,condition:aCondition.value.trim(),description:aDesc.value.trim(),starting_bid:start,current_bid:start,starts_at:new Date(now).toISOString(),ends_at:new Date(now+duration*60000).toISOString(),status:'live',shipping_available:aShipOn.checked,shipping_price:aShipOn.checked?Number(aShip.value||0):null,pickup_available:aPickup.checked,pickup_instructions:aPickup.checked?aPickupInfo.value.trim():null};const{data:a,error}=await sb.from('auctions').insert(row).select('id').single();if(error)return alert(error.message);for(let i=0;i<pendingPhotos.length;i++){const f=pendingPhotos[i],raw=(f.name.split('.').pop()||'jpg').toLowerCase(),ext=raw.replace(/[^a-z0-9]/g,'')||'jpg',path=`${a.id}/${String(i).padStart(2,'0')}-${crypto.randomUUID()}.${ext}`;const{error:upErr}=await sb.storage.from('auction-images').upload(path,f,{contentType:f.type||undefined,upsert:false});if(upErr){alert(`Auction published, but photo ${i+1} failed: ${upErr.message}`);continue}const{error:dbErr}=await sb.from('auction_photos').insert({auction_id:a.id,storage_path:path,sort_order:i});if(dbErr)alert(`Photo ${i+1} uploaded but could not be attached: ${dbErr.message}`)}pendingPhotos=[];await loadData();alert('Auction published.');renderAdmin()}
+async function createAuction(){const title=aTitle.value.trim(),start=Number(aStart.value),duration=Number(aDuration.value),pickupOn=aPickup.checked,pickupLocation=aPickupLocation.value;if(!title||Number.isNaN(start)||!Number.isFinite(duration)||duration<1)return alert('Enter title, starting bid, and duration in minutes.');if(!aShipOn.checked&&!pickupOn)return alert('At least one fulfillment option is required.');if(pickupOn&&!pickupLocation)return alert('Choose Camden, TN or Rock Hill, SC for local pickup.');const now=Date.now();const row={title,category_id:aCat.value,condition:aCondition.value.trim(),description:aDesc.value.trim(),starting_bid:start,current_bid:start,starts_at:new Date(now).toISOString(),ends_at:new Date(now+duration*60000).toISOString(),status:'live',shipping_available:aShipOn.checked,shipping_price:aShipOn.checked?Number(aShip.value||0):null,pickup_available:pickupOn,pickup_location:pickupOn?pickupLocation:null,pickup_instructions:pickupOn?aPickupInfo.value.trim():null};const{data:a,error}=await sb.from('auctions').insert(row).select('id').single();if(error)return alert(error.message);for(let i=0;i<pendingPhotos.length;i++){const f=pendingPhotos[i],raw=(f.name.split('.').pop()||'jpg').toLowerCase(),ext=raw.replace(/[^a-z0-9]/g,'')||'jpg',path=`${a.id}/${String(i).padStart(2,'0')}-${crypto.randomUUID()}.${ext}`;const{error:upErr}=await sb.storage.from('auction-images').upload(path,f,{contentType:f.type||undefined,upsert:false});if(upErr){alert(`Auction published, but photo ${i+1} failed: ${upErr.message}`);continue}const{error:dbErr}=await sb.from('auction_photos').insert({auction_id:a.id,storage_path:path,sort_order:i});if(dbErr)alert(`Photo ${i+1} uploaded but could not be attached: ${dbErr.message}`)}pendingPhotos=[];await loadData();alert('Auction published.');renderAdmin()}
 
 
 
