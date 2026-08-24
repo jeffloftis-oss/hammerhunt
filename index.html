@@ -1166,6 +1166,21 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-sh
 <style>
 .pickupLocationTag{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;background:#eef4ff;color:#344054;font-size:11px;font-weight:850}
 </style>
+
+<style>
+.methodCorrection{
+  min-width:150px;
+  margin:0!important;
+  padding:8px!important;
+  font-size:12px!important;
+}
+.methodHint{
+  font-size:10px;
+  color:#667085;
+  margin-top:4px;
+  line-height:1.35;
+}
+</style>
 </head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="modalbox" class="modalbox"></div></div>
 <script type="module">import{createClient}from'https://esm.sh/@supabase/supabase-js@2';const SUPA='https://cboodkfcfvshsxirpkxt.supabase.co';const KEY='sb_publishable_VDsMnqHeYHajdKendarwww_hMX9fMM2';const hhStorage={
   getItem:key=>{
@@ -1731,16 +1746,29 @@ document.getElementById('app').innerHTML=`
               ${visibleOrders.length?visibleOrders.map(o=>{
                 const paid=o.payment_status==='paid';
                 const fs=o.fulfillment_status||'pending';
-                const auctionForOrder=auctions.find(a=>a.id===o.auction_id); const method=o.fulfillment_method==='pickup'?`Pickup · ${auctionForOrder?.pickup_location||'Location TBD'}`:(o.fulfillment_method||'Not selected');
-                const needsTracking=method==='shipping'&&paid&&fs!=='completed';
+                const auctionForOrder=auctions.find(a=>a.id===o.auction_id);
+                const rawMethod=o.fulfillment_method||'';
+                const pickupLabel=auctionForOrder?.pickup_location?`Pickup · ${auctionForOrder.pickup_location}`:'Pickup';
+                const needsTracking=rawMethod==='shipping'&&paid&&fs!=='completed';
+                const allowedStatuses=rawMethod==='pickup'
+                  ? ['pending','ready_for_pickup','completed']
+                  : ['pending','shipped','completed'];
+
                 return `<tr>
                   <td><div class="opsTitle">${esc(o.auction_title)}</div><div class="opsSub">${esc(o.winner_name||'Winner')} · ${esc(o.winner_email||'')}</div></td>
                   <td><span class="opsBadge ${paid?'paid':'unpaid'}">${paid?'PAID':'UNPAID'}</span></td>
                   <td class="opsMoney">${money(o.total_due||o.winning_bid)}</td>
-                  <td>${esc(method)}</td>
+                  <td>
+                    ${paid?`<select id="fm-${o.order_id}" class="methodCorrection fulfillmentMethod" data-order-id="${o.order_id}">
+                      ${auctionForOrder?.shipping_available?`<option value="shipping" ${rawMethod==='shipping'?'selected':''}>Shipping</option>`:''}
+                      ${auctionForOrder?.pickup_available&&auctionForOrder?.pickup_location?`<option value="pickup" ${rawMethod==='pickup'?'selected':''}>${esc(pickupLabel)}</option>`:''}
+                    </select>
+                    <div class="methodHint">Changing a paid method does not rewrite the amount already charged.</div>`
+                    :`<span class="opsBadge unpaid">${esc(rawMethod||'Not selected')}</span>`}
+                  </td>
                   <td>
                     ${paid?`<select id="fs-${o.order_id}" class="opsSelect fulfillmentStatus" data-order-id="${o.order_id}" data-has-tracking="${needsTracking||o.tracking_number?'true':'false'}">
-                      ${['pending','ready_for_pickup','shipped','completed'].map(s=>`<option value="${s}" ${fs===s?'selected':''}>${statusLabel(s)}</option>`).join('')}
+                      ${allowedStatuses.map(s=>`<option value="${s}" ${fs===s?'selected':''}>${statusLabel(s)}</option>`).join('')}
                     </select>
                     ${needsTracking||o.tracking_number?`<input id="trk-${o.order_id}" class="trackingNumber" data-order-id="${o.order_id}" value="${esc(o.tracking_number||'')}" placeholder="Tracking number" style="margin:6px 0 0">`:''}
                     <div id="save-msg-${o.order_id}" class="opsSub">Saves automatically</div>`
@@ -1812,6 +1840,22 @@ document.querySelectorAll('[data-admin-filter]').forEach(btn=>btn.addEventListen
   adminAuctionFilter=btn.dataset.adminFilter;
   renderAdmin();
 }));
+document.querySelectorAll('.fulfillmentMethod').forEach(sel=>{
+  sel.addEventListener('change',async()=>{
+    const orderId=sel.dataset.orderId;
+    const fs=document.getElementById('fs-'+orderId);
+    const newMethod=sel.value;
+    if(fs){
+      fs.innerHTML=(newMethod==='pickup'
+        ? [['pending','Pending'],['ready_for_pickup','Ready for pickup'],['completed','Completed']]
+        : [['pending','Pending'],['shipped','Shipped'],['completed','Completed']]
+      ).map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
+      fs.value='pending';
+      fs.dataset.hasTracking=newMethod==='shipping'?'true':'false';
+    }
+    await updateFulfillment(orderId,newMethod==='shipping');
+  });
+});
 document.querySelectorAll('.fulfillmentStatus').forEach(sel=>{
   sel.addEventListener('change',async()=>{
     await updateFulfillment(sel.dataset.orderId,sel.dataset.hasTracking==='true');
@@ -1935,12 +1979,17 @@ async function deleteAuction(id){
 }
 
 async function updateFulfillment(orderId,hasTracking){
-  const select=document.getElementById('fs-'+orderId);
+  const statusSelect=document.getElementById('fs-'+orderId);
+  const methodSelect=document.getElementById('fm-'+orderId);
   const msg=document.getElementById('save-msg-'+orderId);
-  const status=select?.value||'pending';
+  const status=statusSelect?.value||'pending';
+  const method=methodSelect?.value||'';
   const tracking=hasTracking?(document.getElementById('trk-'+orderId)?.value||''):null;
-  if(select)select.disabled=true;
-  if(msg){msg.textContent='Saving...';msg.style.fontWeight='800'}
+
+  if(statusSelect)statusSelect.disabled=true;
+  if(methodSelect)methodSelect.disabled=true;
+  if(msg){msg.textContent='Saving...';msg.style.fontWeight='800';msg.style.color=''}
+
   try{
     const r=await fetch(SUPA+'/functions/v1/admin-update-fulfillment',{
       method:'POST',
@@ -1949,15 +1998,35 @@ async function updateFulfillment(orderId,hasTracking){
         apikey:KEY,
         'Content-Type':'application/json'
       },
-      body:JSON.stringify({order_id:orderId,status,tracking_number:tracking})
+      body:JSON.stringify({
+        order_id:orderId,
+        fulfillment_method:method,
+        status,
+        tracking_number:tracking
+      })
     });
     const j=await r.json().catch(()=>({}));
     if(!r.ok)throw new Error(j.error||'Unable to save fulfillment');
-    if(msg){msg.textContent='Saved: '+status.replaceAll('_',' ');msg.style.fontWeight='900'}
-    if(select)select.disabled=false;
+
+    if(msg){
+      if(j.financial_adjustment?.refund_due){
+        msg.innerHTML=`<b>Saved.</b> Method corrected to ${esc(method)}. <span style="color:#b54708">${esc(j.financial_adjustment.message)}</span>`;
+      }else{
+        msg.textContent='Saved: '+method+' · '+status.replaceAll('_',' ');
+      }
+      msg.style.fontWeight='900';
+    }
+
+    await loadData();
+    renderAdmin();
   }catch(err){
-    if(msg){msg.textContent='Save failed: '+(err?.message||String(err));msg.style.fontWeight='900'}
-    if(select)select.disabled=false;
+    if(msg){
+      msg.textContent='Save failed: '+(err?.message||String(err));
+      msg.style.fontWeight='900';
+      msg.style.color='#b42318';
+    }
+    if(statusSelect)statusSelect.disabled=false;
+    if(methodSelect)methodSelect.disabled=false;
   }
 }
 
