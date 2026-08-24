@@ -1218,6 +1218,50 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-sh
 .bidderAccessAction{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.bidderRestrictionBtn{border:0;border-radius:8px;padding:8px 10px;font-size:11px;font-weight:800;cursor:pointer}.bidderRestrictionBtn.restrict{background:#991b1b;color:#fff}.bidderRestrictionBtn.restore{background:#087443;color:#fff}
 @media(max-width:800px){.bidderAccessRow{grid-template-columns:1fr}.bidderAccessAction{justify-content:flex-start}}
 </style>
+
+<style>
+/* Bidder Access fit/scan cleanup */
+.bidderAccessCard .adminCardBody{overflow:hidden}
+.bidderAccessRow{
+  grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)!important;
+  grid-template-areas:
+    "identity action"
+    "signals signals";
+  gap:8px 12px!important;
+  align-items:center!important;
+}
+.bidderIdentity{grid-area:identity;min-width:0}
+.bidderIdentity b,.bidderIdentity span{
+  display:block;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.bidderSignals{grid-area:signals;min-width:0}
+.bidderAccessAction{
+  grid-area:action;
+  min-width:0;
+  justify-content:flex-end!important;
+}
+.bidderAccessAction .opsBadge{
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.bidderRestrictionBtn{
+  white-space:nowrap;
+}
+@media(max-width:900px){
+  .bidderAccessRow{
+    grid-template-columns:1fr!important;
+    grid-template-areas:
+      "identity"
+      "signals"
+      "action";
+  }
+  .bidderAccessAction{justify-content:flex-start!important}
+}
+</style>
 </head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="modalbox" class="modalbox"></div></div>
 <script type="module">import{createClient}from'https://esm.sh/@supabase/supabase-js@2';const SUPA='https://cboodkfcfvshsxirpkxt.supabase.co';const KEY='sb_publishable_VDsMnqHeYHajdKendarwww_hMX9fMM2';const hhStorage={
   getItem:key=>{
@@ -1459,7 +1503,23 @@ else if(ended)action='<div class="bidState closed"><b>Auction ended.</b><br>Bidd
 else action=`<div class="bidNext"><div class="bidPanelLabel">YOUR NEXT BID</div><div class="bidNextAmount">${money(next)}</div></div><div class="bidState ready"><b>✓ Approved to bid</b></div><button id="bidBtn" class="goldBtn bidPrimary" onclick="placeNextBid('${a.id}')">Bid ${money(next)}</button><div class="bidRule"><span class="bidRuleIcon">2m</span><span>Bids increase by $5. Any bid placed with 2:00 or less remaining resets the auction clock to 2:00.</span></div>`;const cur=pics[galleryIndex];const gallery=`<div class="galleryMain">${cur?`<img src="${photoUrl(cur)}" alt="${esc(a.title)}">`:'<div class="galleryFallback">No photos yet</div>'}${pics.length>1?'<button class="galleryNav prev" onclick="galleryMove(-1)">‹</button><button class="galleryNav next" onclick="galleryMove(1)">›</button>':''}</div>${pics.length>1?`<div class="thumbs">${pics.map((p,i)=>`<button class="thumb ${i===galleryIndex?'active':''}" onclick="galleryPick(${i})"><img src="${photoUrl(p)}"></button>`).join('')}</div>`:''}`;const detailBox=document.getElementById('modalbox');detailBox.className='modalbox auctionDetailModal';detailBox.innerHTML=`<button class="auctionCloseX" onclick="closeModal()" aria-label="Close auction">×</button>${gallery}<div class="auctionDetailInner"><div class="detailGrid"><div><div class="category">${esc(a.categories?.name||'Auction')}</div><h2 style="font-size:28px;margin:5px 0 10px">${esc(a.title)}</h2>${a.condition?`<p><b>Condition:</b> ${esc(a.condition)}</p>`:''}${a.description?`<p>${esc(a.description)}</p>`:''}<p class="muted">${a.shipping_available?`Shipping ${money(a.shipping_price)}`:'No shipping'}${a.pickup_available?` • Pickup: ${esc(a.pickup_location||'Location assigned at checkout')}`:''}</p></div><div class="bidBox"><div class="bidPanelLabel">CURRENT BID</div><div class="bidCurrent">${money(a.current_bid)}</div><div class="bidTimeRow"><span class="bidPanelLabel">TIME LEFT</span><div id="modalCountdown" class="countdown" data-ends-at="${a.ends_at}">${remain(a.ends_at)}</div></div><div class="fulfillmentPills">${a.shipping_available?`<span class="fulfillmentPill">Shipping ${money(a.shipping_price)}</span>`:''}${a.pickup_available?`<span class="fulfillmentPill">Pickup · ${esc(a.pickup_location||'Location TBD')}</span>`:''}</div>${action}</div></div></div>`;document.getElementById('modal').classList.add('show');tickCountdowns()}
 function galleryMove(d){const pics=photosFor(activeAuctionId);if(!pics.length)return;galleryIndex=(galleryIndex+d+pics.length)%pics.length;openAuction(activeAuctionId,true)}
 function galleryPick(i){galleryIndex=i;openAuction(activeAuctionId,true)}
-async function placeNextBid(id){const btn=document.getElementById('bidBtn');if(btn){btn.disabled=true;btn.textContent='Submitting bid…'}const{data,error}=await sb.rpc('place_next_bid',{p_auction_id:id});if(error){alert(error.message);await pollAuctions();return}const placed=Array.isArray(data)&&data[0]?(data[0].new_current_bid??data[0].amount):null;await loadData();closeModal();renderAuctions();alert(placed!=null?`Bid placed at ${money(placed)}.`:'Bid placed successfully.')}
+async function placeNextBid(id){
+  const btn=document.getElementById('bidBtn');
+  const oldText=btn?.textContent||'Place Bid';
+  if(btn){btn.disabled=true;btn.textContent='Submitting bid…'}
+  const{data,error}=await sb.rpc('place_next_bid',{p_auction_id:id});
+  if(error){
+    if(btn){btn.disabled=false;btn.textContent=oldText}
+    alert(error.message);
+    await pollAuctions();
+    return;
+  }
+  const placed=Array.isArray(data)&&data[0]?(data[0].new_current_bid??data[0].amount):null;
+  await loadData();
+  closeModal();
+  renderAuctions();
+  alert(placed!=null?`Bid placed at ${money(placed)}.`:'Bid placed successfully.');
+}
 async function renderAccount(){
 if(!session){
   document.getElementById('app').innerHTML='<div class="panel"><h2>My Account</h2><p>Create an account or sign in to bid.</p><div class="row" style="justify-content:flex-start"><button onclick="openSignUp()">Create Account</button><button class="light" onclick="openSignIn()">Sign In</button></div></div>';
@@ -1862,8 +1922,8 @@ document.getElementById('app').innerHTML=`
             ${Number(b.nonpayment_cancellations||0)>0?`<span class="bidderSignal warning">${b.nonpayment_cancellations} nonpayment cancellation${Number(b.nonpayment_cancellations)===1?'':'s'}</span>`:''}
           </div>
           <div class="bidderAccessAction">
-            <span class="opsBadge ${b.bidding_suspended?'overdue':'paid'}">${b.bidding_suspended?'BIDDING RESTRICTED':'BIDDING ACTIVE'}</span>
-            <button class="bidderRestrictionBtn ${b.bidding_suspended?'restore':'restrict'}" data-user-id="${b.user_id}" data-suspended="${b.bidding_suspended?'true':'false'}">${b.bidding_suspended?'Restore Bidding':'Restrict Bidding'}</button>
+            <span class="opsBadge ${b.bidding_suspended?'overdue':'paid'}">${b.bidding_suspended?'RESTRICTED':'ACTIVE'}</span>
+            <button class="bidderRestrictionBtn ${b.bidding_suspended?'restore':'restrict'}" data-user-id="${b.user_id}" data-suspended="${b.bidding_suspended?'true':'false'}">${b.bidding_suspended?'Restore':'Restrict'}</button>
           </div>
         </div>`).join(''):`<div class="opsEmpty">No bidder accounts yet.</div>`}
       </div>
