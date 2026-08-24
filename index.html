@@ -1264,17 +1264,26 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-sh
 </style>
 
 <style>
-.policyLinks{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:20px 0 8px;font-size:12px}
-.policyLinks button{background:none!important;border:0!important;color:#475467!important;padding:0!important;text-decoration:underline;cursor:pointer;font-weight:700}
-.policyDoc{max-height:72vh;overflow:auto;padding-right:6px}
-.policyDoc h2{margin-top:0}
-.policyDoc h3{margin:20px 0 6px;font-size:16px}
-.policyDoc p,.policyDoc li{font-size:13px;line-height:1.6;color:#344054}
-.policyDoc .policyNotice{background:#fff8e8;border:1px solid #ecd28f;padding:10px 12px;border-radius:10px;margin-bottom:14px}
-.checkoutPolicyAck{font-size:11px;color:#667085;line-height:1.45;margin-top:8px}
-.checkoutPolicyAck button{background:none!important;border:0!important;padding:0!important;color:#344054!important;text-decoration:underline;font-weight:700;cursor:pointer}
+.contactWrap{max-width:900px;margin:28px auto}
+.contactHero{padding:26px;border:1px solid #e7e1d6;border-radius:16px;background:#fff}
+.contactHero h2{margin:0 0 6px}
+.contactIntro{color:#667085;line-height:1.55;margin-bottom:20px}
+.contactEmailBox{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px;background:#fff8e8;border:1px solid #ead59b;border-radius:12px;margin:16px 0 22px}
+.contactEmailBox a{font-weight:900;color:#6d4b00;text-decoration:none;overflow-wrap:anywhere}
+.contactTopics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.contactTopic{padding:13px;border:1px solid #ece7dd;border-radius:11px;background:#faf9f6}
+.contactTopic b{display:block;margin-bottom:3px}
+.contactTopic span{font-size:12px;color:#667085;line-height:1.4}
+.contactTip{margin-top:18px;padding:12px;border-radius:10px;background:#f8fafc;color:#475467;font-size:12px;line-height:1.5}
+.contactActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+@media(max-width:700px){
+  .contactWrap{margin:16px auto}
+  .contactHero{padding:18px}
+  .contactEmailBox{align-items:flex-start;flex-direction:column}
+  .contactTopics{grid-template-columns:1fr}
+}
 </style>
-</head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="modalbox" class="modalbox"></div></div>
+</head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button class="ghost" onclick="showContact()">Contact</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="modalbox" class="modalbox"></div></div>
 <script type="module">import{createClient}from'https://esm.sh/@supabase/supabase-js@2';const SUPA='https://cboodkfcfvshsxirpkxt.supabase.co';const KEY='sb_publishable_VDsMnqHeYHajdKendarwww_hMX9fMM2';const hhStorage={
   getItem:key=>{
     try{return window.localStorage.getItem('hammerhunt:'+key)}catch(e){return null}
@@ -1591,7 +1600,7 @@ const openWinHtml=openWins.length?openWins.map(w=>{
     const due=w.payment_due_at?new Date(w.payment_due_at):null;
     const overdue=due&&due.getTime()<=Date.now();
     const dueText=due?due.toLocaleString():'';
-    actionHtml=`<div class="notice ${overdue?'deadlineOverdue':''}" style="margin:10px 0 0"><b>${overdue?'Payment overdue.':'Payment needed.'}</b> ${overdue?'The 24-hour payment period has passed. HammerHunt may cancel this transaction and relist the item.':'Choose how you want to receive the item and complete checkout.'}${dueText?`<div class="paymentDeadline">Payment deadline: <b>${esc(dueText)}</b></div>`:''}</div><div class="accountItemActions">${opts.join('')}</div><div class="checkoutPolicyAck">By completing checkout, you agree to the <button onclick="openPolicy('terms')">Terms & Conditions</button> and <button onclick="openPolicy('refunds')">Payment & Refund Policy</button>.</div>`;
+    actionHtml=`<div class="notice ${overdue?'deadlineOverdue':''}" style="margin:10px 0 0"><b>${overdue?'Payment overdue.':'Payment needed.'}</b> ${overdue?'The 24-hour payment period has passed. HammerHunt may cancel this transaction and relist the item.':'Choose how you want to receive the item and complete checkout.'}${dueText?`<div class="paymentDeadline">Payment deadline: <b>${esc(dueText)}</b></div>`:''}</div><div class="accountItemActions">${opts.join('')}</div>`;
   }else{
     statusText={pending:'PROCESSING',ready_for_pickup:'READY FOR PICKUP',shipped:'SHIPPED',completed:'COMPLETED'}[fs]||'PAID';
     const detail=w.fulfillment_method==='shipping'
@@ -2273,87 +2282,42 @@ async function updateFulfillment(orderId,hasTracking){
 async function createAuction(){const title=aTitle.value.trim(),start=Number(aStart.value),duration=Number(aDuration.value),durationUnit=aDurationUnit.value,pickupOn=aPickup.checked,pickupLocation=aPickupLocation.value;if(!title||Number.isNaN(start)||!Number.isFinite(duration)||duration<1)return alert('Enter title, starting bid, and a valid duration.');if(!aShipOn.checked&&!pickupOn)return alert('At least one fulfillment option is required.');if(pickupOn&&!pickupLocation)return alert('Choose Camden, TN or Rock Hill, SC for local pickup.');const durationMs=duration*(durationUnit==='days'?86400000:durationUnit==='hours'?3600000:60000);const now=Date.now();const row={title,category_id:aCat.value,condition:aCondition.value.trim(),description:aDesc.value.trim(),starting_bid:start,current_bid:start,starts_at:new Date(now).toISOString(),ends_at:new Date(now+durationMs).toISOString(),status:'live',shipping_available:aShipOn.checked,shipping_price:aShipOn.checked?Number(aShip.value||0):null,pickup_available:pickupOn,pickup_location:pickupOn?pickupLocation:null,pickup_instructions:pickupOn?aPickupInfo.value.trim():null};const{data:a,error}=await sb.from('auctions').insert(row).select('id').single();if(error)return alert(error.message);for(let i=0;i<pendingPhotos.length;i++){const f=pendingPhotos[i],raw=(f.name.split('.').pop()||'jpg').toLowerCase(),ext=raw.replace(/[^a-z0-9]/g,'')||'jpg',path=`${a.id}/${String(i).padStart(2,'0')}-${crypto.randomUUID()}.${ext}`;const{error:upErr}=await sb.storage.from('auction-images').upload(path,f,{contentType:f.type||undefined,upsert:false});if(upErr){alert(`Auction published, but photo ${i+1} failed: ${upErr.message}`);continue}const{error:dbErr}=await sb.from('auction_photos').insert({auction_id:a.id,storage_path:path,sort_order:i});if(dbErr)alert(`Photo ${i+1} uploaded but could not be attached: ${dbErr.message}`)}pendingPhotos=[];await loadData();alert('Auction published.');renderAdmin()}
 
 
-function openPolicy(kind){
-  const docs={
-    terms:`<div class="policyDoc">
-      <h2>HammerHunt Terms & Conditions</h2>
-      <div class="policyNotice"><b>Draft for operational use.</b> Have these terms reviewed by a qualified attorney before public launch.</div>
-      <p>By creating an account, placing a bid, or completing a purchase on HammerHunt, you agree to these Terms & Conditions.</p>
 
-      <h3>1. Bidding</h3>
-      <p>All bids are binding offers to purchase the item if you are the winning bidder. Bids generally advance in $5 increments. HammerHunt may use an anti-sniping extension during the final minutes of an auction.</p>
+function showContact(){
+  currentView='contact';
+  document.getElementById('app').innerHTML=`
+    <div class="contactWrap">
+      <section class="contactHero">
+        <h2>Contact HammerHunt</h2>
+        <div class="contactIntro">Need help with an auction, payment, pickup, shipping, refund, or your account? Send us an email and include enough information for us to identify the auction or order.</div>
 
-      <h3>2. Payment deadline</h3>
-      <p>Winning bidders must complete payment within 24 hours after the auction ends. If payment is not completed within that period, HammerHunt may cancel the transaction and return the item to inventory for resale or relisting.</p>
+        <div class="contactEmailBox">
+          <div>
+            <div class="muted" style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em">Customer Support</div>
+            <a href="mailto:support@hammerhunt.com">support@hammerhunt.com</a>
+          </div>
+          <a class="goldBtn" style="display:inline-block;text-decoration:none;color:#111" href="mailto:support@hammerhunt.com?subject=HammerHunt%20Support%20Request">Email Support</a>
+        </div>
 
-      <h3>3. Nonpayment and bidding privileges</h3>
-      <p>Repeated nonpayment may result in temporary or permanent restriction of bidding privileges. Restricted users may still sign in and manage existing orders unless otherwise stated.</p>
+        <div class="adminSectionTitle">What can we help with?</div>
+        <div class="contactTopics">
+          <div class="contactTopic"><b>Bidding & account access</b><span>Bid problems, payment-method verification, sign-in issues, or bidding restrictions.</span></div>
+          <div class="contactTopic"><b>Winning & payment</b><span>Winning-bid questions, checkout issues, or the 24-hour payment deadline.</span></div>
+          <div class="contactTopic"><b>Local pickup</b><span>Questions about Camden, TN or Rock Hill, SC pickup instructions and readiness.</span></div>
+          <div class="contactTopic"><b>Shipping & tracking</b><span>Shipping-method questions, shipment status, or tracking information.</span></div>
+          <div class="contactTopic"><b>Refunds & corrections</b><span>Approved refunds, shipping-to-pickup corrections, or order adjustments.</span></div>
+          <div class="contactTopic"><b>Something else</b><span>Anything that does not fit one of the categories above.</span></div>
+        </div>
 
-      <h3>4. Shipping and pickup</h3>
-      <p>Available fulfillment options are shown on each auction. Pickup items will identify the applicable pickup location, currently Camden, Tennessee or Rock Hill, South Carolina. Buyers are responsible for selecting the correct available fulfillment option during checkout.</p>
-
-      <h3>5. Fulfillment corrections</h3>
-      <p>HammerHunt may correct a fulfillment method when necessary. If a paid order is changed from shipping to pickup and the buyer paid more than the corrected total, any approved difference may be refunded through the original payment processor.</p>
-
-      <h3>6. Item descriptions and condition</h3>
-      <p>Items are sold according to the description, photos, and stated condition shown in the auction listing. Buyers should review all available information before bidding.</p>
-
-      <h3>7. Refunds and cancellations</h3>
-      <p>Completed winning bids are generally final. Refunds may be issued when HammerHunt determines that an order cannot be fulfilled as described, a fulfillment correction creates an overpayment, or another documented exception applies.</p>
-
-      <h3>8. Account integrity</h3>
-      <p>Users must provide accurate account information and may not manipulate auctions, interfere with bidding, or use multiple accounts to distort auction results.</p>
-
-      <h3>9. Site availability</h3>
-      <p>HammerHunt may pause, extend, cancel, or correct an auction when necessary because of technical problems, listing errors, suspected abuse, or other circumstances affecting a fair auction.</p>
-
-      <h3>10. Changes</h3>
-      <p>HammerHunt may update these terms from time to time. Continued use of the service after an update means you accept the revised terms.</p>
-    </div>`,
-    privacy:`<div class="policyDoc">
-      <h2>HammerHunt Privacy Notice</h2>
-      <div class="policyNotice"><b>Draft for operational use.</b> Have this notice reviewed before public launch.</div>
-      <p>HammerHunt collects information needed to operate accounts, auctions, payments, shipping, pickup, customer support, and fraud prevention.</p>
-
-      <h3>Information we collect</h3>
-      <p>This may include your name, email address, account activity, bids, purchases, fulfillment choices, and payment-status information. Payment card details are processed by our payment provider and are not intended to be stored directly by HammerHunt.</p>
-
-      <h3>How information is used</h3>
-      <p>We use information to authenticate users, operate auctions, process orders, send transactional notices, manage fulfillment, prevent abuse, and maintain business records.</p>
-
-      <h3>Service providers</h3>
-      <p>HammerHunt may use third-party providers for payment processing, email delivery, hosting, authentication, and related infrastructure. Those providers process information according to their own terms and privacy practices.</p>
-
-      <h3>Data retention</h3>
-      <p>Auction, bidding, order, payment-status, and fulfillment records may be retained for business, accounting, fraud-prevention, and dispute-resolution purposes.</p>
-
-      <h3>Contact</h3>
-      <p>Questions about privacy should be directed to HammerHunt through the contact method published on the site.</p>
-    </div>`,
-    refunds:`<div class="policyDoc">
-      <h2>Payment, Cancellation & Refund Policy</h2>
-      <p><b>Winning bids are binding.</b> Payment is due within 24 hours after an auction ends.</p>
-      <p>If payment is not completed within 24 hours, HammerHunt may cancel the transaction, return the item to inventory, relist it, and restrict bidding privileges for repeated nonpayment.</p>
-      <p>Refunds are not automatic simply because a buyer changes their mind. HammerHunt may issue a refund when an item cannot be fulfilled as represented, when a fulfillment correction creates an overpayment, or when another approved exception applies.</p>
-      <p>When a shipping-to-pickup correction creates an overpayment, the approved difference may be refunded through the original payment processor. Bank or card posting times may vary.</p>
-    </div>`
-  };
-  document.getElementById('modalbox').innerHTML=(docs[kind]||docs.terms)+`<div style="margin-top:14px"><button class="light" onclick="closeModal()">Close</button></div>`;
-  document.getElementById('modal').classList.add('show');
+        <div class="contactTip"><b>For faster help:</b> include the auction title, the email address on your HammerHunt account, and a short description of what happened. Never email your full card number or password.</div>
+        <div class="contactActions">
+          <button class="light" onclick="showView('auctions')">Back to Auctions</button>
+          ${session?`<button class="light" onclick="showView('account')">My Account</button>`:''}
+        </div>
+      </section>
+    </div>`;
 }
-window.openPolicy=openPolicy;
-
-const _policyFooterObserver=new MutationObserver(()=>{
-  const app=document.getElementById('app');
-  if(!app||document.getElementById('policyFooter'))return;
-  const footer=document.createElement('div');
-  footer.id='policyFooter';
-  footer.className='policyLinks';
-  footer.innerHTML=`<button onclick="openPolicy('terms')">Terms & Conditions</button><button onclick="openPolicy('privacy')">Privacy</button><button onclick="openPolicy('refunds')">Payment & Refund Policy</button>`;
-  app.insertAdjacentElement('afterend',footer);
-});
-_policyFooterObserver.observe(document.body,{childList:true,subtree:true});
-setTimeout(()=>_policyFooterObserver.takeRecords(),0);
+window.showContact=showContact;
 
 
 boot();</script></body></html>
