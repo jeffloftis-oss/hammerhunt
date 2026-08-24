@@ -1,10 +1,1203 @@
-from pathlib import Path
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111827"><title>HammerHunt</title><script>
+if(location.hostname==='hammerhunt.com'){
+  location.replace('https://www.hammerhunt.com'+location.pathname+location.search+location.hash);
+}
+</script><style>
+:root{--bg:#f5f6f8;--card:#fff;--ink:#17191d;--muted:#697180;--line:#e4e7ec;--dark:#111827;--gold:#fbbf24;--green:#087443;--red:#b42318}*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--ink)}header{background:var(--dark);color:#fff;position:sticky;top:0;z-index:5}.top{max-width:1100px;margin:auto;padding:15px 18px;display:flex;gap:14px;align-items:center;justify-content:space-between}.brand{font-size:26px;font-weight:900}.brand span{color:var(--gold)}nav{display:flex;gap:6px;flex-wrap:wrap}button{border:0;border-radius:9px;padding:10px 13px;font-weight:800;cursor:pointer;background:var(--dark);color:#fff}.ghost{background:#ffffff18}.light{background:#eef1f4;color:#111827}.good{background:var(--green)}main{max-width:1100px;margin:22px auto;padding:0 16px}.hero{background:linear-gradient(135deg,#111827,#26344e);color:#fff;padding:28px;border-radius:18px;margin-bottom:18px}.hero h1{margin:0 0 6px;font-size:36px}.hero p{margin:0;color:#d3dae6}.notice{background:#fff7d6;border:1px solid #f4d866;padding:12px;border-radius:10px;margin:12px 0}.ok{background:#eaf7ef;border:1px solid #b7e0c7;color:#08653c;padding:12px;border-radius:10px;margin:12px 0}.err{background:#fff0ee;border:1px solid #f4b9b2;color:#9d1c12;padding:12px;border-radius:10px;margin:12px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}.card,.panel{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 2px 8px #0000000a}.card{overflow:hidden;cursor:pointer}.card:active{transform:scale(.995)}.pad,.panel{padding:17px}.photo{height:160px;background:#e9edf2;display:flex;align-items:center;justify-content:center;font-weight:900;color:#8b94a2}.title{font-size:18px;font-weight:900}.muted{font-size:13px;color:var(--muted)}.price{font-size:24px;font-weight:900;margin:8px 0}.row{display:flex;gap:10px;align-items:center;justify-content:space-between}.hidden{display:none!important}.status{display:inline-block;padding:5px 8px;border-radius:999px;font-size:12px;font-weight:900;background:#eef1f4}.status.approved{background:#eaf7ef;color:#08653c}.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:16px;z-index:20}.modal.show{display:flex}.modalbox{background:#fff;border-radius:16px;max-width:520px;width:100%;padding:20px;max-height:90vh;overflow:auto}input,select,textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:9px;background:#fff;font:inherit}textarea{min-height:100px}label{font-size:13px;font-weight:800;display:block;margin:10px 0 6px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.full{grid-column:1/-1}@media(max-width:650px){.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.hero h1{font-size:29px}.top{align-items:flex-start;flex-direction:column}}
 
-src = Path("/mnt/data/HammerHunt-preview-24hr-nonpayment-policy.html")
-text = src.read_text(encoding="utf-8")
+/* HammerHunt hybrid marketplace refresh */
+body{background:#f7f7f4}.top{max-width:1180px}.brand{letter-spacing:.5px}.hero{background:linear-gradient(135deg,#171717,#353535);border-radius:20px;padding:30px;box-shadow:0 12px 30px #00000014}.hero h1{font-size:clamp(34px,6vw,56px);letter-spacing:-1.5px}.grid{grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px}.card{border-radius:16px;box-shadow:0 5px 18px #0000000d;transition:.15s ease}.card:hover{transform:translateY(-2px);box-shadow:0 12px 30px #00000014}.photo{height:205px;position:relative;overflow:hidden;background:#eceae4}.photo img{width:100%;height:100%;object-fit:cover;display:block}.photo .fallback{height:100%;display:flex;align-items:center;justify-content:center;font-weight:950;color:#8b8c89}.photoCount{position:absolute;right:10px;bottom:10px;background:#171717cc;color:white;border-radius:999px;padding:5px 8px;font-size:11px;font-weight:900}.category{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:#8d7738;font-weight:900}.priceRow{display:flex;align-items:end;justify-content:space-between;gap:12px}.countdown{font-variant-numeric:tabular-nums;font-weight:900}.goldBtn{background:#d9a514;color:#171717}.goldBtn:hover{background:#f4c542}.galleryMain{height:min(52vh,430px);background:#111;position:relative}.galleryMain img{width:100%;height:100%;object-fit:contain;display:block}.galleryFallback{height:100%;display:flex;align-items:center;justify-content:center;background:#eceae4;color:#8b8c89;font-size:22px;font-weight:950}.galleryNav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:0;background:#171717cc;color:#fff;font-size:22px}.galleryNav.prev{left:12px}.galleryNav.next{right:12px}.thumbs{display:flex;gap:8px;padding:10px 14px;overflow:auto;background:#f7f6f2}.thumb{width:68px;height:54px;flex:0 0 auto;border:2px solid transparent;border-radius:8px;overflow:hidden;padding:0;background:#ddd}.thumb.active{border-color:#d9a514}.thumb img{width:100%;height:100%;object-fit:cover}.detailGrid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}.bidBox{background:#f7f6f2;border:1px solid var(--line);border-radius:14px;padding:15px}.bigPrice{font-size:36px;font-weight:950}.photoPicker{border:2px dashed #d4d0c6;border-radius:14px;padding:16px;background:#fbfaf7;margin-bottom:14px}.previewGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:10px;margin-top:12px}.preview{aspect-ratio:1;border-radius:10px;overflow:hidden;background:#e9e7e0}.preview img{width:100%;height:100%;object-fit:cover}.closedList{display:grid;gap:8px}.closedRow{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;border-top:1px solid var(--line);padding:10px 0}.closedRow img{width:64px;height:50px;object-fit:cover;border-radius:8px;background:#eee}@media(max-width:700px){.detailGrid{grid-template-columns:1fr}.galleryMain{height:320px}.closedRow{grid-template-columns:54px 1fr}.closedRow .closedPrice{grid-column:2}.grid{grid-template-columns:1fr}}
 
-# Add CSS for compact duration controls.
-text = text.replace("</head>", r"""
+/* HammerHunt launch polish — visual layer only */
+:root{--hh-navy:#111827;--hh-gold:#f2b91f;--hh-gold2:#ffd45c;--hh-ink:#101828;--hh-line:#e7e4dc;--hh-muted:#667085}
+body{background:radial-gradient(circle at top right,rgba(242,185,31,.07),transparent 34rem),linear-gradient(180deg,#fbfaf6 0,#f5f6f8 42rem,#f7f7f4 100%);color:var(--hh-ink)}
+header{background:rgba(17,24,39,.97);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.08);box-shadow:0 8px 30px rgba(17,24,39,.16)}
+.top{max-width:1240px;padding:15px 22px}.brand{font-size:28px;letter-spacing:.9px}.brand span{color:var(--hh-gold)}
+nav button{border-radius:999px;padding:9px 14px;transition:.18s ease}nav button:hover{background:#ffffff26;transform:translateY(-1px)}
+main{max-width:1240px;margin:28px auto 60px;padding:0 22px}
+.hero{position:relative;overflow:hidden;background:radial-gradient(circle at 82% 20%,rgba(242,185,31,.26),transparent 18rem),linear-gradient(135deg,#0f172a 0%,#1f2937 62%,#2d3544 100%);border:1px solid rgba(255,255,255,.07);border-radius:24px;padding:42px 46px;box-shadow:0 22px 60px rgba(17,24,39,.18)}
+.hero:after{content:"";position:absolute;width:320px;height:320px;border-radius:50%;right:-120px;bottom:-180px;border:1px solid rgba(255,255,255,.09);box-shadow:0 0 0 45px rgba(255,255,255,.025),0 0 0 90px rgba(255,255,255,.018)}
+.hero h1{max-width:760px;font-size:clamp(42px,6vw,72px);line-height:.95;letter-spacing:-2.6px;margin:0 0 14px}.hero p{max-width:780px;font-size:16px;line-height:1.65;color:#d5dbea}
+.heroTag{display:inline-flex;align-items:center;gap:8px;margin-bottom:16px;padding:7px 11px;border-radius:999px;background:#ffffff12;border:1px solid #ffffff18;font-size:12px;font-weight:900;letter-spacing:.9px;text-transform:uppercase;color:#f7d873}
+.liveDot{width:8px;height:8px;border-radius:50%;background:var(--hh-gold);box-shadow:0 0 0 5px rgba(242,185,31,.14)}
+.notice,.ok,.err{border-radius:14px;padding:14px 16px;box-shadow:0 6px 18px rgba(16,24,40,.04)}
+.marketHeader{margin:26px 0 14px;align-items:flex-end}.marketEyebrow{font-size:12px;text-transform:uppercase;letter-spacing:1.2px;font-weight:900;color:#9a7b1f;margin-bottom:3px}.marketTitle{margin:0;font-size:28px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.card{background:rgba(255,255,255,.97);border:1px solid var(--hh-line);border-radius:20px;box-shadow:0 8px 28px rgba(16,24,40,.07);overflow:hidden;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.card:hover{transform:translateY(-5px);box-shadow:0 20px 44px rgba(16,24,40,.13);border-color:#ded8ca}
+.photo{height:238px;background:#ece9e2}.pad{padding:18px 18px 19px}.title{font-size:20px;line-height:1.28;margin-top:5px}
+.priceRow{margin-top:15px;padding-top:14px;border-top:1px solid #eeeae1}.price{font-size:28px;letter-spacing:-.7px}.countdown{font-size:16px;color:#9b2c1d}
+.goldBtn{background:linear-gradient(180deg,var(--hh-gold2),var(--hh-gold));color:#171717;box-shadow:0 7px 18px rgba(242,185,31,.24)}
+.emptyMarket{grid-column:1/-1;min-height:250px;display:flex;align-items:center;justify-content:center;text-align:center;background:radial-gradient(circle at top center,rgba(242,185,31,.09),transparent 18rem),#fff;border:1px dashed #d9d4c8;border-radius:22px;padding:34px}
+.emptyMarket .emptyIcon{width:64px;height:64px;border-radius:18px;margin:0 auto 14px;display:grid;place-items:center;background:#111827;color:#f2b91f;font-size:30px;font-weight:900;box-shadow:0 12px 26px rgba(17,24,39,.16)}
+.emptyMarket h3{font-size:24px;margin:0 0 7px}.emptyMarket p{max-width:520px;margin:0 auto;color:var(--hh-muted);line-height:1.6}
+.panel{border:1px solid var(--hh-line);border-radius:18px;background:rgba(255,255,255,.97);box-shadow:0 8px 26px rgba(16,24,40,.06);margin-bottom:18px}
+input,select,textarea{border:1px solid #dfe3e8;background:#fff;transition:border-color .15s ease,box-shadow .15s ease}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-shadow:0 0 0 4px rgba(242,185,31,.12)}
+.bidBox{background:linear-gradient(180deg,#fbfaf6,#f5f3eb);border-color:#e5deca}
+.closedRow{padding:14px 4px}.closedRow img{width:70px;height:56px;border-radius:10px}
+.photoPicker{background:linear-gradient(180deg,#fcfbf8,#f7f5ef);border-color:#d8d1c2}
+@media(max-width:1000px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){main{padding:0 14px;margin-top:18px}.top{padding:13px 14px}.hero{padding:30px 24px;border-radius:20px}.hero h1{font-size:44px}.grid{grid-template-columns:1fr;gap:16px}.photo{height:250px}.marketTitle{font-size:24px}nav{width:100%}nav button{flex:1}}
+
+
+/* Marketplace discovery controls */
+.hero{padding:32px 40px}
+.hero h1{font-size:clamp(38px,5.4vw,62px);max-width:820px}
+.marketTools{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  justify-content:space-between;
+  margin:0 0 14px;
+}
+.marketSearch{
+  position:relative;
+  flex:1;
+  min-width:260px;
+}
+.marketSearch input{
+  height:48px;
+  padding:0 16px 0 44px;
+  border-radius:14px;
+  background:#fff;
+  border:1px solid #dedbd3;
+  box-shadow:0 7px 18px rgba(16,24,40,.05);
+}
+.marketSearchIcon{
+  position:absolute;
+  left:15px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#98a2b3;
+  pointer-events:none;
+  font-size:18px;
+}
+.categoryScroller{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding:2px 0 12px;
+  scrollbar-width:thin;
+}
+.categoryChip{
+  flex:0 0 auto;
+  border:1px solid #dedbd3;
+  background:#fff;
+  color:#344054;
+  border-radius:999px;
+  padding:9px 13px;
+  font-size:13px;
+  font-weight:850;
+  box-shadow:0 4px 12px rgba(16,24,40,.04);
+}
+.categoryChip:hover{border-color:#d3b04a;background:#fffaf0}
+.categoryChip.active{
+  background:#111827;
+  color:#fff;
+  border-color:#111827;
+  box-shadow:0 7px 16px rgba(17,24,39,.15);
+}
+.resultMeta{
+  color:#667085;
+  font-size:13px;
+  white-space:nowrap;
+}
+.noMatches{
+  grid-column:1/-1;
+  background:#fff;
+  border:1px dashed #d9d4c8;
+  border-radius:18px;
+  padding:28px;
+  text-align:center;
+  color:#667085;
+}
+@media(max-width:700px){
+  .hero{padding:26px 22px}
+  .hero h1{font-size:40px}
+  .marketTools{display:block}
+  .resultMeta{margin-top:8px}
+  .marketSearch{min-width:0}
+  .categoryScroller{margin-top:10px}
+}
+
+
+/* Populated marketplace refinement */
+.card{
+  display:flex;
+  flex-direction:column;
+  min-height:100%;
+}
+.photo{
+  height:auto;
+  aspect-ratio:4/3;
+  position:relative;
+  overflow:hidden;
+  background:#ece9e2;
+}
+.photo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.pad{
+  display:flex;
+  flex-direction:column;
+  flex:1;
+}
+.priceRow{margin-top:auto}
+.card .goldBtn{min-height:42px}
+.countdown{
+  display:inline-block;
+  padding:4px 7px;
+  border-radius:8px;
+  background:#fff4ef;
+  color:#b42318;
+  min-width:72px;
+}
+.countdown.urgent{
+  background:#fee4e2;
+  color:#b42318;
+  box-shadow:0 0 0 1px #fecdca inset;
+}
+.countdown.finalMinute{
+  background:#b42318;
+  color:#fff;
+  box-shadow:0 0 0 1px #912018 inset,0 4px 12px rgba(180,35,24,.18);
+}
+
+
+/* Click-to-view marketplace photo gallery */
+.photo{cursor:zoom-in}
+.photoViewHint{
+  position:absolute;
+  left:10px;
+  bottom:10px;
+  z-index:3;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 9px;
+  border-radius:999px;
+  background:rgba(17,24,39,.82);
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.2px;
+  backdrop-filter:blur(6px);
+}
+.photoViewHint:before{content:"⌕";font-size:14px}
+.photoViewer{
+  width:min(920px,96vw);
+  padding:0;
+  overflow:hidden;
+  background:#111827;
+}
+.photoViewerHead{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:14px;
+  padding:14px 16px;
+  background:#fff;
+  color:#111827;
+}
+.photoViewerHead h3{margin:0;font-size:18px}
+.photoViewerClose{
+  background:#eef1f4;
+  color:#111827;
+  border-radius:999px;
+  width:38px;height:38px;
+  padding:0;
+  font-size:20px;
+}
+.photoViewerMain{
+  height:min(68vh,650px);
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#0b0f17;
+}
+.photoViewerMain img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+.photoViewerNav{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:46px;height:46px;
+  border-radius:50%;
+  padding:0;
+  background:rgba(17,24,39,.78);
+  color:#fff;
+  font-size:30px;
+  line-height:1;
+  box-shadow:0 6px 18px rgba(0,0,0,.22);
+}
+.photoViewerNav.prev{left:14px}
+.photoViewerNav.next{right:14px}
+.photoViewerCount{
+  position:absolute;
+  right:14px;
+  bottom:14px;
+  background:rgba(17,24,39,.82);
+  color:#fff;
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:12px;
+  font-weight:900;
+}
+.photoViewerThumbs{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding:11px 14px;
+  background:#f7f6f2;
+}
+.photoViewerThumb{
+  width:82px;height:64px;
+  flex:0 0 auto;
+  padding:0;
+  border:2px solid transparent;
+  border-radius:9px;
+  overflow:hidden;
+  background:#ddd;
+}
+.photoViewerThumb.active{border-color:#d9a514}
+.photoViewerThumb img{width:100%;height:100%;object-fit:cover}
+@media(max-width:700px){
+  .photoViewerMain{height:58vh}
+  .photoViewerNav{width:40px;height:40px;font-size:25px}
+}
+
+
+/* Auction detail modal polish */
+.modalbox{
+  position:relative;
+}
+.auctionDetailModal{
+  max-width:980px;
+  padding:0;
+  overflow:hidden;
+  border-radius:20px;
+  box-shadow:0 28px 80px rgba(0,0,0,.28);
+}
+.auctionCloseX{
+  position:absolute;
+  top:12px;
+  right:12px;
+  z-index:30;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  padding:0;
+  background:rgba(17,24,39,.86);
+  color:#fff;
+  font-size:26px;
+  line-height:1;
+  display:grid;
+  place-items:center;
+  box-shadow:0 8px 22px rgba(0,0,0,.22);
+}
+.auctionCloseX:hover{
+  background:#111827;
+  transform:translateY(-1px);
+}
+.auctionDetailBody{
+  padding:20px;
+}
+.auctionDetailModal .detailGrid{
+  grid-template-columns:minmax(0,1.35fr) minmax(290px,.65fr);
+  gap:24px;
+}
+.auctionDetailModal .bidBox{
+  position:sticky;
+  top:0;
+  align-self:start;
+  background:linear-gradient(180deg,#fffdf7,#f7f4e8);
+  border:1px solid #e4dcc6;
+  box-shadow:0 10px 24px rgba(16,24,40,.07);
+  padding:18px;
+}
+.auctionDetailModal .bigPrice{
+  font-size:42px;
+  letter-spacing:-1.5px;
+  margin:4px 0 8px;
+}
+.auctionDetailModal .galleryMain{
+  height:min(58vh,520px);
+}
+.auctionDetailModal .thumbs{
+  border-radius:0 0 14px 14px;
+}
+.auctionDetailModal .countdown{
+  background:#f2f4f7;
+  color:#344054;
+  box-shadow:none;
+}
+.auctionDetailModal .countdown.urgent{
+  background:#fff4e5;
+  color:#b54708;
+  box-shadow:0 0 0 1px #fedf89 inset;
+}
+.auctionDetailModal .countdown.finalMinute,
+.auctionDetailModal .countdown.antiSnipe{
+  background:#b42318;
+  color:#fff;
+  box-shadow:0 0 0 1px #912018 inset,0 4px 12px rgba(180,35,24,.18);
+}
+.auctionActionHint{
+  margin-top:10px;
+  font-size:12px;
+  line-height:1.45;
+  color:#667085;
+}
+@media(max-width:760px){
+  .auctionDetailModal{
+    width:min(96vw,680px);
+    max-height:94vh;
+  }
+  .auctionDetailBody{padding:14px}
+  .auctionDetailModal .detailGrid{grid-template-columns:1fr}
+  .auctionDetailModal .galleryMain{height:42vh}
+  .auctionDetailModal .bidBox{position:static}
+}
+
+
+/* Auction detail hotfix */
+.auctionDetailModal{
+  position:relative!important;
+  max-width:980px!important;
+  max-height:92vh!important;
+  overflow:auto!important;
+  padding:0!important;
+  border-radius:20px!important;
+}
+.auctionCloseX{
+  position:sticky!important;
+  float:right;
+  top:10px;
+  margin:10px 10px -52px 0;
+  z-index:200!important;
+  width:42px!important;
+  height:42px!important;
+  border-radius:50%!important;
+  padding:0!important;
+  display:grid!important;
+  place-items:center!important;
+  background:#111827!important;
+  color:#fff!important;
+  font-size:27px!important;
+  line-height:1!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.28)!important;
+}
+.auctionDetailInner{padding:20px 20px 28px}
+.countdown{
+  background:#f2f4f7!important;
+  color:#344054!important;
+  box-shadow:none!important;
+}
+.countdown.urgent{
+  background:#fff4e5!important;
+  color:#b54708!important;
+  box-shadow:0 0 0 1px #fedf89 inset!important;
+}
+.countdown.antiSnipe,.countdown.finalMinute{
+  background:#b42318!important;
+  color:#fff!important;
+  box-shadow:0 0 0 1px #912018 inset,0 4px 12px rgba(180,35,24,.18)!important;
+}
+
+
+/* Live bidding experience */
+.bidBox{
+  border-radius:18px!important;
+  padding:20px!important;
+}
+.bidPanelLabel{
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:#667085;
+}
+.bidCurrent{
+  font-size:44px;
+  line-height:1;
+  font-weight:950;
+  letter-spacing:-1.8px;
+  margin:6px 0 16px;
+  color:#101828;
+}
+.bidTimeRow{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  padding:13px 0;
+  border-top:1px solid #e8e2d2;
+  border-bottom:1px solid #e8e2d2;
+}
+.bidTimeRow .countdown{
+  font-size:17px;
+  font-weight:950;
+  min-width:auto;
+}
+.bidNext{
+  margin-top:16px;
+  padding:13px 14px;
+  border-radius:13px;
+  background:#fff;
+  border:1px solid #e4dcc6;
+}
+.bidNextAmount{
+  font-size:24px;
+  font-weight:950;
+  letter-spacing:-.6px;
+  margin-top:3px;
+}
+.bidPrimary{
+  width:100%;
+  min-height:52px;
+  margin-top:10px;
+  border:0;
+  border-radius:13px!important;
+  font-size:16px;
+  font-weight:950!important;
+  box-shadow:0 10px 22px rgba(242,185,31,.24);
+}
+.bidState{
+  margin-top:14px;
+  border-radius:13px;
+  padding:12px 13px;
+  font-size:13px;
+  line-height:1.45;
+}
+.bidState.ready{
+  background:#edf9f1;
+  border:1px solid #b8e2c7;
+  color:#087443;
+}
+.bidState.actionNeeded{
+  background:#fff8df;
+  border:1px solid #efcf61;
+  color:#694f00;
+}
+.bidState.closed{
+  background:#f2f4f7;
+  border:1px solid #d0d5dd;
+  color:#475467;
+}
+.bidRule{
+  display:flex;
+  gap:9px;
+  align-items:flex-start;
+  margin-top:12px;
+  padding:10px 11px;
+  border-radius:11px;
+  background:#f7f7f5;
+  color:#667085;
+  font-size:12px;
+  line-height:1.45;
+}
+.bidRuleIcon{
+  flex:0 0 auto;
+  width:20px;height:20px;
+  display:grid;place-items:center;
+  border-radius:50%;
+  background:#111827;
+  color:#f2b91f;
+  font-size:11px;
+  font-weight:950;
+}
+.fulfillmentPills{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:12px;
+}
+.fulfillmentPill{
+  display:inline-flex;
+  align-items:center;
+  padding:6px 9px;
+  border-radius:999px;
+  background:#f2f4f7;
+  color:#475467;
+  font-size:12px;
+  font-weight:800;
+}
+@media(max-width:760px){
+  .bidCurrent{font-size:38px}
+}
+
+</style>
+<style>
+/* HammerHunt compact auction modal polish */
+@media (min-width: 900px) {
+  .auction-modal,
+  .auction-modal-content,
+  .modal-content,
+  [class*="auction"][class*="modal"] > div {
+    max-width: 980px !important;
+  }
+
+  .auction-modal-content,
+  .modal-content {
+    width: min(78vw, 980px) !important;
+    max-height: 88vh !important;
+  }
+
+  .auction-modal .main-photo,
+  .auction-modal .gallery-main,
+  .auction-modal .modal-main-image,
+  .modal-content .main-photo,
+  .modal-content .gallery-main,
+  .modal-content .modal-main-image {
+    height: 340px !important;
+    max-height: 340px !important;
+    object-fit: contain !important;
+  }
+
+  .auction-modal img[class*="main"],
+  .modal-content img[class*="main"] {
+    max-height: 340px !important;
+    object-fit: contain !important;
+  }
+
+  .auction-modal .thumbnails,
+  .auction-modal .thumbnail-strip,
+  .modal-content .thumbnails,
+  .modal-content .thumbnail-strip {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+}
+</style>
+
+
+<style>
+/* HammerHunt desktop auction modal — gallery left, bidding right */
+@media (min-width: 800px) {
+  .auctionDetailModal{
+    width:min(86vw,1080px)!important;
+    max-width:1080px!important;
+    max-height:86vh!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1.35fr) minmax(330px,.65fr)!important;
+    grid-template-rows:minmax(0,1fr) auto!important;
+    overflow:hidden!important;
+    padding:0!important;
+  }
+
+  .auctionDetailModal > .auctionCloseX{
+    position:absolute!important;
+    top:12px!important;
+    right:12px!important;
+    margin:0!important;
+    float:none!important;
+    z-index:300!important;
+  }
+
+  .auctionDetailModal > .galleryMain{
+    grid-column:1!important;
+    grid-row:1!important;
+    height:auto!important;
+    min-height:430px!important;
+    max-height:none!important;
+    border-radius:20px 0 0 0!important;
+  }
+
+  .auctionDetailModal > .thumbs{
+    grid-column:1!important;
+    grid-row:2!important;
+    min-height:76px!important;
+    padding:10px 14px!important;
+    border-radius:0 0 0 20px!important;
+  }
+
+  .auctionDetailModal > .auctionDetailInner{
+    grid-column:2!important;
+    grid-row:1 / span 2!important;
+    overflow:auto!important;
+    max-height:86vh!important;
+    padding:28px 22px 24px!important;
+    background:#fff!important;
+  }
+
+  .auctionDetailModal .detailGrid{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:18px!important;
+  }
+
+  .auctionDetailModal .bidBox{
+    position:static!important;
+    width:100%!important;
+  }
+
+  .auctionDetailModal .bidCurrent{
+    font-size:40px!important;
+  }
+}
+
+@media (max-width: 799px) {
+  .auctionDetailModal{
+    width:min(96vw,680px)!important;
+    max-height:92vh!important;
+    overflow:auto!important;
+  }
+}
+</style>
+
+
+<style>
+/* HammerHunt bid-column visibility refinement */
+@media (min-width: 800px) {
+  .auctionDetailModal > .auctionDetailInner{
+    padding:22px 20px 18px!important;
+  }
+
+  .auctionDetailModal .detailGrid{
+    gap:12px!important;
+  }
+
+  .auctionDetailModal .detailGrid > div:first-child{
+    line-height:1.25!important;
+  }
+
+  .auctionDetailModal .detailGrid > div:first-child h2{
+    margin:3px 0 8px!important;
+    font-size:27px!important;
+  }
+
+  .auctionDetailModal .detailGrid > div:first-child p{
+    margin:7px 0!important;
+  }
+
+  .auctionDetailModal .bidBox{
+    padding:16px!important;
+    border-radius:16px!important;
+  }
+
+  .auctionDetailModal .bidCurrent{
+    font-size:38px!important;
+    margin:4px 0 10px!important;
+  }
+
+  .auctionDetailModal .bidTimeRow{
+    padding:9px 0!important;
+  }
+
+  .auctionDetailModal .fulfillmentPills{
+    margin-top:9px!important;
+    gap:6px!important;
+  }
+
+  .auctionDetailModal .fulfillmentPill{
+    padding:5px 8px!important;
+    font-size:11px!important;
+  }
+
+  .auctionDetailModal .bidNext{
+    margin-top:10px!important;
+    padding:10px 12px!important;
+  }
+
+  .auctionDetailModal .bidNextAmount{
+    font-size:22px!important;
+  }
+
+  .auctionDetailModal .bidState{
+    margin-top:9px!important;
+    padding:9px 11px!important;
+  }
+
+  .auctionDetailModal .bidPrimary{
+    min-height:46px!important;
+    margin-top:8px!important;
+  }
+
+  .auctionDetailModal .bidRule{
+    margin-top:8px!important;
+    padding:8px 9px!important;
+    line-height:1.35!important;
+  }
+}
+</style>
+
+
+<style>
+/* HammerHunt final auction-detail spacing refinement */
+@media (min-width: 800px) {
+  .auctionDetailModal > .galleryMain{
+    min-height:390px!important;
+  }
+
+  .auctionDetailModal .galleryMain img{
+    max-height:390px!important;
+    object-fit:contain!important;
+  }
+
+  .auctionDetailModal .thumbs{
+    min-height:70px!important;
+    padding:8px 12px!important;
+  }
+
+  .auctionDetailModal .bidRule{
+    margin-top:6px!important;
+    padding:7px 8px!important;
+    font-size:11px!important;
+    line-height:1.3!important;
+  }
+
+  .auctionDetailModal .bidRuleIcon{
+    width:18px!important;
+    height:18px!important;
+    font-size:10px!important;
+  }
+
+  .auctionDetailModal .bidState{
+    font-size:12px!important;
+  }
+
+  .auctionDetailModal .bidPrimary{
+    min-height:44px!important;
+  }
+}
+</style>
+
+
+<style>
+/* HammerHunt auction-detail title visibility fix */
+@media (min-width: 800px) {
+  .auctionDetailModal > .auctionDetailInner{
+    padding-top:42px!important;
+    scroll-padding-top:42px!important;
+  }
+
+  .auctionDetailModal .detailGrid > div:first-child{
+    flex:0 0 auto!important;
+    overflow:visible!important;
+  }
+
+  .auctionDetailModal .detailGrid > div:first-child .category{
+    margin-top:0!important;
+  }
+
+  .auctionDetailModal .detailGrid > div:first-child h2{
+    margin-top:5px!important;
+  }
+}
+</style>
+
+
+<style>
+/* HammerHunt My Account dashboard polish */
+.accountHero{
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  align-items:flex-start;
+  padding:22px;
+  border-radius:20px;
+  background:linear-gradient(135deg,#111827,#253149);
+  color:#fff;
+  box-shadow:0 16px 36px rgba(17,24,39,.14);
+  margin-bottom:18px;
+}
+.accountHero h2{margin:0 0 5px;font-size:30px}
+.accountHero .muted{color:#cbd5e1}
+.accountHeroActions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.accountHero .status{background:#ffffff14;color:#fff;border-color:#ffffff1f}
+.accountHero .status.approved{background:#dff7e8;color:#087443;border-color:#b8e2c7}
+.accountGrid{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:18px;
+  align-items:start;
+}
+.accountSection{
+  background:#fff;
+  border:1px solid var(--hh-line,#e7e4dc);
+  border-radius:18px;
+  box-shadow:0 8px 26px rgba(16,24,40,.06);
+  overflow:hidden;
+}
+.accountSectionHead{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  padding:17px 18px;
+  border-bottom:1px solid #ece9e1;
+}
+.accountSectionHead h3{margin:0;font-size:19px}
+.accountSectionBody{padding:4px 18px 16px}
+.accountCount{
+  min-width:28px;height:28px;border-radius:999px;
+  display:grid;place-items:center;padding:0 8px;
+  background:#f2f4f7;color:#475467;font-size:12px;font-weight:900;
+}
+.accountItem{
+  padding:15px 0;
+  border-bottom:1px solid #ece9e1;
+}
+.accountItem:last-child{border-bottom:0}
+.accountItemTop{
+  display:flex;justify-content:space-between;gap:14px;align-items:flex-start;
+}
+.accountItemTitle{font-size:15px;font-weight:900;line-height:1.3}
+.accountMeta{font-size:12px;color:#667085;margin-top:4px;line-height:1.45}
+.accountPrice{font-size:18px;font-weight:950;white-space:nowrap}
+.accountItemActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.accountEmpty{
+  padding:22px 0;color:#667085;font-size:13px;line-height:1.55;
+}
+.accountEmpty b{color:#344054}
+.activeBidCard{
+  padding:14px;
+  margin:12px 0 0;
+  border:1px solid #e6e0d2;
+  border-radius:14px;
+  background:linear-gradient(180deg,#fffdf8,#faf8f1);
+}
+.activeBidCard .countdown{
+  font-size:13px!important;
+  padding:4px 7px!important;
+}
+.historyRow{
+  display:grid;
+  grid-template-columns:1fr auto auto;
+  gap:12px;
+  align-items:center;
+  padding:13px 0;
+  border-bottom:1px solid #ece9e1;
+}
+.historyRow:last-child{border-bottom:0}
+.historyStatus{
+  font-size:11px;font-weight:900;text-transform:uppercase;
+  letter-spacing:.5px;color:#087443;
+}
+.securityCard{
+  padding:15px 0;
+}
+.securityCard p{margin:4px 0 12px}
+.accountWide{grid-column:1/-1}
+@media(max-width:800px){
+  .accountGrid{grid-template-columns:1fr}
+  .accountHero{display:block}
+  .accountHeroActions{justify-content:flex-start;margin-top:12px}
+  .historyRow{grid-template-columns:1fr auto}
+  .historyRow .historyStatus{grid-column:1/-1}
+}
+</style>
+
+
+<style>
+/* HammerHunt Admin dashboard polish */
+.adminShell{
+  display:grid;
+  gap:18px;
+}
+.adminHero{
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  align-items:flex-start;
+  padding:22px;
+  border-radius:20px;
+  background:linear-gradient(135deg,#111827,#253149);
+  color:#fff;
+  box-shadow:0 16px 36px rgba(17,24,39,.14);
+}
+.adminHero h2{margin:0 0 5px;font-size:30px}
+.adminHero .muted{color:#cbd5e1}
+.adminHeroStats{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.adminStat{
+  padding:8px 11px;
+  border-radius:12px;
+  background:#ffffff12;
+  border:1px solid #ffffff18;
+  font-size:12px;
+  font-weight:900;
+}
+.adminGrid{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:18px;
+  align-items:start;
+}
+.adminCard{
+  background:#fff;
+  border:1px solid var(--hh-line,#e7e4dc);
+  border-radius:18px;
+  box-shadow:0 8px 26px rgba(16,24,40,.06);
+  overflow:hidden;
+}
+.adminCardHead{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  padding:17px 18px;
+  border-bottom:1px solid #ece9e1;
+}
+.adminCardHead h3{margin:0;font-size:19px}
+.adminCardBody{padding:18px}
+.adminSectionTitle{
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.9px;
+  color:#8b6c15;
+  margin:4px 0 10px;
+}
+.adminDivider{
+  height:1px;
+  background:#ece9e1;
+  margin:18px 0;
+}
+.adminFormGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.adminFormGrid .full{grid-column:1/-1}
+.adminToggleRow{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.adminToggle{
+  flex:1;
+  min-width:180px;
+  padding:12px;
+  border:1px solid #e3dfd4;
+  border-radius:13px;
+  background:#faf9f5;
+}
+.adminToggle label{margin:0}
+.adminPublish{
+  width:100%;
+  min-height:48px;
+  margin-top:14px;
+  border-radius:13px!important;
+}
+.fulfillmentQueue{
+  display:grid;
+  gap:12px;
+}
+.fulfillmentItem{
+  border:1px solid #e5e1d7;
+  border-radius:15px;
+  padding:14px;
+  background:#fff;
+}
+.fulfillmentItem.needsAction{
+  border-color:#efcf61;
+  background:#fffdf5;
+}
+.fulfillmentItem.done{
+  opacity:.78;
+  background:#fafafa;
+}
+.fulfillmentTop{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+}
+.fulfillmentBuyer{
+  font-size:12px;
+  color:#667085;
+  margin-top:3px;
+}
+.fulfillmentFacts{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:12px;
+}
+.fulfillmentFact{
+  padding:9px 10px;
+  border-radius:10px;
+  background:#f7f7f5;
+}
+.fulfillmentFact .muted{display:block;margin-bottom:2px}
+.manageFilters{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.manageFilter{
+  border:1px solid #dedbd3;
+  background:#fff;
+  color:#344054;
+  border-radius:999px;
+  padding:8px 12px;
+  font-size:12px;
+  font-weight:850;
+}
+.manageFilter.active{
+  background:#111827;
+  color:#fff;
+  border-color:#111827;
+}
+.manageAuctionList{
+  display:grid;
+  gap:10px;
+  margin-top:14px;
+}
+.manageAuctionRow{
+  display:grid;
+  grid-template-columns:72px 1fr auto;
+  gap:12px;
+  align-items:center;
+  padding:12px;
+  border:1px solid #ebe7dd;
+  border-radius:14px;
+  background:#fff;
+}
+.manageAuctionRow.live{
+  border-color:#b8e2c7;
+  background:#fbfffc;
+}
+.manageAuctionRow img{
+  width:72px;
+  height:58px;
+  object-fit:cover;
+  border-radius:9px;
+}
+.manageAuctionMeta{
+  font-size:12px;
+  color:#667085;
+  margin-top:4px;
+  line-height:1.45;
+}
+.manageAuctionActions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:9px;
+}
+.dangerGhost{
+  background:#fff5f4!important;
+  color:#b42318!important;
+  border:1px solid #f4c7c3!important;
+}
+.adminWide{grid-column:1/-1}
+.adminEmpty{
+  color:#667085;
+  padding:10px 0 4px;
+  font-size:13px;
+}
+@media(max-width:900px){
+  .adminGrid{grid-template-columns:1fr}
+  .adminHero{display:block}
+  .adminHeroStats{justify-content:flex-start;margin-top:12px}
+}
+@media(max-width:700px){
+  .adminFormGrid{grid-template-columns:1fr}
+  .adminFormGrid .full{grid-column:auto}
+  .fulfillmentFacts{grid-template-columns:1fr}
+  .manageAuctionRow{grid-template-columns:58px 1fr}
+  .manageAuctionRow img{width:58px;height:50px}
+  .manageAuctionRow > :last-child{grid-column:2}
+}
+</style>
+
+
+<style>
+/* Compact Admin operations pass */
+.opsToolbar{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+}
+.opsSearch{
+  flex:1;min-width:230px;margin:0!important;
+}
+.opsTable{
+  width:100%;border-collapse:collapse;font-size:13px;
+}
+.opsTable th{
+  text-align:left;padding:10px 9px;border-bottom:1px solid #e8e5dd;
+  color:#667085;font-size:10px;text-transform:uppercase;letter-spacing:.65px;
+}
+.opsTable td{
+  padding:11px 9px;border-bottom:1px solid #efede7;vertical-align:middle;
+}
+.opsTable tr:last-child td{border-bottom:0}
+.opsTitle{font-weight:900;color:#101828}
+.opsSub{font-size:11px;color:#667085;margin-top:2px}
+.opsMoney{font-weight:900;white-space:nowrap}
+.opsBadge{
+  display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;
+  font-size:10px;font-weight:900;white-space:nowrap;background:#f2f4f7;color:#475467;
+}
+.opsBadge.paid,.opsBadge.live,.opsBadge.ready{background:#e8f7ee;color:#087443}
+.opsBadge.unpaid{background:#fff4e5;color:#9a5b00}
+.opsSelect{
+  min-width:150px;margin:0!important;padding:8px!important;font-size:12px!important;
+}
+.opsActions{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}
+.opsActions button{padding:7px 9px!important;font-size:11px!important}
+.opsThumb{width:48px;height:40px;object-fit:cover;border-radius:7px;display:block}
+.opsCountLine{font-size:12px;color:#667085}
+@media(max-width:800px){
+  .opsTable thead{display:none}
+  .opsTable,.opsTable tbody,.opsTable tr,.opsTable td{display:block;width:100%}
+  .opsTable tr{padding:10px 0;border-bottom:1px solid #e8e5dd}
+  .opsTable td{border:0;padding:4px 0}
+  .opsActions{justify-content:flex-start}
+  .opsSelect{width:100%}
+}
+</style>
+
+
+<style>
+.pickupLocationTag{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:999px;background:#eef4ff;color:#344054;font-size:11px;font-weight:850}
+</style>
+
+<style>
+.methodCorrection{
+  min-width:150px;
+  margin:0!important;
+  padding:8px!important;
+  font-size:12px!important;
+}
+.methodHint{
+  font-size:10px;
+  color:#667085;
+  margin-top:4px;
+  line-height:1.35;
+}
+</style>
+
+<style>
+.refundDueBox,.refundDoneBox{
+  display:grid;gap:4px;margin-top:8px;padding:9px 10px;border-radius:10px;font-size:11px;
+}
+.refundDueBox{background:#fff7e8;border:1px solid #f2cf87;color:#7a4a00}
+.refundDoneBox{background:#ecfdf3;border:1px solid #b7e5c8;color:#087443}
+.refundDueBox button{margin-top:5px;background:#b54708!important;color:#fff!important;border:0!important;padding:7px 9px!important;font-size:11px!important}
+</style>
+<style>
+.paymentPolicy{margin:0 0 12px;padding:10px 12px;border:1px solid #ead59b;background:#fffaf0;border-radius:10px;font-size:12px;line-height:1.45;color:#604b16}
+.paymentDeadline{margin-top:7px;font-size:12px}
+.deadlineOverdue{border-color:#efb0a8!important;background:#fff1ef!important;color:#8a1c12!important}
+.opsBadge.overdue{background:#fee2e2;color:#991b1b}
+.cancelNonpaymentBtn{display:block;margin-top:7px;background:#991b1b!important;color:white!important;border:0!important;border-radius:8px!important;padding:7px 9px!important;font-size:11px!important;font-weight:800!important}
+</style>
+
 <style>
 .durationRow{
   display:grid;
@@ -16,11 +1209,536 @@ text = text.replace("</head>", r"""
   .durationRow{grid-template-columns:1fr}
 }
 </style>
-</head>""", 1)
+</head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="modalbox" class="modalbox"></div></div>
+<script type="module">import{createClient}from'https://esm.sh/@supabase/supabase-js@2';const SUPA='https://cboodkfcfvshsxirpkxt.supabase.co';const KEY='sb_publishable_VDsMnqHeYHajdKendarwww_hMX9fMM2';const hhStorage={
+  getItem:key=>{
+    try{return window.localStorage.getItem('hammerhunt:'+key)}catch(e){return null}
+  },
+  setItem:(key,value)=>{
+    try{window.localStorage.setItem('hammerhunt:'+key,value)}catch(e){}
+  },
+  removeItem:key=>{
+    try{window.localStorage.removeItem('hammerhunt:'+key)}catch(e){}
+  }
+};
+const sb=createClient(SUPA,KEY,{
+  auth:{
+    persistSession:true,
+    autoRefreshToken:true,
+    detectSessionInUrl:true,
+    storage:hhStorage,
+    storageKey:'hammerhunt-auth'
+  }
+});let session=null,profile=null,categories=[],auctions=[],currentView='auctions',activeAuctionId=null,realtimeChannel=null,photosByAuction={},galleryIndex=0,pendingPhotos=[],marketplaceQuery='',marketplaceCategory='all',photoViewerAuctionId=null,photoViewerIndex=0,adminAuctionFilter='current',adminAuctionSearch='',adminFulfillmentSearch='';const nowMs=()=>new Date().getTime();let expiryCheckRunning=false;const money=n=>'$'+Number(n||0).toFixed(2);const esc=s=>String(s??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));const remain=d=>{const endMs=Date.parse(String(d));const currentMs=new Date().getTime();let x=endMs-currentMs;if(!Number.isFinite(x)||x<=0)return'Ended';let h=Math.floor(x/3600000),m=Math.floor((x%3600000)/60000),sec=Math.floor((x%60000)/1000);return h>=24?Math.floor(h/24)+'d '+(h%24)+'h':h>0?h+'h '+m+'m '+sec+'s':m+'m '+sec+'s'};const isOpen=a=>a.status!=='ended'&&new Date(a.ends_at).getTime()>nowMs();const photosFor=id=>photosByAuction[id]||[];const photoUrl=p=>sb.storage.from('auction-images').getPublicUrl(p.storage_path).data.publicUrl;window.showView=showView;window.openAuthChoice=openAuthChoice;window.openSignIn=openSignIn;window.openSignUp=openSignUp;
+window.setMarketplaceQuery=v=>{marketplaceQuery=String(v||'');renderAuctions()};
+window.setMarketplaceCategory=v=>{marketplaceCategory=String(v||'all');renderAuctions()};
+window.openPhotoViewer=openPhotoViewer;
+window.photoViewerMove=photoViewerMove;
+window.photoViewerPick=photoViewerPick;
+window.setAdminAuctionFilter=v=>{adminAuctionFilter=String(v||'all');renderAdmin()};window.closeModal=()=>{
+  activeAuctionId=null;
+  photoViewerAuctionId=null;
+  const box=document.getElementById('modalbox');
+  if(box)box.className='modalbox';
+  document.getElementById('modal').classList.remove('show');
+};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')window.closeModal()});window.signOutNow=async()=>{await sb.auth.signOut();session=null;profile=null;await boot()};window.cardSetup=cardSetup;window.createAuction=createAuction;window.openAuction=openAuction;window.placeNextBid=placeNextBid;window.galleryMove=galleryMove;window.galleryPick=galleryPick;window.onPhotoPick=onPhotoPick;window.winnerCheckout=winnerCheckout;window.updateFulfillment=updateFulfillment;
+function tickCountdowns(){
+let expired=false;
+document.querySelectorAll('[data-ends-at]').forEach(el=>{
+  const endMs=new Date(el.dataset.endsAt).getTime();
+  const left=endMs-nowMs();
+  el.textContent=remain(el.dataset.endsAt);
+  el.classList.remove('urgent','antiSnipe','finalMinute');
+  if(left>0&&left<=120000){
+    el.classList.add('antiSnipe');
+    if(left<=60000)el.classList.add('finalMinute');
+  }else if(left>120000&&left<=300000){
+    el.classList.add('urgent');
+  }
+  if(left<=0)expired=true;
+});
+if(activeAuctionId){
+  const a=auctions.find(x=>x.id===activeAuctionId);
+  if(a){
+    const el=document.getElementById('modalCountdown');
+    if(el)el.textContent=remain(a.ends_at);
+    if(new Date(a.ends_at).getTime()<=nowMs()){
+      const btn=document.getElementById('bidBtn');
+      if(btn){btn.disabled=true;btn.textContent='Auction Ended'}
+      expired=true;
+    }
+  }
+}
+if(expired&&!expiryCheckRunning){
+  expiryCheckRunning=true;
+  finalizeExpiredAuctions()
+    .then(()=>{
+      if(currentView==='auctions')renderAuctions();
+      if(currentView==='admin')renderAdmin();
+      if(activeAuctionId){
+        const a=auctions.find(x=>x.id===activeAuctionId);
+        if(a&&!isOpen(a))closeModal();
+      }
+    })
+    .finally(()=>{expiryCheckRunning=false});
+}
+}
+setInterval(tickCountdowns,1000);setInterval(()=>{if(!document.hidden)tickCountdowns()},5000);
+async function refreshLiveAuction(payload){if(payload?.new?.id){const i=auctions.findIndex(a=>a.id===payload.new.id);if(i>=0)auctions[i]={...auctions[i],...payload.new};else await loadData()}else await loadData();if(currentView==='auctions')renderAuctions();if(currentView==='account')renderAccount();if(currentView==='admin')renderAdmin();if(activeAuctionId)openAuction(activeAuctionId)}
+async function finalizeExpiredAuctions(){
+  // Auction finalization and winner notifications are server-owned.
+  // Supabase cron runs finalize-expired-auctions once per minute.
+  return;
+}
 
-# CREATE AUCTION: replace minutes-only field with value + unit.
-old_create_duration = """<div><label>Duration (minutes)</label><input id="aDuration" type="number" min="1" step="1" value="10"></div>"""
-new_create_duration = """<div>
+async function verifyWinnerPayment(sessionId){
+if(!session||!sessionId)return;
+try{
+const r=await fetch(SUPA+'/functions/v1/verify-winner-payment',{method:'POST',headers:{Authorization:'Bearer '+session.access_token,apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({session_id:sessionId})});
+const j=await r.json().catch(()=>({}));
+if(!r.ok)alert(j.error||'Unable to verify payment.');
+}catch(e){alert('Unable to verify payment.')}
+}
+async function winnerCheckout(auctionId,method){
+if(!session){openSignIn();return}
+const r=await fetch(SUPA+'/functions/v1/create-winner-checkout',{method:'POST',headers:{Authorization:'Bearer '+session.access_token,apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({auction_id:auctionId,fulfillment_method:method})});
+const j=await r.json().catch(()=>({}));
+if(!r.ok)throw new Error(j.error||'Unable to start checkout.');
+if(j.paid){alert('This auction is already paid.');await renderAccount();return}
+if(!j.url)throw new Error('Checkout link was not returned.');
+location.href=j.url
+}
+function startRealtime(){if(realtimeChannel)return;realtimeChannel=sb.channel('hammerhunt-auctions').on('postgres_changes',{event:'*',schema:'public',table:'auctions'},refreshLiveAuction).on('postgres_changes',{event:'*',schema:'public',table:'auction_photos'},async()=>{await loadData();if(currentView==='auctions')renderAuctions();if(currentView==='admin')renderAdmin();if(activeAuctionId)openAuction(activeAuctionId,true)}).subscribe()}
+async function pollAuctions(){if(document.hidden)return;const before=JSON.stringify(auctions.map(x=>[x.id,x.current_bid,x.ends_at,x.status,photosFor(x.id).length]));await loadData();const after=JSON.stringify(auctions.map(x=>[x.id,x.current_bid,x.ends_at,x.status,photosFor(x.id).length]));if(before!==after){if(currentView==='auctions')renderAuctions();if(currentView==='account')renderAccount();if(currentView==='admin')renderAdmin();if(activeAuctionId)openAuction(activeAuctionId,true)}}
+setInterval(pollAuctions,3000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)pollAuctions()});
+async function boot(){
+let s=null;
+const cached=hhStorage.getItem('hammerhunt-auth');
+if(cached){
+  try{
+    const parsed=JSON.parse(cached);
+    const access_token=parsed?.access_token||parsed?.currentSession?.access_token;
+    const refresh_token=parsed?.refresh_token||parsed?.currentSession?.refresh_token;
+    if(access_token&&refresh_token){
+      const {data:setData}=await sb.auth.setSession({access_token,refresh_token});
+      s=setData?.session||null;
+    }
+  }catch(e){}
+}
+if(!s){
+  const {data}=await sb.auth.getSession();
+  s=data?.session||null;
+}
+session=s;
+if(session){const{data:p}=await sb.from('profiles').select('*').eq('id',session.user.id).single();profile=p}else profile=null;
+const b=document.getElementById('authBtn');b.textContent=session?'Sign Out':'Sign In';b.onclick=session?window.signOutNow:openAuthChoice;
+document.getElementById('adminNav').classList.toggle('hidden',!profile?.is_admin);
+await loadData();startRealtime();
+const qs=new URLSearchParams(location.search);
+if(session&&qs.get('reset')==='1'){showView('auctions');setTimeout(openNewPassword,50);return}
+if(session&&qs.get('checkout')==='success'&&qs.get('session_id')){await verifyWinnerPayment(qs.get('session_id'));history.replaceState({},'',location.pathname);showView('account');return}
+showView(location.search.includes('payment=')?'account':'auctions')}
+async function loadData(){const[{data:c},{data:a},{data:p}]=await Promise.all([sb.from('categories').select('*').eq('is_active',true).order('sort_order'),sb.from('auctions').select('*,categories(name)').in('status',['scheduled','live','ended']).order('ends_at'),sb.from('auction_photos').select('*').order('sort_order').order('created_at')]);categories=c||[];auctions=a||[];photosByAuction={};for(const ph of(p||[]))(photosByAuction[ph.auction_id]??=[]).push(ph)}
+function showView(v){currentView=v;activeAuctionId=null;if(v==='auctions')renderAuctions();if(v==='account')renderAccount();if(v==='admin')renderAdmin()}
+function renderAuctions(){
+  const open=auctions.filter(isOpen);
+  const q=marketplaceQuery.trim().toLowerCase();
+  const filtered=open.filter(a=>{
+    const cat=String(a.categories?.name||'');
+    const matchesCategory=marketplaceCategory==='all'||cat===marketplaceCategory;
+    const hay=[a.title,a.description,a.condition,cat].map(x=>String(x||'').toLowerCase()).join(' ');
+    const matchesQuery=!q||hay.includes(q);
+    return matchesCategory&&matchesQuery;
+  });
+
+  let html='<section class="hero"><div class="heroTag"><span class="liveDot"></span> Live online auctions</div><h1>Find it. Bid on it. Make it yours.</h1><p>Verified bidders, live pricing, multiple photos, $5 bid increments, and a 2-minute anti-sniping rule. Win with confidence, then choose shipping or local pickup.</p></section>';
+
+  if(!session)html+='<div class="notice"><b>Ready to join the hunt?</b> Create an account and add a payment method to start bidding.</div>';
+
+  html+=`<div class="row marketHeader"><div><div class="marketEyebrow">On the block now</div><h2 class="marketTitle">Live Auctions</h2></div><span class="status">${open.length} active</span></div>`;
+
+  html+=`<div class="marketTools">
+    <div class="marketSearch">
+      <span class="marketSearchIcon">⌕</span>
+      <input aria-label="Search auctions" placeholder="Search auctions, descriptions, condition..." value="${esc(marketplaceQuery)}" oninput="setMarketplaceQuery(this.value)">
+    </div>
+    ${open.length ? `${open.length?`<div class="resultMeta">${filtered.length} ${filtered.length===1?'auction':'auctions'} shown</div>`:''}` : ''}
+  </div>`;
+
+  const catNames=categories.map(c=>c.name).filter(Boolean);
+  html+=`<div class="categoryScroller" aria-label="Auction categories">
+    <button class="categoryChip ${marketplaceCategory==='all'?'active':''}" onclick="setMarketplaceCategory('all')">All</button>
+    ${catNames.map(name=>`<button class="categoryChip ${marketplaceCategory===name?'active':''}" onclick="setMarketplaceCategory('${esc(name).replace(/&#39;/g,"\\'")}')">${esc(name)}</button>`).join('')}
+  </div>`;
+
+  if(!open.length){
+    html+='<div class="grid"><div class="emptyMarket"><div><div class="emptyIcon">H</div><h3>The next hunt is coming soon.</h3><p>New auctions will appear here as soon as they go live. Check back soon for fresh finds and new chances to bid.</p></div></div></div>';
+  }else if(!filtered.length){
+    html+='<div class="grid"><div class="noMatches"><b>No auctions match that search.</b><div style="margin-top:6px">Try another keyword or choose a different category.</div></div></div>';
+  }else{
+    html+='<div class="grid">'+filtered.map(a=>{
+      const pics=photosFor(a.id),cover=pics[0];
+      return `<article class="card" onclick="openAuction('${a.id}')">
+        <div class="photo" onclick="event.stopPropagation();${pics.length?`openPhotoViewer('${a.id}',0)`:`openAuction('${a.id}')`}">${cover?`<img src="${photoUrl(cover)}" alt="${esc(a.title)}">`:'<div class="fallback">HAMMERHUNT</div>'}${pics.length?`<span class="photoViewHint">View photos</span><span class="photoCount">${pics.length} photo${pics.length===1?'':'s'}</span>`:''}</div>
+        <div class="pad">
+          <div class="category">${esc(a.categories?.name||'Auction')}</div>
+          <div class="title">${esc(a.title)}</div>
+          <div class="priceRow">
+            <div><div class="muted">CURRENT BID</div><div class="price">${money(a.current_bid)}</div></div>
+            <div style="text-align:right"><div class="muted">TIME LEFT</div><div class="countdown" data-ends-at="${a.ends_at}">${remain(a.ends_at)}</div></div>
+          </div>
+          <div class="muted" style="margin-top:8px">${a.shipping_available?`Shipping ${money(a.shipping_price)}`:'No shipping'}${a.pickup_available?` • Pickup: ${esc(a.pickup_location||'Location assigned at checkout')}`:''}</div>
+          <button class="goldBtn" style="margin-top:12px;width:100%">View & Bid</button>
+        </div>
+      </article>`;
+    }).join('')+'</div>';
+  }
+
+  document.getElementById('app').innerHTML=html;
+  tickCountdowns();
+}
+
+function openPhotoViewer(id,index=0){
+  const a=auctions.find(x=>x.id===id);
+  const pics=photosFor(id);
+  if(!a||!pics.length){openAuction(id);return}
+  photoViewerAuctionId=id;
+  photoViewerIndex=Math.max(0,Math.min(Number(index)||0,pics.length-1));
+  renderPhotoViewer();
+}
+function renderPhotoViewer(){
+  const a=auctions.find(x=>x.id===photoViewerAuctionId);
+  const pics=photosFor(photoViewerAuctionId);
+  if(!a||!pics.length)return;
+  if(photoViewerIndex>=pics.length)photoViewerIndex=0;
+  const cur=pics[photoViewerIndex];
+  const modal=document.getElementById('modal');
+  const box=document.getElementById('modalbox');
+  box.className='modalbox photoViewer';
+  box.innerHTML=`<div class="photoViewerHead">
+    <div><div class="category">${esc(a.categories?.name||'Auction')}</div><h3>${esc(a.title)}</h3></div>
+    <button class="photoViewerClose" onclick="closePhotoViewer()" aria-label="Close photo gallery">×</button>
+  </div>
+  <div class="photoViewerMain">
+    <img src="${photoUrl(cur)}" alt="${esc(a.title)} photo ${photoViewerIndex+1}">
+    ${pics.length>1?`<button class="photoViewerNav prev" onclick="photoViewerMove(-1)" aria-label="Previous photo">‹</button><button class="photoViewerNav next" onclick="photoViewerMove(1)" aria-label="Next photo">›</button>`:''}
+    <div class="photoViewerCount">${photoViewerIndex+1} / ${pics.length}</div>
+  </div>
+  ${pics.length>1?`<div class="photoViewerThumbs">${pics.map((p,i)=>`<button class="photoViewerThumb ${i===photoViewerIndex?'active':''}" onclick="photoViewerPick(${i})"><img src="${photoUrl(p)}" alt="Photo ${i+1}"></button>`).join('')}</div>`:''}
+  <div style="padding:12px 14px;background:#fff"><button class="goldBtn" style="width:100%" onclick="closePhotoViewer();openAuction('${a.id}')">View Auction & Bid</button></div>`;
+  modal.classList.add('show');
+}
+function photoViewerMove(dir){
+  const pics=photosFor(photoViewerAuctionId);
+  if(!pics.length)return;
+  photoViewerIndex=(photoViewerIndex+dir+pics.length)%pics.length;
+  renderPhotoViewer();
+}
+function photoViewerPick(i){photoViewerIndex=i;renderPhotoViewer()}
+window.closePhotoViewer=()=>{
+  photoViewerAuctionId=null;
+  const box=document.getElementById('modalbox');
+  box.className='modalbox';
+  document.getElementById('modal').classList.remove('show');
+};
+
+function openAuction(id,preserveGallery=false){activeAuctionId=id;const a=auctions.find(x=>x.id===id);if(!a)return;const pics=photosFor(id);if(!preserveGallery)galleryIndex=0;if(galleryIndex>=pics.length)galleryIndex=0;const ended=!isOpen(a);const next=Number(a.current_bid||0)+5;let action='';
+if(!session)action=`<div class="bidNext"><div class="bidPanelLabel">NEXT BID</div><div class="bidNextAmount">${money(next)}</div></div><div class="bidState actionNeeded"><b>Sign in to bid.</b><br>Your account needs a verified payment method before a bid can be placed.</div><button class="bidPrimary" onclick="openSignIn()">Sign In to Bid</button>`;
+else if(!profile?.payment_verified)action=`<div class="bidNext"><div class="bidPanelLabel">NEXT BID</div><div class="bidNextAmount">${money(next)}</div></div><div class="bidState actionNeeded"><b>One step left.</b><br>Add a verified payment method to unlock bidding.</div><button class="good bidPrimary" onclick="closeModal();showView('account')">Add Payment Method</button>`;
+else if(ended)action='<div class="bidState closed"><b>Auction ended.</b><br>Bidding is closed for this item.</div>';
+else action=`<div class="bidNext"><div class="bidPanelLabel">YOUR NEXT BID</div><div class="bidNextAmount">${money(next)}</div></div><div class="bidState ready"><b>✓ Approved to bid</b></div><button id="bidBtn" class="goldBtn bidPrimary" onclick="placeNextBid('${a.id}')">Bid ${money(next)}</button><div class="bidRule"><span class="bidRuleIcon">2m</span><span>Bids increase by $5. Any bid placed with 2:00 or less remaining resets the auction clock to 2:00.</span></div>`;const cur=pics[galleryIndex];const gallery=`<div class="galleryMain">${cur?`<img src="${photoUrl(cur)}" alt="${esc(a.title)}">`:'<div class="galleryFallback">No photos yet</div>'}${pics.length>1?'<button class="galleryNav prev" onclick="galleryMove(-1)">‹</button><button class="galleryNav next" onclick="galleryMove(1)">›</button>':''}</div>${pics.length>1?`<div class="thumbs">${pics.map((p,i)=>`<button class="thumb ${i===galleryIndex?'active':''}" onclick="galleryPick(${i})"><img src="${photoUrl(p)}"></button>`).join('')}</div>`:''}`;const detailBox=document.getElementById('modalbox');detailBox.className='modalbox auctionDetailModal';detailBox.innerHTML=`<button class="auctionCloseX" onclick="closeModal()" aria-label="Close auction">×</button>${gallery}<div class="auctionDetailInner"><div class="detailGrid"><div><div class="category">${esc(a.categories?.name||'Auction')}</div><h2 style="font-size:28px;margin:5px 0 10px">${esc(a.title)}</h2>${a.condition?`<p><b>Condition:</b> ${esc(a.condition)}</p>`:''}${a.description?`<p>${esc(a.description)}</p>`:''}<p class="muted">${a.shipping_available?`Shipping ${money(a.shipping_price)}`:'No shipping'}${a.pickup_available?` • Pickup: ${esc(a.pickup_location||'Location assigned at checkout')}`:''}</p></div><div class="bidBox"><div class="bidPanelLabel">CURRENT BID</div><div class="bidCurrent">${money(a.current_bid)}</div><div class="bidTimeRow"><span class="bidPanelLabel">TIME LEFT</span><div id="modalCountdown" class="countdown" data-ends-at="${a.ends_at}">${remain(a.ends_at)}</div></div><div class="fulfillmentPills">${a.shipping_available?`<span class="fulfillmentPill">Shipping ${money(a.shipping_price)}</span>`:''}${a.pickup_available?`<span class="fulfillmentPill">Pickup · ${esc(a.pickup_location||'Location TBD')}</span>`:''}</div>${action}</div></div></div>`;document.getElementById('modal').classList.add('show');tickCountdowns()}
+function galleryMove(d){const pics=photosFor(activeAuctionId);if(!pics.length)return;galleryIndex=(galleryIndex+d+pics.length)%pics.length;openAuction(activeAuctionId,true)}
+function galleryPick(i){galleryIndex=i;openAuction(activeAuctionId,true)}
+async function placeNextBid(id){const btn=document.getElementById('bidBtn');if(btn){btn.disabled=true;btn.textContent='Submitting bid…'}const{data,error}=await sb.rpc('place_next_bid',{p_auction_id:id});if(error){alert(error.message);await pollAuctions();return}const placed=Array.isArray(data)&&data[0]?(data[0].new_current_bid??data[0].amount):null;await loadData();closeModal();renderAuctions();alert(placed!=null?`Bid placed at ${money(placed)}.`:'Bid placed successfully.')}
+async function renderAccount(){
+if(!session){
+  document.getElementById('app').innerHTML='<div class="panel"><h2>My Account</h2><p>Create an account or sign in to bid.</p><div class="row" style="justify-content:flex-start"><button onclick="openSignUp()">Create Account</button><button class="light" onclick="openSignIn()">Sign In</button></div></div>';
+  return;
+}
+
+const[{data:bids},{data:wins}]=await Promise.all([
+  sb.from('bids').select('*,auctions(id,title,current_bid,ends_at,status,categories(name))').order('created_at',{ascending:false}),
+  sb.from('orders').select('id,auction_id,winner_user_id,winning_bid,payment_status,fulfillment_method,shipping_price,total_amount,total_due,fulfillment_status,tracking_number,fulfilled_at,created_at,payment_due_at,nonpayment_status,auctions(title,shipping_available,shipping_price,pickup_available,pickup_location,pickup_instructions)').eq('winner_user_id',session.user.id).order('created_at',{ascending:false})
+]);
+
+const now=Date.now();
+const latestBidByAuction=new Map();
+for(const b of (bids||[])){
+  if(!latestBidByAuction.has(b.auction_id))latestBidByAuction.set(b.auction_id,b);
+}
+const activeBids=[...latestBidByAuction.values()].filter(b=>{
+  const a=b.auctions||{};
+  return a.status!=='ended'&&new Date(a.ends_at).getTime()>now;
+});
+
+const openWins=(wins||[]).filter(w=>w.nonpayment_status!=='cancelled_nonpayment'&&((w.payment_status!=='paid')||((w.fulfillment_status||'pending')!=='completed')));
+const history=(wins||[]).filter(w=>w.payment_status==='paid'&&(w.fulfillment_status||'pending')==='completed');
+
+const activeBidHtml=activeBids.length?activeBids.map(b=>{
+  const a=b.auctions||{};
+  const leading=Number(b.amount||0)>=Number(a.current_bid||0);
+  return `<div class="activeBidCard">
+    <div class="accountItemTop">
+      <div>
+        <div class="category">${esc(a.categories?.name||'Auction')}</div>
+        <div class="accountItemTitle">${esc(a.title||'Auction')}</div>
+        <div class="accountMeta">${leading?'You are currently at the top bid.':'Another bidder is currently ahead.'}</div>
+      </div>
+      <span class="status ${leading?'approved':''}">${leading?'LEADING':'OUTBID'}</span>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <div><div class="muted">YOUR LAST BID</div><div class="accountPrice">${money(b.amount)}</div></div>
+      <div style="text-align:right"><div class="muted">CURRENT BID</div><div class="accountPrice">${money(a.current_bid)}</div></div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div class="countdown" data-ends-at="${a.ends_at}">${remain(a.ends_at)}</div>
+      <button class="goldBtn" onclick="openAuction('${b.auction_id}')">View & Bid</button>
+    </div>
+  </div>`;
+}).join(''):`<div class="accountEmpty"><b>No active bids right now.</b><br>When you bid on a live auction, it will appear here until the auction ends.</div>`;
+
+const openWinHtml=openWins.length?openWins.map(w=>{
+  const a=w.auctions||{},paid=w.payment_status==='paid',fs=w.fulfillment_status||'pending';
+  let actionHtml='';
+  let statusText='YOU WON';
+
+  if(!paid){
+    const opts=[];
+    if(a.shipping_available)opts.push(`<button class="goldBtn winnerCheckoutBtn" data-auction-id="${w.auction_id}" data-method="shipping">Pay & Ship ${money(Number(w.winning_bid)+Number(a.shipping_price||0))}</button>`);
+    if(a.pickup_available)opts.push(`<button class="good winnerCheckoutBtn" data-auction-id="${w.auction_id}" data-method="pickup">Pay & Pick Up · ${esc(a.pickup_location||'Pickup location')} ${money(w.winning_bid)}</button>`);
+    const due=w.payment_due_at?new Date(w.payment_due_at):null;
+    const overdue=due&&due.getTime()<=Date.now();
+    const dueText=due?due.toLocaleString():'';
+    actionHtml=`<div class="notice ${overdue?'deadlineOverdue':''}" style="margin:10px 0 0"><b>${overdue?'Payment overdue.':'Payment needed.'}</b> ${overdue?'The 24-hour payment period has passed. HammerHunt may cancel this transaction and relist the item.':'Choose how you want to receive the item and complete checkout.'}${dueText?`<div class="paymentDeadline">Payment deadline: <b>${esc(dueText)}</b></div>`:''}</div><div class="accountItemActions">${opts.join('')}</div>`;
+  }else{
+    statusText={pending:'PROCESSING',ready_for_pickup:'READY FOR PICKUP',shipped:'SHIPPED',completed:'COMPLETED'}[fs]||'PAID';
+    const detail=w.fulfillment_method==='shipping'
+      ? (fs==='shipped'&&w.tracking_number?`Tracking: <a href="https://www.google.com/search?q=${encodeURIComponent(w.tracking_number)}" target="_blank" rel="noopener">${esc(w.tracking_number)}</a>`:'Shipping selected.')
+      : (fs==='ready_for_pickup'?(a.pickup_instructions?`Pickup: ${esc(a.pickup_instructions)}`:'Ready for pickup.'):'Local pickup selected.');
+    actionHtml=`<div class="ok" style="margin:10px 0 0"><b>${statusText}</b><div class="muted" style="margin-top:5px">${detail}</div></div>`;
+  }
+
+  return `<div class="accountItem">
+    <div class="accountItemTop">
+      <div><div class="accountItemTitle">${esc(a.title||'Auction')}</div><div class="accountMeta">Winning bid ${money(w.winning_bid)}</div></div>
+      <span class="status ${paid?'approved':''}">${statusText}</span>
+    </div>
+    ${actionHtml}
+  </div>`;
+}).join(''):`<div class="accountEmpty"><b>Nothing needs your attention.</b><br>New wins and fulfillment updates will appear here.</div>`;
+
+const historyHtml=history.length?history.map(w=>{
+  const a=w.auctions||{};
+  const method=w.fulfillment_method==='shipping'?'Shipped':'Local pickup';
+  return `<div class="historyRow">
+    <div><div class="accountItemTitle">${esc(a.title||'Auction')}</div><div class="accountMeta">${method}</div></div>
+    <div class="accountPrice">${money(w.total_due||w.total_amount||w.winning_bid)}</div>
+    <div class="historyStatus">Completed</div>
+  </div>`;
+}).join(''):`<div class="accountEmpty"><b>No completed purchases yet.</b></div>`;
+
+document.getElementById('app').innerHTML=`
+  <section class="accountHero">
+    <div>
+      <h2>My Account</h2>
+      <div class="muted">${esc(session.user.email)}</div>
+    </div>
+    <div class="accountHeroActions">
+      <span class="status ${profile?.payment_verified?'approved':''}">${profile?.payment_verified?'BID APPROVED':'PAYMENT REQUIRED'}</span>
+      <button class="light" onclick="openForgotPassword('${esc(session.user.email)}')">Security</button>
+    </div>
+  </section>
+
+  ${!profile?.payment_verified?`<div class="notice"><b>Complete bidder setup.</b> Add a valid payment method before placing bids.<div style="margin-top:10px"><button class="good" onclick="cardSetup()">Add Payment Method</button></div></div>`:''}
+
+  <div class="accountGrid">
+    <section class="accountSection">
+      <div class="accountSectionHead"><h3>Active Bids</h3><span class="accountCount">${activeBids.length}</span></div>
+      <div class="accountSectionBody">${activeBidHtml}</div>
+    </section>
+
+    <section class="accountSection">
+      <div class="accountSectionHead"><h3>Wins / Action Needed</h3><span class="accountCount">${openWins.length}</span></div>
+      <div class="paymentPolicy"><b>24-hour payment policy:</b> Winning bids must be paid within 24 hours after the auction ends. After that period, HammerHunt may cancel the transaction and relist the item. Repeated nonpayment may result in account restrictions.</div>
+      <div class="accountSectionBody">${openWinHtml}</div>
+    </section>
+
+    <section class="accountSection accountWide">
+      <div class="accountSectionHead"><h3>Purchase History</h3><span class="accountCount">${history.length}</span></div>
+      <div class="accountSectionBody">${historyHtml}</div>
+    </section>
+
+    <section class="accountSection accountWide">
+      <div class="accountSectionHead"><h3>Account & Security</h3></div>
+      <div class="accountSectionBody">
+        <div class="securityCard">
+          <div class="accountItemTitle">Password & sign-in</div>
+          <p class="accountMeta">Use a password-reset link anytime you need to change your password or regain access.</p>
+          <button class="light" onclick="openForgotPassword('${esc(session.user.email)}')">Reset Password</button>
+        </div>
+      </div>
+    </section>
+  </div>`;
+
+document.querySelectorAll('.winnerCheckoutBtn').forEach(btn=>{
+  btn.addEventListener('click',async()=>{
+    const auctionId=btn.dataset.auctionId;
+    const method=btn.dataset.method;
+    btn.disabled=true;
+    const oldText=btn.textContent;
+    btn.textContent='Opening checkout...';
+    try{await winnerCheckout(auctionId,method)}
+    catch(err){
+      alert('Unable to start checkout: '+(err?.message||String(err)));
+      btn.disabled=false;
+      btn.textContent=oldText;
+    }
+  });
+});
+tickCountdowns();
+}
+
+function openAuthChoice(){document.getElementById('modalbox').innerHTML='<h2>HammerHunt Account</h2><p>Choose what you want to do.</p><div class="row" style="justify-content:flex-start"><button onclick="openSignUp()">Create Account</button><button class="light" onclick="openSignIn()">Sign In</button></div><div style="margin-top:14px"><button class="light" onclick="closeModal()">Close</button></div>';document.getElementById('modal').classList.add('show')}
+function openSignUp(){document.getElementById('modalbox').innerHTML='<h2>Create Account</h2><label>Display name</label><input id="suName" autocomplete="name"><label>Email</label><input id="suEmail" type="email" autocomplete="email"><label>Password</label><input id="suPass" type="password" minlength="6" autocomplete="new-password"><div class="muted" style="margin-top:6px">Use at least 6 characters.</div><button id="suBtn" class="good" style="margin-top:12px">Create My Account</button><div id="suMsg"></div><div style="margin-top:14px"><button class="light" onclick="openAuthChoice()">Back</button></div>';document.getElementById('modal').classList.add('show');document.getElementById('suBtn').onclick=async()=>{const name=document.getElementById('suName').value.trim(),email=document.getElementById('suEmail').value.trim(),password=document.getElementById('suPass').value,msg=document.getElementById('suMsg');if(!email||!password){msg.innerHTML='<div class="err">Enter email and password.</div>';return}if(password.length<6){msg.innerHTML='<div class="err">Password must be at least 6 characters.</div>';return}msg.innerHTML='<div class="notice">Creating account…</div>';const{data,error}=await sb.auth.signUp({email,password,options:{emailRedirectTo:'https://www.hammerhunt.com',data:{display_name:name||email.split('@')[0]}}});if(error){msg.innerHTML='<div class="err">'+esc(error.message)+'</div>';return}if(data.session){msg.innerHTML='<div class="ok">Account created and signed in.</div>';setTimeout(async()=>{closeModal();await boot()},500);return}const identities=data?.user?.identities;if(Array.isArray(identities)&&identities.length===0){msg.innerHTML='<div class="notice"><b>An account may already exist for this email.</b><div style="margin-top:6px">Try signing in, or reset the password if you do not remember it.</div><div class="row" style="justify-content:flex-start;margin-top:10px"><button class="light" onclick="openSignIn()">Sign In</button><button class="light" onclick="openForgotPassword(\''+esc(email)+'\')">Forgot Password</button></div></div>';return}msg.innerHTML='<div class="ok"><b>Check your email to confirm your account.</b><div style="margin-top:6px">After confirming, return to HammerHunt and sign in.</div></div>'}}
+function openSignIn(){document.getElementById('modalbox').innerHTML='<h2>Sign In</h2><label>Email</label><input id="siEmail" type="email" autocomplete="email"><label>Password</label><input id="siPass" type="password" autocomplete="current-password"><button id="siBtn" style="margin-top:12px">Sign In</button><button class="light" style="margin-top:8px;width:100%" onclick="openForgotPassword(document.getElementById(\'siEmail\')?.value||\'\')">Forgot Password?</button><div id="siMsg"></div><div style="margin-top:14px"><button class="light" onclick="openAuthChoice()">Back</button></div>';document.getElementById('modal').classList.add('show');document.getElementById('siBtn').onclick=async()=>{const email=document.getElementById('siEmail').value.trim(),password=document.getElementById('siPass').value,msg=document.getElementById('siMsg');if(!email||!password){msg.innerHTML='<div class="err">Enter email and password.</div>';return}msg.innerHTML='<div class="notice">Signing in…</div>';const{error}=await sb.auth.signInWithPassword({email,password});if(error){msg.innerHTML='<div class="err">'+esc(error.message)+'<div style="margin-top:8px"><button class="light" onclick="openForgotPassword(\''+esc(email)+'\')">Reset Password</button></div></div>';return}closeModal();await boot()}}
+
+function openForgotPassword(prefill=''){
+  const safe=esc(String(prefill||''));
+  const box=document.getElementById('modalbox');
+  box.className='modalbox';
+  box.innerHTML=`<h2>Reset Password</h2><p class="muted">Enter the email address on your HammerHunt account. We will send a secure password-reset link.</p><label>Email</label><input id="fpEmail" type="email" autocomplete="email" value="${safe}"><button id="fpBtn" class="good" style="margin-top:12px;width:100%">Send Reset Link</button><div id="fpMsg"></div><div style="margin-top:14px"><button class="light" onclick="openSignIn()">Back to Sign In</button></div>`;
+  document.getElementById('modal').classList.add('show');
+  document.getElementById('fpBtn').onclick=async()=>{
+    const email=document.getElementById('fpEmail').value.trim();
+    const msg=document.getElementById('fpMsg');
+    if(!email){msg.innerHTML='<div class="err">Enter your email address.</div>';return}
+    msg.innerHTML='<div class="notice">Sending reset link…</div>';
+    const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:'https://www.hammerhunt.com/?reset=1'});
+    if(error){msg.innerHTML='<div class="err">'+esc(error.message)+'</div>';return}
+    msg.innerHTML='<div class="ok"><b>Check your email.</b><div style="margin-top:6px">If an account exists for that address, a password-reset link has been sent.</div></div>';
+  };
+}
+window.openForgotPassword=openForgotPassword;
+
+function openNewPassword(){
+  const box=document.getElementById('modalbox');
+  box.className='modalbox';
+  box.innerHTML='<h2>Choose a New Password</h2><label>New password</label><input id="npPass" type="password" minlength="6" autocomplete="new-password"><div class="muted" style="margin-top:6px">Use at least 6 characters.</div><label>Confirm new password</label><input id="npConfirm" type="password" minlength="6" autocomplete="new-password"><button id="npBtn" class="good" style="margin-top:12px;width:100%">Update Password</button><div id="npMsg"></div>';
+  document.getElementById('modal').classList.add('show');
+  document.getElementById('npBtn').onclick=async()=>{
+    const p=document.getElementById('npPass').value;
+    const c=document.getElementById('npConfirm').value;
+    const msg=document.getElementById('npMsg');
+    if(p.length<6){msg.innerHTML='<div class="err">Password must be at least 6 characters.</div>';return}
+    if(p!==c){msg.innerHTML='<div class="err">Passwords do not match.</div>';return}
+    msg.innerHTML='<div class="notice">Updating password…</div>';
+    const {error}=await sb.auth.updateUser({password:p});
+    if(error){msg.innerHTML='<div class="err">'+esc(error.message)+'</div>';return}
+    history.replaceState({},'',location.pathname);
+    msg.innerHTML='<div class="ok"><b>Password updated.</b><div style="margin-top:6px">You are signed in and ready to continue.</div></div>';
+    setTimeout(async()=>{closeModal();await boot()},800);
+  };
+}
+
+async function cardSetup(){if(!session)return openSignIn();const r=await fetch(SUPA+'/functions/v1/create-card-setup-checkout',{method:'POST',headers:{Authorization:'Bearer '+session.access_token,apikey:KEY,'Content-Type':'application/json'},body:'{}'});const j=await r.json().catch(()=>({}));if(!r.ok||!j.url)return alert(j.error||'Unable to start Stripe setup.');location.href=j.url}
+
+function onPhotoPick(event){
+  const files=Array.from(event?.target?.files||[]).filter(f=>f.type?.startsWith('image/')).slice(0,10);
+  pendingPhotos=files;
+  const preview=document.getElementById('photoPreview');
+  if(!preview)return;
+  preview.innerHTML='';
+  files.forEach((file,i)=>{
+    const box=document.createElement('div');
+    box.className='preview';
+    const img=document.createElement('img');
+    img.alt=`Auction photo ${i+1}`;
+    const url=URL.createObjectURL(file);
+    img.src=url;
+    img.onload=()=>URL.revokeObjectURL(url);
+    box.appendChild(img);
+    preview.appendChild(box);
+  });
+}
+
+async function renderAdmin(){
+if(!profile?.is_admin){document.getElementById('app').innerHTML='<div class="err">Admin access required.</div>';return}
+
+const {data:fulfill,error:fErr}=await sb.rpc('admin_fulfillment_orders');
+const orders=fulfill||[];
+const byAuction=Object.fromEntries(orders.map(o=>[o.auction_id,o]));
+const statusLabel=s=>({pending:'Pending',ready_for_pickup:'Ready for pickup',shipped:'Shipped',completed:'Completed'}[s]||s||'Pending');
+
+const completedOrders=orders.filter(o=>o.payment_status==='paid'&&(o.fulfillment_status||'pending')==='completed');
+const completedAuctionIds=new Set(completedOrders.map(o=>o.auction_id));
+const workingOrders=orders.filter(o=>!(o.payment_status==='paid'&&(o.fulfillment_status||'pending')==='completed'));
+
+const liveAuctions=auctions.filter(isOpen);
+const endedAuctions=auctions.filter(a=>!isOpen(a));
+const completedAuctions=auctions.filter(a=>completedAuctionIds.has(a.id));
+const currentAuctions=auctions.filter(a=>!completedAuctionIds.has(a.id));
+
+const readyToFulfill=workingOrders.filter(o=>o.payment_status==='paid'&&(o.fulfillment_status||'pending')!=='completed');
+const unpaidOrders=workingOrders.filter(o=>o.payment_status!=='paid');
+
+const fsq=adminFulfillmentSearch.trim().toLowerCase();
+const visibleOrders=workingOrders.filter(o=>!fsq||[
+  o.auction_title,o.winner_name,o.winner_email,o.payment_status,o.fulfillment_method,o.fulfillment_status
+].some(v=>String(v||'').toLowerCase().includes(fsq)));
+
+const asq=adminAuctionSearch.trim().toLowerCase();
+const filteredAuctions=auctions
+  .slice()
+  .sort((a,b)=>new Date(b.starts_at||b.ends_at)-new Date(a.starts_at||a.ends_at))
+  .filter(a=>{
+    const isCompleted=completedAuctionIds.has(a.id);
+    if(adminAuctionFilter==='current'&&isCompleted)return false;
+    if(adminAuctionFilter==='live'&&!isOpen(a))return false;
+    if(adminAuctionFilter==='ended'&&(isOpen(a)||isCompleted))return false;
+    if(adminAuctionFilter==='completed'&&!isCompleted)return false;
+    if(asq&&!String(a.title||'').toLowerCase().includes(asq)&&!String(a.description||'').toLowerCase().includes(asq))return false;
+    return true;
+  });
+
+document.getElementById('app').innerHTML=`
+<div class="adminShell">
+  <section class="adminHero">
+    <div>
+      <h2>Admin Dashboard</h2>
+      <div class="muted">Create auctions, manage fulfillment, and keep the marketplace moving.</div>
+    </div>
+    <div class="adminHeroStats">
+      <div class="adminStat">${liveAuctions.length} live</div>
+      <div class="adminStat">${readyToFulfill.length} ready to fulfill</div>
+      <div class="adminStat">${unpaidOrders.length} unpaid</div>
+      <div class="adminStat">${completedAuctions.length} completed</div>
+    </div>
+  </section>
+
+  <div class="adminGrid">
+    <section class="adminCard">
+      <div class="adminCardHead">
+        <div><h3>Create Auction</h3><div class="muted">Build and publish a new listing</div></div>
+      </div>
+      <div class="adminCardBody">
+        <div class="adminSectionTitle">Auction photos</div>
+        <div class="photoPicker">
+          <b>Upload up to 10 photos</b>
+          <div class="muted">The first image becomes the cover photo.</div>
+          <input id="aPhotos" type="file" accept="image/*" multiple style="margin-top:10px" onchange="onPhotoPick(event)">
+          <div id="photoPreview" class="previewGrid"></div>
+        </div>
+
+        <div class="adminDivider"></div>
+        <div class="adminSectionTitle">Listing details</div>
+        <div class="adminFormGrid">
+          <div><label>Title</label><input id="aTitle"></div>
+          <div><label>Category</label><select id="aCat">${categories.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></div>
+          <div><label>Condition</label><input id="aCondition"></div>
+          <div><label>Starting bid ($)</label><input id="aStart" type="number" min="0" step="5"></div>
+          <div class="full"><label>Description</label><textarea id="aDesc"></textarea></div>
+          <div>
   <label>Duration</label>
   <div class="durationRow">
     <input id="aDuration" type="number" min="1" step="1" value="24">
@@ -30,33 +1748,226 @@ new_create_duration = """<div>
       <option value="days">Days</option>
     </select>
   </div>
-</div>"""
-if old_create_duration not in text:
-    raise RuntimeError("Create duration field not found")
-text = text.replace(old_create_duration, new_create_duration, 1)
+</div>
+          <div><label>Shipping price ($)</label><input id="aShip" type="number" min="0" step="0.01" value="0"></div>
+        </div>
 
-# CREATE AUCTION function: convert selected unit to milliseconds.
-old_create_fn = """async function createAuction(){const title=aTitle.value.trim(),start=Number(aStart.value),duration=Number(aDuration.value),pickupOn=aPickup.checked,pickupLocation=aPickupLocation.value;if(!title||Number.isNaN(start)||!Number.isFinite(duration)||duration<1)return alert('Enter title, starting bid, and duration in minutes.');if(!aShipOn.checked&&!pickupOn)return alert('At least one fulfillment option is required.');if(pickupOn&&!pickupLocation)return alert('Choose Camden, TN or Rock Hill, SC for local pickup.');const now=Date.now();const row={title,category_id:aCat.value,condition:aCondition.value.trim(),description:aDesc.value.trim(),starting_bid:start,current_bid:start,starts_at:new Date(now).toISOString(),ends_at:new Date(now+duration*60000).toISOString(),status:'live',shipping_available:aShipOn.checked,shipping_price:aShipOn.checked?Number(aShip.value||0):null,pickup_available:pickupOn,pickup_location:pickupOn?pickupLocation:null,pickup_instructions:pickupOn?aPickupInfo.value.trim():null};"""
-new_create_fn = """async function createAuction(){const title=aTitle.value.trim(),start=Number(aStart.value),duration=Number(aDuration.value),durationUnit=aDurationUnit.value,pickupOn=aPickup.checked,pickupLocation=aPickupLocation.value;if(!title||Number.isNaN(start)||!Number.isFinite(duration)||duration<1)return alert('Enter title, starting bid, and a valid duration.');if(!aShipOn.checked&&!pickupOn)return alert('At least one fulfillment option is required.');if(pickupOn&&!pickupLocation)return alert('Choose Camden, TN or Rock Hill, SC for local pickup.');const durationMs=duration*(durationUnit==='days'?86400000:durationUnit==='hours'?3600000:60000);const now=Date.now();const row={title,category_id:aCat.value,condition:aCondition.value.trim(),description:aDesc.value.trim(),starting_bid:start,current_bid:start,starts_at:new Date(now).toISOString(),ends_at:new Date(now+durationMs).toISOString(),status:'live',shipping_available:aShipOn.checked,shipping_price:aShipOn.checked?Number(aShip.value||0):null,pickup_available:pickupOn,pickup_location:pickupOn?pickupLocation:null,pickup_instructions:pickupOn?aPickupInfo.value.trim():null};"""
-if old_create_fn not in text:
-    raise RuntimeError("Create auction function not found")
-text = text.replace(old_create_fn, new_create_fn, 1)
+        <div class="adminDivider"></div>
+        <div class="adminSectionTitle">Fulfillment options</div>
+        <div class="adminToggleRow">
+          <div class="adminToggle"><label><input id="aShipOn" type="checkbox" checked style="width:auto"> Shipping available</label></div>
+          <div class="adminToggle"><label><input id="aPickup" type="checkbox" style="width:auto"> Local pickup available</label></div>
+        </div>
+        <label>Pickup location</label>
+        <select id="aPickupLocation">
+          <option value="">Select pickup location</option>
+          <option value="Camden, TN">Camden, TN</option>
+          <option value="Rock Hill, SC">Rock Hill, SC</option>
+        </select>
+        <label>Pickup instructions</label>
+        <input id="aPickupInfo" placeholder="Optional pickup directions or hours">
+        <button class="goldBtn adminPublish" onclick="createAuction()">Publish Auction</button>
+      </div>
+    </section>
 
-# EDIT AUCTION: show current time remaining in a sensible unit.
-old_edit_head = """const mins=Math.max(1,Math.round((new Date(a.ends_at).getTime()-Date.now())/60000));
-  document.getElementById('modalbox').innerHTML=`<h2>Edit Auction</h2>"""
-new_edit_head = """const remainingMs=Math.max(60000,new Date(a.ends_at).getTime()-Date.now());
+    <section class="adminCard">
+      <div class="adminCardHead">
+        <div>
+          <h3>Fulfillment Queue</h3>
+          <div class="opsCountLine">${readyToFulfill.length} ready to fulfill · ${unpaidOrders.length} awaiting payment</div>
+        </div>
+        <span class="accountCount">${workingOrders.length}</span>
+      </div>
+      <div class="adminCardBody">
+        ${fErr?`<div class="err">${esc(fErr.message)}</div>`:''}
+        <input class="opsSearch" id="adminFulfillmentSearch" placeholder="Search winner or auction..." value="${esc(adminFulfillmentSearch)}">
+        <div style="overflow:auto;margin-top:10px">
+          <table class="opsTable">
+            <thead><tr><th>Item / winner</th><th>Payment</th><th>Amount</th><th>Method</th><th>Status</th></tr></thead>
+            <tbody>
+              ${visibleOrders.length?visibleOrders.map(o=>{
+                const paid=o.payment_status==='paid';
+                const fs=o.fulfillment_status||'pending';
+                const auctionForOrder=auctions.find(a=>a.id===o.auction_id);
+                const rawMethod=o.fulfillment_method||'';
+                const pickupLabel=auctionForOrder?.pickup_location?`Pickup · ${auctionForOrder.pickup_location}`:'Pickup';
+                const needsTracking=rawMethod==='shipping'&&paid&&fs!=='completed';
+                const allowedStatuses=rawMethod==='pickup'
+                  ? ['pending','ready_for_pickup','completed']
+                  : ['pending','shipped','completed'];
+
+                return `<tr>
+                  <td><div class="opsTitle">${esc(o.auction_title)}</div><div class="opsSub">${esc(o.winner_name||'Winner')} · ${esc(o.winner_email||'')}</div></td>
+                  <td><span class="opsBadge ${paid?'paid':'unpaid'}">${paid?'PAID':'UNPAID'}</span></td>
+                  <td class="opsMoney">${money(o.total_due||o.winning_bid)}</td>
+                  <td>
+                    ${paid?`<select id="fm-${o.order_id}" class="methodCorrection fulfillmentMethod" data-order-id="${o.order_id}">
+                      ${auctionForOrder?.shipping_available?`<option value="shipping" ${rawMethod==='shipping'?'selected':''}>Shipping</option>`:''}
+                      ${auctionForOrder?.pickup_available&&auctionForOrder?.pickup_location?`<option value="pickup" ${rawMethod==='pickup'?'selected':''}>${esc(pickupLabel)}</option>`:''}
+                    </select>
+                    <div class="methodHint">Changing a paid method does not rewrite the amount already charged.</div>`
+                    :`<span class="opsBadge unpaid">${esc(rawMethod||'Not selected')}</span>`}
+                  </td>
+                  <td>
+                    ${paid?`<select id="fs-${o.order_id}" class="opsSelect fulfillmentStatus" data-order-id="${o.order_id}" data-has-tracking="${needsTracking||o.tracking_number?'true':'false'}">
+                      ${allowedStatuses.map(s=>`<option value="${s}" ${fs===s?'selected':''}>${statusLabel(s)}</option>`).join('')}
+                    </select>
+                    ${needsTracking||o.tracking_number?`<input id="trk-${o.order_id}" class="trackingNumber" data-order-id="${o.order_id}" value="${esc(o.tracking_number||'')}" placeholder="Tracking number" style="margin:6px 0 0">`:''}
+                    ${Number(o.refund_due||0)>0&&o.refund_status==='due'
+                      ?`<div class="refundDueBox"><b>Refund due: ${money(o.refund_due)}</b><span>Shipping overpayment after fulfillment correction.</span><button class="refundDifferenceBtn" data-order-id="${o.order_id}" data-amount="${Number(o.refund_due||0)}">Issue ${money(o.refund_due)} Refund</button></div>`
+                      :o.refund_status==='refunded'
+                        ?`<div class="refundDoneBox"><b>Refunded ${money(o.refunded_amount||o.refund_due)}</b><span>Refund issued through Stripe.</span></div>`
+                        :''}
+                    <div id="save-msg-${o.order_id}" class="opsSub">Saves automatically</div>`
+                    :(()=>{const due=o.payment_due_at?new Date(o.payment_due_at):null;const overdue=due&&due.getTime()<=Date.now();const cancelled=o.nonpayment_status==='cancelled_nonpayment';return `<span class="opsBadge ${overdue?'overdue':'unpaid'}">${cancelled?'CANCELLED — NONPAYMENT':overdue?'PAYMENT OVERDUE':'AWAITING PAYMENT'}</span>${due?`<div class="opsSub" style="margin-top:5px">Due ${esc(due.toLocaleString())}</div>`:''}${overdue&&!cancelled?`<button class="cancelNonpaymentBtn" data-order-id="${o.order_id}" data-auction-id="${o.auction_id}">Cancel for Nonpayment / Relist</button>`:''}`})()}
+                  </td>
+                </tr>`;
+              }).join(''):`<tr><td colspan="5" class="adminEmpty">No active fulfillment items match this search.</td></tr>`}
+            </tbody>
+          </table>
+        </div>
+        ${completedOrders.length?`<div class="opsCountLine" style="margin-top:10px">${completedOrders.length} completed order${completedOrders.length===1?'':'s'} hidden from this working queue.</div>`:''}
+      </div>
+    </section>
+
+    <section class="adminCard adminWide">
+      <div class="adminCardHead">
+        <div><h3>Manage Auctions</h3><div class="opsCountLine">${filteredAuctions.length} shown</div></div>
+        <div class="manageFilters">
+          <button class="manageFilter ${adminAuctionFilter==='current'?'active':''}" data-admin-filter="current">Current ${currentAuctions.length}</button>
+          <button class="manageFilter ${adminAuctionFilter==='live'?'active':''}" data-admin-filter="live">Live ${liveAuctions.length}</button>
+          <button class="manageFilter ${adminAuctionFilter==='ended'?'active':''}" data-admin-filter="ended">Ended ${endedAuctions.filter(a=>!completedAuctionIds.has(a.id)).length}</button>
+          <button class="manageFilter ${adminAuctionFilter==='completed'?'active':''}" data-admin-filter="completed">Completed ${completedAuctions.length}</button>
+        </div>
+      </div>
+      <div class="adminCardBody">
+        <div class="opsToolbar">
+          <input class="opsSearch" id="adminAuctionSearch" placeholder="Search auctions..." value="${esc(adminAuctionSearch)}">
+        </div>
+        <div style="overflow:auto;margin-top:10px">
+          <table class="opsTable">
+            <thead><tr><th></th><th>Auction</th><th>Status</th><th>Current bid</th><th>Payment / fulfillment</th><th style="text-align:right">Actions</th></tr></thead>
+            <tbody>
+              ${filteredAuctions.length?filteredAuctions.map(a=>{
+                const p=photosFor(a.id)[0],o=byAuction[a.id],ended=!isOpen(a),isCompleted=completedAuctionIds.has(a.id);
+                let ops='—';
+                if(o) ops=`${o.payment_status==='paid'?'Paid':'Unpaid'} · ${esc(o.fulfillment_method||'Not selected')}${isCompleted?' · Completed':''}`;
+                return `<tr>
+                  <td>${p?`<img class="opsThumb" src="${photoUrl(p)}" alt="">`:''}</td>
+                  <td><div class="opsTitle">${esc(a.title)}</div><div class="opsSub">${ended?'Ended':'Ends'} ${new Date(a.ends_at).toLocaleString()}</div></td>
+                  <td><span class="opsBadge ${isCompleted?'paid':ended?'':'live'}">${isCompleted?'COMPLETED':ended?'ENDED':'LIVE'}</span></td>
+                  <td class="opsMoney">${money(a.current_bid)}</td>
+                  <td>${ops}</td>
+                  <td><div class="opsActions">
+                    ${isCompleted?'':`<button class="light adminEditAuctionBtn" data-auction-id="${a.id}">Edit</button>`}
+                    ${ended?`<button class="adminRelistAuctionBtn" data-auction-id="${a.id}" style="background:#087443">Relist</button>`:''}
+                    ${isCompleted?'':`<button class="dangerGhost adminDeleteAuctionBtn" data-auction-id="${a.id}">Delete</button>`}
+                  </div></td>
+                </tr>`;
+              }).join(''):`<tr><td colspan="6" class="adminEmpty">No auctions match this filter.</td></tr>`}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>`;
+
+document.getElementById('adminFulfillmentSearch')?.addEventListener('input',e=>{
+  adminFulfillmentSearch=e.target.value;
+  clearTimeout(window._adminFsTimer);
+  window._adminFsTimer=setTimeout(()=>renderAdmin(),180);
+});
+document.getElementById('adminAuctionSearch')?.addEventListener('input',e=>{
+  adminAuctionSearch=e.target.value;
+  clearTimeout(window._adminAsTimer);
+  window._adminAsTimer=setTimeout(()=>renderAdmin(),180);
+});
+document.querySelectorAll('[data-admin-filter]').forEach(btn=>btn.addEventListener('click',()=>{
+  adminAuctionFilter=btn.dataset.adminFilter;
+  renderAdmin();
+}));
+document.querySelectorAll('.cancelNonpaymentBtn').forEach(btn=>{
+  btn.addEventListener('click',async()=>{
+    const orderId=btn.dataset.orderId,auctionId=btn.dataset.auctionId;
+    if(!confirm('Cancel this unpaid order for nonpayment? The original auction history will remain intact, and you will then be given the Relist screen.'))return;
+    btn.disabled=true;btn.textContent='Cancelling...';
+    const {data,error}=await sb.rpc('admin_cancel_nonpayment_order',{p_order_id:orderId});
+    if(error){btn.disabled=false;btn.textContent='Cancel for Nonpayment / Relist';return alert(error.message);}
+    await loadData();renderAdmin();
+    openRelistAuction(auctionId);
+  });
+});
+
+document.querySelectorAll('.refundDifferenceBtn').forEach(btn=>{
+  btn.addEventListener('click',async()=>{
+    const orderId=btn.dataset.orderId;
+    const amount=Number(btn.dataset.amount||0);
+    if(!confirm(`Issue a ${money(amount)} refund through Stripe? This action moves money and cannot be undone from HammerHunt.`))return;
+    const old=btn.textContent;
+    btn.disabled=true;
+    btn.textContent='Issuing refund...';
+    try{
+      const r=await fetch(SUPA+'/functions/v1/admin-update-fulfillment',{
+        method:'POST',
+        headers:{Authorization:'Bearer '+session.access_token,apikey:KEY,'Content-Type':'application/json'},
+        body:JSON.stringify({order_id:orderId,action:'refund_difference'})
+      });
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok)throw new Error(j.error||'Unable to issue refund');
+      alert(`Refund issued: ${money(j.amount||amount)}.`);
+      await loadData();
+      renderAdmin();
+    }catch(err){
+      alert('Refund failed: '+(err?.message||String(err)));
+      btn.disabled=false;
+      btn.textContent=old;
+    }
+  });
+});
+document.querySelectorAll('.fulfillmentMethod').forEach(sel=>{
+  sel.addEventListener('change',async()=>{
+    const orderId=sel.dataset.orderId;
+    const fs=document.getElementById('fs-'+orderId);
+    const newMethod=sel.value;
+    if(fs){
+      fs.innerHTML=(newMethod==='pickup'
+        ? [['pending','Pending'],['ready_for_pickup','Ready for pickup'],['completed','Completed']]
+        : [['pending','Pending'],['shipped','Shipped'],['completed','Completed']]
+      ).map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
+      fs.value='pending';
+      fs.dataset.hasTracking=newMethod==='shipping'?'true':'false';
+    }
+    await updateFulfillment(orderId,newMethod==='shipping');
+  });
+});
+document.querySelectorAll('.fulfillmentStatus').forEach(sel=>{
+  sel.addEventListener('change',async()=>{
+    await updateFulfillment(sel.dataset.orderId,sel.dataset.hasTracking==='true');
+  });
+});
+document.querySelectorAll('.trackingNumber').forEach(inp=>{
+  inp.addEventListener('change',async()=>{await updateFulfillment(inp.dataset.orderId,true)});
+  inp.addEventListener('blur',async()=>{await updateFulfillment(inp.dataset.orderId,true)});
+});
+document.querySelectorAll('.adminEditAuctionBtn').forEach(btn=>btn.addEventListener('click',()=>openEditAuction(btn.dataset.auctionId)));
+document.querySelectorAll('.adminRelistAuctionBtn').forEach(btn=>btn.addEventListener('click',()=>openRelistAuction(btn.dataset.auctionId)));
+document.querySelectorAll('.adminDeleteAuctionBtn').forEach(btn=>btn.addEventListener('click',()=>deleteAuction(btn.dataset.auctionId)));
+}
+
+function openEditAuction(id){
+  const a=auctions.find(x=>x.id===id); if(!a)return;
+  const remainingMs=Math.max(60000,new Date(a.ends_at).getTime()-Date.now());
   const remainingMinutes=Math.max(1,Math.round(remainingMs/60000));
   let editDuration=remainingMinutes,editUnit='minutes';
   if(remainingMinutes>=1440&&remainingMinutes%1440===0){editDuration=remainingMinutes/1440;editUnit='days'}
   else if(remainingMinutes>=60&&remainingMinutes%60===0){editDuration=remainingMinutes/60;editUnit='hours'}
-  document.getElementById('modalbox').innerHTML=`<h2>Edit Auction</h2>"""
-if old_edit_head not in text:
-    raise RuntimeError("Edit duration setup not found")
-text = text.replace(old_edit_head, new_edit_head, 1)
-
-old_edit_field = """<label>Minutes remaining</label><input id="eDuration" type="number" min="1" step="1" value="${mins}">"""
-new_edit_field = """<label>Time remaining</label>
+  document.getElementById('modalbox').innerHTML=`<h2>Edit Auction</h2>
+  ${a.status==='ended'?'<div class="notice"><b>This auction has ended.</b> Editing will not reopen it. Use Relist to create a fresh auction.</div>':''}
+  <label>Title</label><input id="eTitle" value="${esc(a.title)}">
+  <label>Condition</label><input id="eCondition" value="${esc(a.condition||'')}">
+  <label>Description</label><textarea id="eDesc">${esc(a.description||'')}</textarea>
+  <label>Time remaining</label>
   <div class="durationRow">
     <input id="eDuration" type="number" min="1" step="1" value="${editDuration}">
     <select id="eDurationUnit">
@@ -64,28 +1975,39 @@ new_edit_field = """<label>Time remaining</label>
       <option value="hours" ${editUnit==='hours'?'selected':''}>Hours</option>
       <option value="days" ${editUnit==='days'?'selected':''}>Days</option>
     </select>
-  </div>"""
-if old_edit_field not in text:
-    raise RuntimeError("Edit duration field not found")
-text = text.replace(old_edit_field, new_edit_field, 1)
-
-old_edit_save = """const duration=Math.max(1,Number(document.getElementById('eDuration').value||1));
-    const pickupOn=document.getElementById('ePickup').checked,pickupLocation=document.getElementById('ePickupLocation').value;
-    if(pickupOn&&!pickupLocation)return alert('Choose Camden, TN or Rock Hill, SC for local pickup.');
-    const patch={title:document.getElementById('eTitle').value.trim(),condition:document.getElementById('eCondition').value.trim(),description:document.getElementById('eDesc').value.trim(),ends_at:a.status==='ended'?a.ends_at:new Date(Date.now()+duration*60000).toISOString(),shipping_available:document.getElementById('eShipOn').checked,shipping_price:document.getElementById('eShipOn').checked?Number(document.getElementById('eShip').value||0):null,pickup_available:pickupOn,pickup_location:pickupOn?pickupLocation:null,pickup_instructions:pickupOn?document.getElementById('ePickupInfo').value.trim():null};"""
-new_edit_save = """const duration=Math.max(1,Number(document.getElementById('eDuration').value||1));
+  </div>
+  <label>Shipping price ($)</label><input id="eShip" type="number" min="0" step="0.01" value="${Number(a.shipping_price||0)}">
+  <label><input id="eShipOn" type="checkbox" style="width:auto" ${a.shipping_available?'checked':''}> Shipping available</label>
+  <label><input id="ePickup" type="checkbox" style="width:auto" ${a.pickup_available?'checked':''}> Local pickup available</label>
+  <label>Pickup location</label>
+  <select id="ePickupLocation">
+    <option value="">Select pickup location</option>
+    <option value="Camden, TN" ${a.pickup_location==='Camden, TN'?'selected':''}>Camden, TN</option>
+    <option value="Rock Hill, SC" ${a.pickup_location==='Rock Hill, SC'?'selected':''}>Rock Hill, SC</option>
+  </select>
+  <label>Pickup instructions</label><input id="ePickupInfo" value="${esc(a.pickup_instructions||'')}">
+  <div style="display:flex;gap:8px;margin-top:14px"><button id="saveEditAuction" class="good">Save Changes</button><button class="light" onclick="closeModal()">Cancel</button></div>`;
+  document.getElementById('modal').classList.add('show');
+  document.getElementById('saveEditAuction').onclick=async()=>{
+    const duration=Math.max(1,Number(document.getElementById('eDuration').value||1));
     const durationUnit=document.getElementById('eDurationUnit').value;
     const durationMs=duration*(durationUnit==='days'?86400000:durationUnit==='hours'?3600000:60000);
     const pickupOn=document.getElementById('ePickup').checked,pickupLocation=document.getElementById('ePickupLocation').value;
     if(pickupOn&&!pickupLocation)return alert('Choose Camden, TN or Rock Hill, SC for local pickup.');
-    const patch={title:document.getElementById('eTitle').value.trim(),condition:document.getElementById('eCondition').value.trim(),description:document.getElementById('eDesc').value.trim(),ends_at:a.status==='ended'?a.ends_at:new Date(Date.now()+durationMs).toISOString(),shipping_available:document.getElementById('eShipOn').checked,shipping_price:document.getElementById('eShipOn').checked?Number(document.getElementById('eShip').value||0):null,pickup_available:pickupOn,pickup_location:pickupOn?pickupLocation:null,pickup_instructions:pickupOn?document.getElementById('ePickupInfo').value.trim():null};"""
-if old_edit_save not in text:
-    raise RuntimeError("Edit save duration block not found")
-text = text.replace(old_edit_save, new_edit_save, 1)
+    const patch={title:document.getElementById('eTitle').value.trim(),condition:document.getElementById('eCondition').value.trim(),description:document.getElementById('eDesc').value.trim(),ends_at:a.status==='ended'?a.ends_at:new Date(Date.now()+durationMs).toISOString(),shipping_available:document.getElementById('eShipOn').checked,shipping_price:document.getElementById('eShipOn').checked?Number(document.getElementById('eShip').value||0):null,pickup_available:pickupOn,pickup_location:pickupOn?pickupLocation:null,pickup_instructions:pickupOn?document.getElementById('ePickupInfo').value.trim():null};
+    const {error}=await sb.from('auctions').update(patch).eq('id',id);
+    if(error)return alert(error.message);
+    closeModal(); await loadData(); renderAdmin();
+  };
+}
 
-# RELIST: replace minutes-only with value + unit; default 24 hours.
-old_relist_field = """<label>Duration (minutes)</label><input id="rDuration" type="number" min="1" step="1" value="10">"""
-new_relist_field = """<label>Duration</label>
+function openRelistAuction(id){
+  const a=auctions.find(x=>x.id===id); if(!a)return;
+  document.getElementById('modalbox').innerHTML=`<h2>Relist Auction</h2>
+    <div class="notice">This creates a brand-new auction. Old bids, winner history, orders, and payments remain attached to the original listing.</div>
+    <label>Title</label><input id="rTitle" value="${esc(a.title)}">
+    <label>Starting bid ($)</label><input id="rStart" type="number" min="0" step="5" value="${Number(a.starting_bid||a.current_bid||0)}">
+    <label>Duration</label>
     <div class="durationRow">
       <input id="rDuration" type="number" min="1" step="1" value="24">
       <select id="rDurationUnit">
@@ -93,31 +2015,132 @@ new_relist_field = """<label>Duration</label>
         <option value="hours" selected>Hours</option>
         <option value="days">Days</option>
       </select>
-    </div>"""
-if old_relist_field not in text:
-    raise RuntimeError("Relist duration field not found")
-text = text.replace(old_relist_field, new_relist_field, 1)
+    </div>
+    <label>Condition</label><input id="rCondition" value="${esc(a.condition||'')}">
+    <label>Description</label><textarea id="rDesc">${esc(a.description||'')}</textarea>
+    <label>Shipping price ($)</label><input id="rShip" type="number" min="0" step="0.01" value="${Number(a.shipping_price||0)}">
+    <label><input id="rShipOn" type="checkbox" style="width:auto" ${a.shipping_available?'checked':''}> Shipping available</label>
+    <label><input id="rPickup" type="checkbox" style="width:auto" ${a.pickup_available?'checked':''}> Local pickup available</label>
+    <label>Pickup location</label>
+    <select id="rPickupLocation">
+      <option value="">Select pickup location</option>
+      <option value="Camden, TN" ${a.pickup_location==='Camden, TN'?'selected':''}>Camden, TN</option>
+      <option value="Rock Hill, SC" ${a.pickup_location==='Rock Hill, SC'?'selected':''}>Rock Hill, SC</option>
+    </select>
+    <label>Pickup instructions</label><input id="rPickupInfo" value="${esc(a.pickup_instructions||'')}">
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button id="saveRelistAuction" class="good">Create Relisted Auction</button>
+      <button class="light" onclick="closeModal()">Cancel</button>
+    </div>`;
+  document.getElementById('modal').classList.add('show');
 
-old_relist_save = """const duration=Math.max(1,Number(document.getElementById('rDuration').value||1));
-    const start=Number(document.getElementById('rStart').value||0);
-    const now=Date.now();"""
-new_relist_save = """const duration=Math.max(1,Number(document.getElementById('rDuration').value||1));
+  document.getElementById('saveRelistAuction').onclick=async()=>{
+    const duration=Math.max(1,Number(document.getElementById('rDuration').value||1));
     const durationUnit=document.getElementById('rDurationUnit').value;
     const durationMs=duration*(durationUnit==='days'?86400000:durationUnit==='hours'?3600000:60000);
     const start=Number(document.getElementById('rStart').value||0);
-    const now=Date.now();"""
-if old_relist_save not in text:
-    raise RuntimeError("Relist save block not found")
-text = text.replace(old_relist_save, new_relist_save, 1)
+    const now=Date.now();
+    const row={
+      title:document.getElementById('rTitle').value.trim(),
+      category_id:a.category_id,
+      condition:document.getElementById('rCondition').value.trim(),
+      description:document.getElementById('rDesc').value.trim(),
+      starting_bid:start,
+      current_bid:start,
+      starts_at:new Date(now).toISOString(),
+      ends_at:new Date(now+durationMs).toISOString(),
+      status:'live',
+      shipping_available:document.getElementById('rShipOn').checked,
+      shipping_price:document.getElementById('rShipOn').checked?Number(document.getElementById('rShip').value||0):null,
+      pickup_available:document.getElementById('rPickup').checked,
+      pickup_location:document.getElementById('rPickup').checked?document.getElementById('rPickupLocation').value:null,
+      pickup_instructions:document.getElementById('rPickup').checked?document.getElementById('rPickupInfo').value.trim():null
+    };
+    if(!row.title)return alert('Enter a title.');
+    if(row.pickup_available&&!row.pickup_location)return alert('Choose Camden, TN or Rock Hill, SC for local pickup.');
+    const {data:newAuction,error}=await sb.from('auctions').insert(row).select('id').single();
+    if(error)return alert(error.message);
 
-text = text.replace(
-    "ends_at:new Date(now+duration*60000).toISOString(),",
-    "ends_at:new Date(now+durationMs).toISOString(),",
-    1
-)
+    // Copy photo records to the new auction. Storage files can be shared by path.
+    const oldPhotos=photosFor(id);
+    if(oldPhotos.length){
+      const photoRows=oldPhotos.map((p,i)=>({
+        auction_id:newAuction.id,
+        storage_path:p.storage_path,
+        sort_order:i
+      }));
+      await sb.from('auction_photos').insert(photoRows);
+    }
 
-out = Path("/mnt/data/HammerHunt-preview-24hr-nonpayment-plus-duration.html")
-out.write_text(text, encoding="utf-8")
+    closeModal();
+    await loadData();
+    renderAdmin();
+    alert('Auction relisted.');
+  };
+}
 
-print(f"Created {out} ({out.stat().st_size:,} bytes)")
-print("Added Minutes / Hours / Days duration selection to Create, Edit, and Relist.")
+async function deleteAuction(id){
+  const a=auctions.find(x=>x.id===id); if(!a)return;
+  if(!confirm(`Delete "${a.title}"? This cannot be undone.`))return;
+  const {error}=await sb.from('auctions').delete().eq('id',id);
+  if(error)return alert(error.message);
+  await loadData(); renderAdmin();
+}
+
+async function updateFulfillment(orderId,hasTracking){
+  const statusSelect=document.getElementById('fs-'+orderId);
+  const methodSelect=document.getElementById('fm-'+orderId);
+  const msg=document.getElementById('save-msg-'+orderId);
+  const status=statusSelect?.value||'pending';
+  const method=methodSelect?.value||'';
+  const tracking=hasTracking?(document.getElementById('trk-'+orderId)?.value||''):null;
+
+  if(statusSelect)statusSelect.disabled=true;
+  if(methodSelect)methodSelect.disabled=true;
+  if(msg){msg.textContent='Saving...';msg.style.fontWeight='800';msg.style.color=''}
+
+  try{
+    const r=await fetch(SUPA+'/functions/v1/admin-update-fulfillment',{
+      method:'POST',
+      headers:{
+        Authorization:'Bearer '+session.access_token,
+        apikey:KEY,
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({
+        order_id:orderId,
+        fulfillment_method:method,
+        status,
+        tracking_number:tracking
+      })
+    });
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(j.error||'Unable to save fulfillment');
+
+    if(msg){
+      if(j.financial_adjustment?.refund_due){
+        msg.innerHTML=`<b>Saved.</b> Method corrected to ${esc(method)}. <span style="color:#b54708">${esc(j.financial_adjustment.message)}</span>`;
+      }else{
+        msg.textContent='Saved: '+method+' · '+status.replaceAll('_',' ');
+      }
+      msg.style.fontWeight='900';
+    }
+
+    await loadData();
+    renderAdmin();
+  }catch(err){
+    if(msg){
+      msg.textContent='Save failed: '+(err?.message||String(err));
+      msg.style.fontWeight='900';
+      msg.style.color='#b42318';
+    }
+    if(statusSelect)statusSelect.disabled=false;
+    if(methodSelect)methodSelect.disabled=false;
+  }
+}
+
+async function createAuction(){const title=aTitle.value.trim(),start=Number(aStart.value),duration=Number(aDuration.value),durationUnit=aDurationUnit.value,pickupOn=aPickup.checked,pickupLocation=aPickupLocation.value;if(!title||Number.isNaN(start)||!Number.isFinite(duration)||duration<1)return alert('Enter title, starting bid, and a valid duration.');if(!aShipOn.checked&&!pickupOn)return alert('At least one fulfillment option is required.');if(pickupOn&&!pickupLocation)return alert('Choose Camden, TN or Rock Hill, SC for local pickup.');const durationMs=duration*(durationUnit==='days'?86400000:durationUnit==='hours'?3600000:60000);const now=Date.now();const row={title,category_id:aCat.value,condition:aCondition.value.trim(),description:aDesc.value.trim(),starting_bid:start,current_bid:start,starts_at:new Date(now).toISOString(),ends_at:new Date(now+durationMs).toISOString(),status:'live',shipping_available:aShipOn.checked,shipping_price:aShipOn.checked?Number(aShip.value||0):null,pickup_available:pickupOn,pickup_location:pickupOn?pickupLocation:null,pickup_instructions:pickupOn?aPickupInfo.value.trim():null};const{data:a,error}=await sb.from('auctions').insert(row).select('id').single();if(error)return alert(error.message);for(let i=0;i<pendingPhotos.length;i++){const f=pendingPhotos[i],raw=(f.name.split('.').pop()||'jpg').toLowerCase(),ext=raw.replace(/[^a-z0-9]/g,'')||'jpg',path=`${a.id}/${String(i).padStart(2,'0')}-${crypto.randomUUID()}.${ext}`;const{error:upErr}=await sb.storage.from('auction-images').upload(path,f,{contentType:f.type||undefined,upsert:false});if(upErr){alert(`Auction published, but photo ${i+1} failed: ${upErr.message}`);continue}const{error:dbErr}=await sb.from('auction_photos').insert({auction_id:a.id,storage_path:path,sort_order:i});if(dbErr)alert(`Photo ${i+1} uploaded but could not be attached: ${dbErr.message}`)}pendingPhotos=[];await loadData();alert('Auction published.');renderAdmin()}
+
+
+
+boot();</script></body></html>
