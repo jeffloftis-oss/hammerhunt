@@ -1283,7 +1283,49 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-sh
   .contactTopics{grid-template-columns:1fr}
 }
 </style>
-</head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button class="ghost" onclick="showContact()">Contact</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="modalbox" class="modalbox"></div></div>
+
+<style>
+.siteFooter{
+  max-width:1200px;
+  margin:26px auto 18px;
+  padding:18px 16px;
+  border-top:1px solid #e7e1d6;
+  text-align:center;
+}
+.siteFooterLinks{
+  display:flex;
+  justify-content:center;
+  gap:14px;
+  flex-wrap:wrap;
+}
+.siteFooter button{
+  background:none!important;
+  border:0!important;
+  padding:2px!important;
+  color:#667085!important;
+  font-size:12px!important;
+  font-weight:700!important;
+  text-decoration:underline;
+  cursor:pointer;
+}
+.siteFooterCopy{margin-top:9px;color:#98a2b3;font-size:11px}
+.policyDoc{max-height:72vh;overflow:auto;padding-right:6px}
+.policyDoc h2{margin-top:0}
+.policyDoc h3{margin:20px 0 6px;font-size:16px}
+.policyDoc p,.policyDoc li{font-size:13px;line-height:1.6;color:#344054}
+.policyNotice{background:#fff8e8;border:1px solid #ecd28f;padding:10px 12px;border-radius:10px;margin-bottom:14px}
+</style>
+</head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button class="ghost" onclick="showContact()">Contact</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main>
+<footer class="siteFooter">
+  <div class="siteFooterLinks">
+    <button onclick="openPolicy('terms')">Terms &amp; Conditions</button>
+    <button onclick="openPolicy('privacy')">Privacy</button>
+    <button onclick="openPolicy('refunds')">Payment &amp; Refund Policy</button>
+    <button onclick="showContact()">Contact HammerHunt</button>
+  </div>
+  <div class="siteFooterCopy">HammerHunt · Customer support: support@hammerhunt.com</div>
+</footer>
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="modalbox" class="modalbox"></div></div>
 <script type="module">import{createClient}from'https://esm.sh/@supabase/supabase-js@2';const SUPA='https://cboodkfcfvshsxirpkxt.supabase.co';const KEY='sb_publishable_VDsMnqHeYHajdKendarwww_hMX9fMM2';const hhStorage={
   getItem:key=>{
     try{return window.localStorage.getItem('hammerhunt:'+key)}catch(e){return null}
@@ -2282,6 +2324,59 @@ async function updateFulfillment(orderId,hasTracking){
 async function createAuction(){const title=aTitle.value.trim(),start=Number(aStart.value),duration=Number(aDuration.value),durationUnit=aDurationUnit.value,pickupOn=aPickup.checked,pickupLocation=aPickupLocation.value;if(!title||Number.isNaN(start)||!Number.isFinite(duration)||duration<1)return alert('Enter title, starting bid, and a valid duration.');if(!aShipOn.checked&&!pickupOn)return alert('At least one fulfillment option is required.');if(pickupOn&&!pickupLocation)return alert('Choose Camden, TN or Rock Hill, SC for local pickup.');const durationMs=duration*(durationUnit==='days'?86400000:durationUnit==='hours'?3600000:60000);const now=Date.now();const row={title,category_id:aCat.value,condition:aCondition.value.trim(),description:aDesc.value.trim(),starting_bid:start,current_bid:start,starts_at:new Date(now).toISOString(),ends_at:new Date(now+durationMs).toISOString(),status:'live',shipping_available:aShipOn.checked,shipping_price:aShipOn.checked?Number(aShip.value||0):null,pickup_available:pickupOn,pickup_location:pickupOn?pickupLocation:null,pickup_instructions:pickupOn?aPickupInfo.value.trim():null};const{data:a,error}=await sb.from('auctions').insert(row).select('id').single();if(error)return alert(error.message);for(let i=0;i<pendingPhotos.length;i++){const f=pendingPhotos[i],raw=(f.name.split('.').pop()||'jpg').toLowerCase(),ext=raw.replace(/[^a-z0-9]/g,'')||'jpg',path=`${a.id}/${String(i).padStart(2,'0')}-${crypto.randomUUID()}.${ext}`;const{error:upErr}=await sb.storage.from('auction-images').upload(path,f,{contentType:f.type||undefined,upsert:false});if(upErr){alert(`Auction published, but photo ${i+1} failed: ${upErr.message}`);continue}const{error:dbErr}=await sb.from('auction_photos').insert({auction_id:a.id,storage_path:path,sort_order:i});if(dbErr)alert(`Photo ${i+1} uploaded but could not be attached: ${dbErr.message}`)}pendingPhotos=[];await loadData();alert('Auction published.');renderAdmin()}
 
 
+
+
+function openPolicy(kind){
+  const docs={
+    terms:`<div class="policyDoc">
+      <h2>HammerHunt Terms & Conditions</h2>
+      <div class="policyNotice"><b>Draft for operational use.</b> These terms should be reviewed by a qualified attorney before public launch.</div>
+      <p>By creating an account, placing a bid, or completing a purchase on HammerHunt, you agree to these Terms & Conditions.</p>
+      <h3>Bidding</h3>
+      <p>Bids are binding offers to purchase an item if you are the winning bidder. HammerHunt uses stated bid increments and may extend an auction near closing to provide a fair opportunity for responsive bidding.</p>
+      <h3>Payment deadline</h3>
+      <p>Winning bidders must complete payment within 24 hours after an auction ends. After that period, HammerHunt may cancel the transaction and return the item to inventory for resale or relisting.</p>
+      <h3>Nonpayment and bidder restrictions</h3>
+      <p>Repeated nonpayment may result in restriction of bidding privileges. A restricted customer may still sign in and manage existing orders unless HammerHunt determines otherwise.</p>
+      <h3>Shipping and local pickup</h3>
+      <p>Available fulfillment methods are shown on each auction. Local pickup listings identify the applicable location, including Camden, Tennessee or Rock Hill, South Carolina when offered.</p>
+      <h3>Fulfillment corrections and refunds</h3>
+      <p>HammerHunt may correct an order's fulfillment method when necessary. If a paid shipping order is corrected to pickup and the correction creates an overpayment, the approved difference may be refunded through the original payment processor.</p>
+      <h3>Item condition and descriptions</h3>
+      <p>Buyers should review the auction description, photographs, condition information, fulfillment options, and other listing details before bidding.</p>
+      <h3>Auction integrity</h3>
+      <p>Users may not manipulate auctions, interfere with bidding, or use accounts to distort auction results. HammerHunt may pause, correct, extend, or cancel an auction when necessary because of technical issues, listing errors, suspected abuse, or circumstances affecting a fair auction.</p>
+      <h3>Questions</h3>
+      <p>Contact HammerHunt at <b>support@hammerhunt.com</b>.</p>
+    </div>`,
+    privacy:`<div class="policyDoc">
+      <h2>HammerHunt Privacy Notice</h2>
+      <div class="policyNotice"><b>Draft for operational use.</b> This notice should be reviewed before public launch.</div>
+      <p>HammerHunt collects information needed to operate customer accounts, auctions, bidding, payments, shipping, local pickup, customer support, and fraud prevention.</p>
+      <h3>Information we use</h3>
+      <p>This may include your name, email address, account activity, bids, purchases, fulfillment choices, and payment-status information. Payment card details are processed by the payment provider and are not intended to be stored directly by HammerHunt.</p>
+      <h3>How information is used</h3>
+      <p>Information is used to authenticate users, operate auctions, process orders, communicate transaction status, manage fulfillment, provide customer support, prevent abuse, and maintain appropriate business records.</p>
+      <h3>Service providers</h3>
+      <p>HammerHunt may use third-party providers for payment processing, transactional email, hosting, authentication, and related infrastructure.</p>
+      <h3>Data retention</h3>
+      <p>Auction, bidding, order, payment-status, and fulfillment records may be retained for business, accounting, fraud-prevention, and dispute-resolution purposes.</p>
+      <h3>Privacy questions</h3>
+      <p>Email <b>support@hammerhunt.com</b>.</p>
+    </div>`,
+    refunds:`<div class="policyDoc">
+      <h2>Payment, Cancellation & Refund Policy</h2>
+      <p><b>Winning bids are binding.</b> Payment is due within 24 hours after an auction ends.</p>
+      <p>If payment is not completed within 24 hours, HammerHunt may cancel the transaction, return the item to inventory, relist it, and restrict bidding privileges for repeated nonpayment.</p>
+      <p>Refunds are not automatic because a buyer changes their mind. HammerHunt may approve a refund when an item cannot be fulfilled as represented, when a fulfillment correction creates an overpayment, or when another documented exception applies.</p>
+      <p>If a shipping-to-pickup correction creates an overpayment, the approved difference may be returned through the original payment processor. Bank or card posting times may vary.</p>
+      <p>Questions about a payment, cancellation, or refund can be sent to <b>support@hammerhunt.com</b>.</p>
+    </div>`
+  };
+  document.getElementById('modalbox').innerHTML=(docs[kind]||docs.terms)+`<div style="margin-top:14px"><button class="light" onclick="closeModal()">Close</button></div>`;
+  document.getElementById('modal').classList.add('show');
+}
+window.openPolicy=openPolicy;
 
 function showContact(){
   currentView='contact';
