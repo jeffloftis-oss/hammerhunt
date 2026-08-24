@@ -1642,12 +1642,8 @@ function onPhotoPick(event){
 async function renderAdmin(){
 if(!profile?.is_admin){document.getElementById('app').innerHTML='<div class="err">Admin access required.</div>';return}
 
-const [{data:fulfill,error:fErr},{data:refundRows,error:refundErr}]=await Promise.all([
-  sb.rpc('admin_fulfillment_orders'),
-  sb.from('orders').select('id,refund_due,refund_status,refunded_amount,stripe_refund_id,refunded_at')
-]);
-const refundByOrder=Object.fromEntries((refundRows||[]).map(r=>[r.id,r]));
-const orders=(fulfill||[]).map(o=>({...o,...(refundByOrder[o.order_id]||{})}));
+const {data:fulfill,error:fErr}=await sb.rpc('admin_fulfillment_orders');
+const orders=fulfill||[];
 const byAuction=Object.fromEntries(orders.map(o=>[o.auction_id,o]));
 const statusLabel=s=>({pending:'Pending',ready_for_pickup:'Ready for pickup',shipped:'Shipped',completed:'Completed'}[s]||s||'Pending');
 
