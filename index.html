@@ -1181,6 +1181,15 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-sh
   line-height:1.35;
 }
 </style>
+
+<style>
+.refundDueBox,.refundDoneBox{
+  display:grid;gap:4px;margin-top:8px;padding:9px 10px;border-radius:10px;font-size:11px;
+}
+.refundDueBox{background:#fff7e8;border:1px solid #f2cf87;color:#7a4a00}
+.refundDoneBox{background:#ecfdf3;border:1px solid #b7e5c8;color:#087443}
+.refundDueBox button{margin-top:5px;background:#b54708!important;color:#fff!important;border:0!important;padding:7px 9px!important;font-size:11px!important}
+</style>
 </head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="modalbox" class="modalbox"></div></div>
 <script type="module">import{createClient}from'https://esm.sh/@supabase/supabase-js@2';const SUPA='https://cboodkfcfvshsxirpkxt.supabase.co';const KEY='sb_publishable_VDsMnqHeYHajdKendarwww_hMX9fMM2';const hhStorage={
   getItem:key=>{
@@ -1633,8 +1642,12 @@ function onPhotoPick(event){
 async function renderAdmin(){
 if(!profile?.is_admin){document.getElementById('app').innerHTML='<div class="err">Admin access required.</div>';return}
 
-const {data:fulfill,error:fErr}=await sb.rpc('admin_fulfillment_orders');
-const orders=fulfill||[];
+const [{data:fulfill,error:fErr},{data:refundRows,error:refundErr}]=await Promise.all([
+  sb.rpc('admin_fulfillment_orders'),
+  sb.from('orders').select('id,refund_due,refund_status,refunded_amount,stripe_refund_id,refunded_at')
+]);
+const refundByOrder=Object.fromEntries((refundRows||[]).map(r=>[r.id,r]));
+const orders=(fulfill||[]).map(o=>({...o,...(refundByOrder[o.order_id]||{})}));
 const byAuction=Object.fromEntries(orders.map(o=>[o.auction_id,o]));
 const statusLabel=s=>({pending:'Pending',ready_for_pickup:'Ready for pickup',shipped:'Shipped',completed:'Completed'}[s]||s||'Pending');
 
@@ -1771,6 +1784,11 @@ document.getElementById('app').innerHTML=`
                       ${allowedStatuses.map(s=>`<option value="${s}" ${fs===s?'selected':''}>${statusLabel(s)}</option>`).join('')}
                     </select>
                     ${needsTracking||o.tracking_number?`<input id="trk-${o.order_id}" class="trackingNumber" data-order-id="${o.order_id}" value="${esc(o.tracking_number||'')}" placeholder="Tracking number" style="margin:6px 0 0">`:''}
+                    ${Number(o.refund_due||0)>0&&o.refund_status==='due'
+                      ?`<div class="refundDueBox"><b>Refund due: ${money(o.refund_due)}</b><span>Shipping overpayment after fulfillment correction.</span><button class="refundDifferenceBtn" data-order-id="${o.order_id}" data-amount="${Number(o.refund_due||0)}">Issue ${money(o.refund_due)} Refund</button></div>`
+                      :o.refund_status==='refunded'
+                        ?`<div class="refundDoneBox"><b>Refunded ${money(o.refunded_amount||o.refund_due)}</b><span>Refund issued through Stripe.</span></div>`
+                        :''}
                     <div id="save-msg-${o.order_id}" class="opsSub">Saves automatically</div>`
                     :`<span class="opsBadge unpaid">AWAITING PAYMENT</span>`}
                   </td>
@@ -1840,6 +1858,32 @@ document.querySelectorAll('[data-admin-filter]').forEach(btn=>btn.addEventListen
   adminAuctionFilter=btn.dataset.adminFilter;
   renderAdmin();
 }));
+document.querySelectorAll('.refundDifferenceBtn').forEach(btn=>{
+  btn.addEventListener('click',async()=>{
+    const orderId=btn.dataset.orderId;
+    const amount=Number(btn.dataset.amount||0);
+    if(!confirm(`Issue a ${money(amount)} refund through Stripe? This action moves money and cannot be undone from HammerHunt.`))return;
+    const old=btn.textContent;
+    btn.disabled=true;
+    btn.textContent='Issuing refund...';
+    try{
+      const r=await fetch(SUPA+'/functions/v1/admin-update-fulfillment',{
+        method:'POST',
+        headers:{Authorization:'Bearer '+session.access_token,apikey:KEY,'Content-Type':'application/json'},
+        body:JSON.stringify({order_id:orderId,action:'refund_difference'})
+      });
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok)throw new Error(j.error||'Unable to issue refund');
+      alert(`Refund issued: ${money(j.amount||amount)}.`);
+      await loadData();
+      renderAdmin();
+    }catch(err){
+      alert('Refund failed: '+(err?.message||String(err)));
+      btn.disabled=false;
+      btn.textContent=old;
+    }
+  });
+});
 document.querySelectorAll('.fulfillmentMethod').forEach(sel=>{
   sel.addEventListener('change',async()=>{
     const orderId=sel.dataset.orderId;
