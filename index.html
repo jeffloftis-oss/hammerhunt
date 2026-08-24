@@ -1338,6 +1338,19 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-sh
   color:#8a6500;
 }
 </style>
+
+<style>
+.hhToast{
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
+  z-index:9999;max-width:min(520px,calc(100vw - 28px));width:max-content;
+  padding:12px 15px;border-radius:11px;box-shadow:0 8px 28px rgba(0,0,0,.18);
+  font-size:13px;font-weight:750;line-height:1.4;background:#17202a;color:#fff;
+}
+.hhToast.error{background:#8f1d1d}
+.hhToast.success{background:#087443}
+.hhToast.info{background:#344054}
+.hhToast button{margin-left:10px;background:transparent!important;border:0!important;color:#fff!important;text-decoration:underline;padding:0!important;font-weight:800;cursor:pointer}
+</style>
 </head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button class="ghost" onclick="showContact()">Contact</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main>
 <footer class="siteFooter">
   <div class="siteFooterLinks">
@@ -1431,22 +1444,51 @@ async function finalizeExpiredAuctions(){
   return;
 }
 
-async function verifyWinnerPayment(sessionId){
-if(!session||!sessionId)return;
-try{
-const r=await fetch(SUPA+'/functions/v1/verify-winner-payment',{method:'POST',headers:{Authorization:'Bearer '+session.access_token,apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({session_id:sessionId})});
-const j=await r.json().catch(()=>({}));
-if(!r.ok)alert(j.error||'Unable to verify payment.');
-}catch(e){alert('Unable to verify payment.')}
+
+let hhToastTimer=null;
+function hhMessage(message,type='info',ms=4500){
+  let el=document.getElementById('hhToast');
+  if(!el){el=document.createElement('div');el.id='hhToast';document.body.appendChild(el)}
+  el.className=`hhToast ${type}`;
+  el.textContent=message;
+  el.style.display='block';
+  clearTimeout(hhToastTimer);
+  hhToastTimer=setTimeout(()=>{el.style.display='none'},ms);
 }
-async function winnerCheckout(auctionId,method){
-if(!session){openSignIn();return}
-const r=await fetch(SUPA+'/functions/v1/create-winner-checkout',{method:'POST',headers:{Authorization:'Bearer '+session.access_token,apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({auction_id:auctionId,fulfillment_method:method})});
-const j=await r.json().catch(()=>({}));
-if(!r.ok)throw new Error(j.error||'Unable to start checkout.');
-if(j.paid){alert('This auction is already paid.');await renderAccount();return}
-if(!j.url)throw new Error('Checkout link was not returned.');
-location.href=j.url
+function friendlyBidError(message=''){
+  const m=String(message).toLowerCase();
+  if(m.includes('suspend')||m.includes('restrict'))return 'Your bidding privileges are currently restricted. Contact HammerHunt Support if you believe this is an error.';
+  if(m.includes('ended')||m.includes('closed')||m.includes('expired'))return 'This auction has ended, so no additional bids can be accepted.';
+  if(m.includes('payment')&&(m.includes('method')||m.includes('card')||m.includes('verif')))return 'A verified payment method is required before bidding. Open My Account to verify your payment method.';
+  if(m.includes('auth')||m.includes('sign in')||m.includes('jwt'))return 'Your sign-in session needs to be refreshed. Please sign in again and retry.';
+  if(m.includes('network')||m.includes('fetch')||m.includes('connection'))return 'We could not reach HammerHunt. Check your connection and try the bid again.';
+  return message||'The bid could not be placed. Refresh the auction and try again.';
+}
+async function verifyWinnerPayment(sessionId){
+  if(!session||!sessionId)return;
+  try{
+    const r=await fetch(SUPA+'/functions/v1/verify-winner-payment',{method:'POST',headers:{Authorization:'Bearer '+session.access_token,apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({session_id:sessionId})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)hhMessage(j.error||'Payment completed, but HammerHunt could not verify it yet. Refresh My Account in a moment.','error',7000);
+  }catch(e){
+    hhMessage('Payment completed, but verification is temporarily unavailable. Refresh My Account in a moment.','error',7000);
+  }
+}
+async function winnerCheckout(auctionId,method,btn=null){
+  if(!session){openSignIn();return}
+  const oldText=btn?.textContent||'Checkout';
+  if(btn){btn.disabled=true;btn.textContent='Opening checkout…'}
+  try{
+    const r=await fetch(SUPA+'/functions/v1/create-winner-checkout',{method:'POST',headers:{Authorization:'Bearer '+session.access_token,apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({auction_id:auctionId,fulfillment_method:method})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(j.error||'Unable to start checkout.');
+    if(j.paid){hhMessage('This order is already paid.','info');await renderAccount();return}
+    if(!j.url)throw new Error('Checkout link was not returned.');
+    location.href=j.url;
+  }catch(err){
+    if(btn){btn.disabled=false;btn.textContent=oldText}
+    hhMessage(err?.message||'Checkout could not be opened. Please try again.','error',6500);
+  }
 }
 function startRealtime(){if(realtimeChannel)return;realtimeChannel=sb.channel('hammerhunt-auctions').on('postgres_changes',{event:'*',schema:'public',table:'auctions'},refreshLiveAuction).on('postgres_changes',{event:'*',schema:'public',table:'auction_photos'},async()=>{await loadData();if(currentView==='auctions')renderAuctions();if(currentView==='admin')renderAdmin();if(activeAuctionId)openAuction(activeAuctionId,true)}).subscribe()}
 async function pollAuctions(){if(document.hidden)return;const before=JSON.stringify(auctions.map(x=>[x.id,x.current_bid,x.ends_at,x.status,photosFor(x.id).length]));await loadData();const after=JSON.stringify(auctions.map(x=>[x.id,x.current_bid,x.ends_at,x.status,photosFor(x.id).length]));if(before!==after){if(currentView==='auctions')renderAuctions();if(currentView==='account')renderAccount();if(currentView==='admin')renderAdmin();if(activeAuctionId)openAuction(activeAuctionId,true)}}
@@ -1593,18 +1635,19 @@ async function placeNextBid(id){
   const btn=document.getElementById('bidBtn');
   const oldText=btn?.textContent||'Place Bid';
   if(btn){btn.disabled=true;btn.textContent='Submitting bid…'}
-  const{data,error}=await sb.rpc('place_next_bid',{p_auction_id:id});
-  if(error){
+  try{
+    const{data,error}=await sb.rpc('place_next_bid',{p_auction_id:id});
+    if(error)throw error;
+    const placed=Array.isArray(data)&&data[0]?(data[0].new_current_bid??data[0].amount):null;
+    await loadData();
+    closeModal();
+    renderAuctions();
+    hhMessage(placed!=null?`Bid placed at ${money(placed)}.`:'Bid placed successfully.','success');
+  }catch(err){
     if(btn){btn.disabled=false;btn.textContent=oldText}
-    alert(error.message);
+    hhMessage(friendlyBidError(err?.message||String(err)),'error',6500);
     await pollAuctions();
-    return;
   }
-  const placed=Array.isArray(data)&&data[0]?(data[0].new_current_bid??data[0].amount):null;
-  await loadData();
-  closeModal();
-  renderAuctions();
-  alert(placed!=null?`Bid placed at ${money(placed)}.`:'Bid placed successfully.');
 }
 async function renderAccount(){
 if(!session){
