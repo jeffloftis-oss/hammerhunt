@@ -1190,6 +1190,13 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-sh
 .refundDoneBox{background:#ecfdf3;border:1px solid #b7e5c8;color:#087443}
 .refundDueBox button{margin-top:5px;background:#b54708!important;color:#fff!important;border:0!important;padding:7px 9px!important;font-size:11px!important}
 </style>
+<style>
+.paymentPolicy{margin:0 0 12px;padding:10px 12px;border:1px solid #ead59b;background:#fffaf0;border-radius:10px;font-size:12px;line-height:1.45;color:#604b16}
+.paymentDeadline{margin-top:7px;font-size:12px}
+.deadlineOverdue{border-color:#efb0a8!important;background:#fff1ef!important;color:#8a1c12!important}
+.opsBadge.overdue{background:#fee2e2;color:#991b1b}
+.cancelNonpaymentBtn{display:block;margin-top:7px;background:#991b1b!important;color:white!important;border:0!important;border-radius:8px!important;padding:7px 9px!important;font-size:11px!important;font-weight:800!important}
+</style>
 </head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="modalbox" class="modalbox"></div></div>
 <script type="module">import{createClient}from'https://esm.sh/@supabase/supabase-js@2';const SUPA='https://cboodkfcfvshsxirpkxt.supabase.co';const KEY='sb_publishable_VDsMnqHeYHajdKendarwww_hMX9fMM2';const hhStorage={
   getItem:key=>{
@@ -1440,7 +1447,7 @@ if(!session){
 
 const[{data:bids},{data:wins}]=await Promise.all([
   sb.from('bids').select('*,auctions(id,title,current_bid,ends_at,status,categories(name))').order('created_at',{ascending:false}),
-  sb.from('orders').select('id,auction_id,winner_user_id,winning_bid,payment_status,fulfillment_method,shipping_price,total_amount,total_due,fulfillment_status,tracking_number,fulfilled_at,created_at,auctions(title,shipping_available,shipping_price,pickup_available,pickup_location,pickup_instructions)').eq('winner_user_id',session.user.id).order('created_at',{ascending:false})
+  sb.from('orders').select('id,auction_id,winner_user_id,winning_bid,payment_status,fulfillment_method,shipping_price,total_amount,total_due,fulfillment_status,tracking_number,fulfilled_at,created_at,payment_due_at,nonpayment_status,auctions(title,shipping_available,shipping_price,pickup_available,pickup_location,pickup_instructions)').eq('winner_user_id',session.user.id).order('created_at',{ascending:false})
 ]);
 
 const now=Date.now();
@@ -1453,7 +1460,7 @@ const activeBids=[...latestBidByAuction.values()].filter(b=>{
   return a.status!=='ended'&&new Date(a.ends_at).getTime()>now;
 });
 
-const openWins=(wins||[]).filter(w=>(w.payment_status!=='paid')||((w.fulfillment_status||'pending')!=='completed'));
+const openWins=(wins||[]).filter(w=>w.nonpayment_status!=='cancelled_nonpayment'&&((w.payment_status!=='paid')||((w.fulfillment_status||'pending')!=='completed')));
 const history=(wins||[]).filter(w=>w.payment_status==='paid'&&(w.fulfillment_status||'pending')==='completed');
 
 const activeBidHtml=activeBids.length?activeBids.map(b=>{
@@ -1488,7 +1495,10 @@ const openWinHtml=openWins.length?openWins.map(w=>{
     const opts=[];
     if(a.shipping_available)opts.push(`<button class="goldBtn winnerCheckoutBtn" data-auction-id="${w.auction_id}" data-method="shipping">Pay & Ship ${money(Number(w.winning_bid)+Number(a.shipping_price||0))}</button>`);
     if(a.pickup_available)opts.push(`<button class="good winnerCheckoutBtn" data-auction-id="${w.auction_id}" data-method="pickup">Pay & Pick Up · ${esc(a.pickup_location||'Pickup location')} ${money(w.winning_bid)}</button>`);
-    actionHtml=`<div class="notice" style="margin:10px 0 0"><b>Payment needed.</b> Choose how you want to receive the item and complete checkout.</div><div class="accountItemActions">${opts.join('')}</div>`;
+    const due=w.payment_due_at?new Date(w.payment_due_at):null;
+    const overdue=due&&due.getTime()<=Date.now();
+    const dueText=due?due.toLocaleString():'';
+    actionHtml=`<div class="notice ${overdue?'deadlineOverdue':''}" style="margin:10px 0 0"><b>${overdue?'Payment overdue.':'Payment needed.'}</b> ${overdue?'The 24-hour payment period has passed. HammerHunt may cancel this transaction and relist the item.':'Choose how you want to receive the item and complete checkout.'}${dueText?`<div class="paymentDeadline">Payment deadline: <b>${esc(dueText)}</b></div>`:''}</div><div class="accountItemActions">${opts.join('')}</div>`;
   }else{
     statusText={pending:'PROCESSING',ready_for_pickup:'READY FOR PICKUP',shipped:'SHIPPED',completed:'COMPLETED'}[fs]||'PAID';
     const detail=w.fulfillment_method==='shipping'
@@ -1538,6 +1548,7 @@ document.getElementById('app').innerHTML=`
 
     <section class="accountSection">
       <div class="accountSectionHead"><h3>Wins / Action Needed</h3><span class="accountCount">${openWins.length}</span></div>
+      <div class="paymentPolicy"><b>24-hour payment policy:</b> Winning bids must be paid within 24 hours after the auction ends. After that period, HammerHunt may cancel the transaction and relist the item. Repeated nonpayment may result in account restrictions.</div>
       <div class="accountSectionBody">${openWinHtml}</div>
     </section>
 
@@ -1786,7 +1797,7 @@ document.getElementById('app').innerHTML=`
                         ?`<div class="refundDoneBox"><b>Refunded ${money(o.refunded_amount||o.refund_due)}</b><span>Refund issued through Stripe.</span></div>`
                         :''}
                     <div id="save-msg-${o.order_id}" class="opsSub">Saves automatically</div>`
-                    :`<span class="opsBadge unpaid">AWAITING PAYMENT</span>`}
+                    :(()=>{const due=o.payment_due_at?new Date(o.payment_due_at):null;const overdue=due&&due.getTime()<=Date.now();const cancelled=o.nonpayment_status==='cancelled_nonpayment';return `<span class="opsBadge ${overdue?'overdue':'unpaid'}">${cancelled?'CANCELLED — NONPAYMENT':overdue?'PAYMENT OVERDUE':'AWAITING PAYMENT'}</span>${due?`<div class="opsSub" style="margin-top:5px">Due ${esc(due.toLocaleString())}</div>`:''}${overdue&&!cancelled?`<button class="cancelNonpaymentBtn" data-order-id="${o.order_id}" data-auction-id="${o.auction_id}">Cancel for Nonpayment / Relist</button>`:''}`})()}
                   </td>
                 </tr>`;
               }).join(''):`<tr><td colspan="5" class="adminEmpty">No active fulfillment items match this search.</td></tr>`}
@@ -1854,6 +1865,18 @@ document.querySelectorAll('[data-admin-filter]').forEach(btn=>btn.addEventListen
   adminAuctionFilter=btn.dataset.adminFilter;
   renderAdmin();
 }));
+document.querySelectorAll('.cancelNonpaymentBtn').forEach(btn=>{
+  btn.addEventListener('click',async()=>{
+    const orderId=btn.dataset.orderId,auctionId=btn.dataset.auctionId;
+    if(!confirm('Cancel this unpaid order for nonpayment? The original auction history will remain intact, and you will then be given the Relist screen.'))return;
+    btn.disabled=true;btn.textContent='Cancelling...';
+    const {data,error}=await sb.rpc('admin_cancel_nonpayment_order',{p_order_id:orderId});
+    if(error){btn.disabled=false;btn.textContent='Cancel for Nonpayment / Relist';return alert(error.message);}
+    await loadData();renderAdmin();
+    openRelistAuction(auctionId);
+  });
+});
+
 document.querySelectorAll('.refundDifferenceBtn').forEach(btn=>{
   btn.addEventListener('click',async()=>{
     const orderId=btn.dataset.orderId;
