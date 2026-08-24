@@ -1209,6 +1209,15 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-sh
   .durationRow{grid-template-columns:1fr}
 }
 </style>
+<style>
+.bidderAccessCard{margin-top:20px}
+.bidderAccessList{margin-top:10px}
+.bidderAccessRow{display:grid;grid-template-columns:minmax(180px,1.4fr) minmax(240px,1.5fr) minmax(170px,.8fr);gap:14px;align-items:center;padding:12px 8px;border-bottom:1px solid #ece8df}
+.bidderIdentity{display:grid;gap:3px}.bidderIdentity span{font-size:12px;color:#64748b;overflow-wrap:anywhere}
+.bidderSignals{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.bidderSignal{font-size:11px;background:#f1f5f9;padding:5px 8px;border-radius:999px}.bidderSignal.warning{background:#fff1df;color:#9a5200}
+.bidderAccessAction{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.bidderRestrictionBtn{border:0;border-radius:8px;padding:8px 10px;font-size:11px;font-weight:800;cursor:pointer}.bidderRestrictionBtn.restrict{background:#991b1b;color:#fff}.bidderRestrictionBtn.restore{background:#087443;color:#fff}
+@media(max-width:800px){.bidderAccessRow{grid-template-columns:1fr}.bidderAccessAction{justify-content:flex-start}}
+</style>
 </head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main><div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div id="modalbox" class="modalbox"></div></div>
 <script type="module">import{createClient}from'https://esm.sh/@supabase/supabase-js@2';const SUPA='https://cboodkfcfvshsxirpkxt.supabase.co';const KEY='sb_publishable_VDsMnqHeYHajdKendarwww_hMX9fMM2';const hhStorage={
   getItem:key=>{
@@ -1665,8 +1674,13 @@ function onPhotoPick(event){
 async function renderAdmin(){
 if(!profile?.is_admin){document.getElementById('app').innerHTML='<div class="err">Admin access required.</div>';return}
 
-const {data:fulfill,error:fErr}=await sb.rpc('admin_fulfillment_orders');
+const [{data:fulfill,error:fErr},{data:bidderAccounts,error:bErr}]=await Promise.all([
+  sb.rpc('admin_fulfillment_orders'),
+  sb.rpc('admin_bidder_accounts')
+]);
 const orders=fulfill||[];
+const bidders=bidderAccounts||[];
+const suspendedBidders=bidders.filter(b=>b.bidding_suspended);
 const byAuction=Object.fromEntries(orders.map(o=>[o.auction_id,o]));
 const statusLabel=s=>({pending:'Pending',ready_for_pickup:'Ready for pickup',shipped:'Shipped',completed:'Completed'}[s]||s||'Pending');
 
@@ -1713,6 +1727,7 @@ document.getElementById('app').innerHTML=`
       <div class="adminStat">${readyToFulfill.length} ready to fulfill</div>
       <div class="adminStat">${unpaidOrders.length} unpaid</div>
       <div class="adminStat">${completedAuctions.length} completed</div>
+      <div class="adminStat">${suspendedBidders.length} restricted</div>
     </div>
   </section>
 
@@ -1830,7 +1845,32 @@ document.getElementById('app').innerHTML=`
       </div>
     </section>
 
-    <section class="adminCard adminWide">
+      <section class="adminCard bidderAccessCard">
+    <div class="adminCardHead">
+      <div><h3>Bidder Access</h3><div class="opsCountLine">Restrict or restore bidding privileges without disabling the customer account.</div></div>
+      <span class="accountCount">${bidders.length}</span>
+    </div>
+    <div class="adminCardBody">
+      ${bErr?`<div class="err">${esc(bErr.message)}</div>`:''}
+      <input class="opsSearch" id="bidderAccessSearch" placeholder="Search bidder name or email...">
+      <div class="bidderAccessList">
+        ${bidders.length?bidders.map(b=>`<div class="bidderAccessRow" data-bidder-search="${esc(((b.display_name||'')+' '+(b.email||'')).toLowerCase())}">
+          <div class="bidderIdentity"><b>${esc(b.display_name||'Bidder')}</b><span>${esc(b.email||'')}</span></div>
+          <div class="bidderSignals">
+            <span class="opsBadge ${b.payment_verified?'paid':'unpaid'}">${b.payment_verified?'PAYMENT VERIFIED':'PAYMENT NOT VERIFIED'}</span>
+            ${Number(b.unpaid_orders||0)>0?`<span class="bidderSignal">${b.unpaid_orders} unpaid</span>`:''}
+            ${Number(b.nonpayment_cancellations||0)>0?`<span class="bidderSignal warning">${b.nonpayment_cancellations} nonpayment cancellation${Number(b.nonpayment_cancellations)===1?'':'s'}</span>`:''}
+          </div>
+          <div class="bidderAccessAction">
+            <span class="opsBadge ${b.bidding_suspended?'overdue':'paid'}">${b.bidding_suspended?'BIDDING RESTRICTED':'BIDDING ACTIVE'}</span>
+            <button class="bidderRestrictionBtn ${b.bidding_suspended?'restore':'restrict'}" data-user-id="${b.user_id}" data-suspended="${b.bidding_suspended?'true':'false'}">${b.bidding_suspended?'Restore Bidding':'Restrict Bidding'}</button>
+          </div>
+        </div>`).join(''):`<div class="opsEmpty">No bidder accounts yet.</div>`}
+      </div>
+    </div>
+  </section>
+
+<section class="adminCard adminWide">
       <div class="adminCardHead">
         <div><h3>Manage Auctions</h3><div class="opsCountLine">${filteredAuctions.length} shown</div></div>
         <div class="manageFilters">
@@ -1887,6 +1927,25 @@ document.querySelectorAll('[data-admin-filter]').forEach(btn=>btn.addEventListen
   adminAuctionFilter=btn.dataset.adminFilter;
   renderAdmin();
 }));
+const bidderSearch=document.getElementById('bidderAccessSearch');
+if(bidderSearch)bidderSearch.addEventListener('input',()=>{
+  const q=bidderSearch.value.trim().toLowerCase();
+  document.querySelectorAll('.bidderAccessRow').forEach(row=>row.style.display=!q||row.dataset.bidderSearch.includes(q)?'grid':'none');
+});
+document.querySelectorAll('.bidderRestrictionBtn').forEach(btn=>{
+  btn.addEventListener('click',async()=>{
+    const currentlySuspended=btn.dataset.suspended==='true';
+    const next=!currentlySuspended;
+    const verb=next?'restrict this bidder from placing NEW bids':'restore this bidder’s bidding privileges';
+    if(!confirm(`Are you sure you want to ${verb}? Their account, existing orders, and payment access will remain available.`))return;
+    btn.disabled=true;btn.textContent=next?'Restricting...':'Restoring...';
+    const {error}=await sb.rpc('admin_set_bidding_suspended',{p_user_id:btn.dataset.userId,p_suspended:next});
+    if(error){btn.disabled=false;btn.textContent=currentlySuspended?'Restore Bidding':'Restrict Bidding';return alert(error.message);}
+    alert(next?'Bidding privileges restricted. The customer can still sign in and handle existing orders.':'Bidding privileges restored.');
+    await renderAdmin();
+  });
+});
+
 document.querySelectorAll('.cancelNonpaymentBtn').forEach(btn=>{
   btn.addEventListener('click',async()=>{
     const orderId=btn.dataset.orderId,auctionId=btn.dataset.auctionId;
