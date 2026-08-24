@@ -1351,6 +1351,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#d1a62e;box-sh
 .hhToast.info{background:#344054}
 .hhToast button{margin-left:10px;background:transparent!important;border:0!important;color:#fff!important;text-decoration:underline;padding:0!important;font-weight:800;cursor:pointer}
 </style>
+
+<style>
+.countdown{white-space:nowrap!important;min-width:max-content!important}
+</style>
 </head><body><header><div class="top"><div class="brand">HAMMER<span>HUNT</span></div><nav><button class="ghost" onclick="showView('auctions')">Auctions</button><button class="ghost" onclick="showView('account')">My Account</button><button class="ghost" onclick="showContact()">Contact</button><button id="adminNav" class="ghost hidden" onclick="showView('admin')">Admin</button><button id="authBtn" class="ghost" onclick="openAuthChoice()">Sign In</button></nav></div></header><main id="app"><div class="panel">Loading HammerHunt…</div></main>
 <footer class="siteFooter">
   <div class="siteFooterLinks">
@@ -1381,7 +1385,7 @@ const sb=createClient(SUPA,KEY,{
     storage:hhStorage,
     storageKey:'hammerhunt-auth'
   }
-});let session=null,profile=null,categories=[],auctions=[],currentView='auctions',activeAuctionId=null,realtimeChannel=null,photosByAuction={},galleryIndex=0,pendingPhotos=[],marketplaceQuery='',marketplaceCategory='all',photoViewerAuctionId=null,photoViewerIndex=0,adminAuctionFilter='current',adminAuctionSearch='',adminFulfillmentSearch='';const nowMs=()=>new Date().getTime();let expiryCheckRunning=false;const money=n=>'$'+Number(n||0).toFixed(2);const esc=s=>String(s??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));const remain=d=>{const endMs=Date.parse(String(d));const currentMs=new Date().getTime();let x=endMs-currentMs;if(!Number.isFinite(x)||x<=0)return'Ended';let h=Math.floor(x/3600000),m=Math.floor((x%3600000)/60000),sec=Math.floor((x%60000)/1000);return h>=24?Math.floor(h/24)+'d '+(h%24)+'h':h>0?h+'h '+m+'m '+sec+'s':m+'m '+sec+'s'};const isOpen=a=>a.status!=='ended'&&new Date(a.ends_at).getTime()>nowMs();const photosFor=id=>photosByAuction[id]||[];const photoUrl=p=>sb.storage.from('auction-images').getPublicUrl(p.storage_path).data.publicUrl;window.showView=showView;window.openAuthChoice=openAuthChoice;window.openSignIn=openSignIn;window.openSignUp=openSignUp;
+});let session=null,profile=null,categories=[],auctions=[],currentView='auctions',activeAuctionId=null,realtimeChannel=null,photosByAuction={},galleryIndex=0,pendingPhotos=[],marketplaceQuery='',marketplaceCategory='all',photoViewerAuctionId=null,photoViewerIndex=0,adminAuctionFilter='current',adminAuctionSearch='',adminFulfillmentSearch='';const nowMs=()=>new Date().getTime();let expiryCheckRunning=false;const money=n=>'$'+Number(n||0).toFixed(2);const esc=s=>String(s??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));const remain=d=>{const endMs=Date.parse(String(d));const currentMs=new Date().getTime();let x=endMs-currentMs;if(!Number.isFinite(x)||x<=0)return'Ended';const totalSec=Math.floor(x/1000),days=Math.floor(totalSec/86400),hours=Math.floor((totalSec%86400)/3600),mins=Math.floor((totalSec%3600)/60),secs=totalSec%60;return days>0?`${days}d ${hours}h ${mins}m ${String(secs).padStart(2,'0')}s`:hours>0?`${hours}h ${mins}m ${String(secs).padStart(2,'0')}s`:`${mins}m ${String(secs).padStart(2,'0')}s`};const isOpen=a=>a.status!=='ended'&&new Date(a.ends_at).getTime()>nowMs();const photosFor=id=>photosByAuction[id]||[];const photoUrl=p=>sb.storage.from('auction-images').getPublicUrl(p.storage_path).data.publicUrl;window.showView=showView;window.openAuthChoice=openAuthChoice;window.openSignIn=openSignIn;window.openSignUp=openSignUp;
 window.setMarketplaceQuery=v=>{marketplaceQuery=String(v||'');renderAuctions()};
 window.setMarketplaceCategory=v=>{marketplaceCategory=String(v||'all');renderAuctions()};
 window.openPhotoViewer=openPhotoViewer;
@@ -1477,7 +1481,12 @@ async function verifyWinnerPayment(sessionId){
 async function winnerCheckout(auctionId,method,btn=null){
   if(!session){openSignIn();return}
   const oldText=btn?.textContent||'Checkout';
-  if(btn){btn.disabled=true;btn.textContent='Opening checkout…'}
+  if(btn){
+    btn.dataset.checkoutButton='true';
+    btn.dataset.defaultText=oldText;
+    btn.disabled=true;
+    btn.textContent='Opening checkout…';
+  }
   try{
     const r=await fetch(SUPA+'/functions/v1/create-winner-checkout',{method:'POST',headers:{Authorization:'Bearer '+session.access_token,apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({auction_id:auctionId,fulfillment_method:method})});
     const j=await r.json().catch(()=>({}));
@@ -1486,7 +1495,12 @@ async function winnerCheckout(auctionId,method,btn=null){
     if(!j.url)throw new Error('Checkout link was not returned.');
     location.href=j.url;
   }catch(err){
-    if(btn){btn.disabled=false;btn.textContent=oldText}
+    if(btn){
+      btn.disabled=false;
+      btn.textContent=oldText;
+      delete btn.dataset.checkoutButton;
+      delete btn.dataset.defaultText;
+    }
     hhMessage(err?.message||'Checkout could not be opened. Please try again.','error',6500);
   }
 }
@@ -2479,6 +2493,19 @@ function showContact(){
     </div>`;
 }
 window.showContact=showContact;
+
+function resetCheckoutButtons(){
+  document.querySelectorAll('[data-checkout-button="true"]').forEach(btn=>{
+    if(btn.dataset.defaultText)btn.textContent=btn.dataset.defaultText;
+    btn.disabled=false;
+  });
+}
+window.addEventListener('pageshow',()=>{
+  resetCheckoutButtons();
+  if(currentView==='account'&&session)renderAccount();
+});
+window.addEventListener('focus',resetCheckoutButtons);
+
 
 
 boot();</script></body></html>
