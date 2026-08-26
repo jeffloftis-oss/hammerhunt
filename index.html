@@ -1536,14 +1536,24 @@ if(session&&qs.get('checkout')==='success'&&qs.get('session_id')){await verifyWi
 showView(location.search.includes('payment=')?'account':'auctions')}
 async function loadData(){const[{data:c},{data:a},{data:p}]=await Promise.all([sb.from('categories').select('*').eq('is_active',true).order('sort_order'),sb.from('auctions').select('*,categories(name)').in('status',['scheduled','live','ended']).order('ends_at'),sb.from('auction_photos').select('*').order('sort_order').order('created_at'),sb.from('bids').select('auction_id,bidder_user_id,amount,created_at').order('created_at',{ascending:false})]);categories=c||[];categories=c||[];auctions=a||[];bids=b||[];photosByAuction={};for(const ph of(p||[]))(photosByAuction[ph.auction_id]??=[]).push(ph)}
 function showView(v){currentView=v;activeAuctionId=null;if(v==='auctions')renderAuctions();if(v==='account')renderAccount();if(v==='admin')renderAdmin()}
-function renderAuctions(){
-  const bidStatusFor=a=>{
-  if(!session)return '';
-  const auctionBids=(bids||[]).filter(b=>b.auction_id===a.id);
-  const hasBid=auctionBids.some(b=>b.bidder_user_id===session.user.id);
-  if(!hasBid)return '';
-  const leader=auctionBids[0];
-  return leader?.bidder_user_id===session.user.id?'winning':'outbid';
+async function renderAuctions(){
+  const bidStatusMap={};
+
+async function refreshBidStatuses(){
+  if(!session){
+    Object.keys(bidStatusMap).forEach(k=>delete bidStatusMap[k]);
+    return;
+  }
+
+  await Promise.all(
+    auctions.filter(isOpen).map(async a=>{
+      const {data,error}=await sb.rpc('bid_status_for_auction',{p_auction_id:a.id});
+      if(!error) bidStatusMap[a.id]=data||'';
+    })
+  );
+}
+
+const bidStatusFor=a=>bidStatusMap[a.id]||'';
 };
   const open=auctions.filter(isOpen);
   const q=marketplaceQuery.trim().toLowerCase();
