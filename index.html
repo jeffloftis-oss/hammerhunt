@@ -1547,7 +1547,11 @@ async function refreshBidStatuses(){
   await Promise.all(
     auctions.filter(isOpen).map(async a=>{
       const {data,error}=await sb.rpc('bid_status_for_auction',{p_auction_id:a.id});
-      if(!error) bidStatusMap[a.id]=data||'';
+      if(error){
+  console.error('bid status error',a.id,error);
+}else{
+  bidStatusMap[a.id]=data||'';
+}
     })
   );
 }
