@@ -1534,10 +1534,9 @@ const qs=new URLSearchParams(location.search);
 if(session&&qs.get('reset')==='1'){showView('auctions');setTimeout(openNewPassword,50);return}
 if(session&&qs.get('checkout')==='success'&&qs.get('session_id')){await verifyWinnerPayment(qs.get('session_id'));history.replaceState({},'',location.pathname);showView('account');return}
 showView(location.search.includes('payment=')?'account':'auctions')}
-async function loadData(){const[{data:c},{data:a},{data:p}]=await Promise.all([sb.from('categories').select('*').eq('is_active',true).order('sort_order'),sb.from('auctions').select('*,categories(name)').in('status',['scheduled','live','ended']).order('ends_at'),sb.from('auction_photos').select('*').order('sort_order').order('created_at'),sb.from('bids').select('auction_id,bidder_user_id,amount,created_at').order('created_at',{ascending:false})]);categories=c||[];categories=c||[];auctions=a||[];bids=b||[];photosByAuction={};for(const ph of(p||[]))(photosByAuction[ph.auction_id]??=[]).push(ph)}
+const[{data:c},{data:a},{data:p}]=await Promise.all([sb.from('categories').select('*').eq('is_active',true).order('sort_order'),sb.from('auctions').select('*,categories(name)').in('status',['scheduled','live','ended']).order('ends_at'),sb.from('auction_photos').select('*').order('sort_order').order('created_at')]);categories=c||[];categories=c||[];auctions=a||[];photosByAuction={};for(const ph of(p||[]))(photosByAuction[ph.auction_id]??=[]).push(ph)}
 function showView(v){currentView=v;activeAuctionId=null;if(v==='auctions')renderAuctions();if(v==='account')renderAccount();if(v==='admin')renderAdmin()}
-async function renderAuctions(){
-  const bidStatusMap={};
+const bidStatusMap={};
 
 async function refreshBidStatuses(){
   if(!session){
@@ -1554,7 +1553,9 @@ async function refreshBidStatuses(){
 }
 
 const bidStatusFor=a=>bidStatusMap[a.id]||'';
-};
+
+async function renderAuctions(){
+  await refreshBidStatuses();
   const open=auctions.filter(isOpen);
   const q=marketplaceQuery.trim().toLowerCase();
   const filtered=open.filter(a=>{
