@@ -1445,7 +1445,7 @@ async function refreshLiveAuction(payload){if(payload?.new?.id){const i=auctions
 async function finalizeExpiredAuctions(){
   // Auction finalization and winner notifications are server-owned.
   // Supabase cron runs finalize-expired-auctions once per minute.
-  return;
+  await loadData();
 }
 
 
