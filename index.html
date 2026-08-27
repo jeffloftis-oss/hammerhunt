@@ -2449,6 +2449,19 @@ async function deleteAuction(id){
   if(!confirm(`Delete "${a.title}"? This cannot be undone.`))return;
   const {error}=await sb.from('auctions').delete().eq('id',id);
   if(error)return alert(error.message);
+  if(a.inventory_sku){
+  const {error:invErr}=await sb
+    .from('inventory')
+    .update({
+      status:'inventory',
+      updated_at:new Date().toISOString()
+    })
+    .eq('sku',a.inventory_sku);
+
+  if(invErr){
+    alert('Auction deleted, but inventory status could not be restored: '+invErr.message);
+  }
+}
   await loadData(); renderAdmin();
 }
 
@@ -2506,7 +2519,7 @@ async function updateFulfillment(orderId,hasTracking){
 
 async function createAuction(){
 const inventorySku=document.getElementById('aInventory')?.value||'';
-const title=aTitle.value.trim(),start=Number(aStart.value),duration=Number(aDuration.value),durationUnit=aDurationUnit.value,pickupOn=aPickup.checked,pickupLocation=aPickupLocation.value;if(!title||Number.isNaN(start)||!Number.isFinite(duration)||duration<1)return alert('Enter title, starting bid, and a valid duration.');if(!aShipOn.checked&&!pickupOn)return alert('At least one fulfillment option is required.');if(pickupOn&&!pickupLocation)return alert('Choose Camden, TN or Rock Hill, SC for local pickup.');const durationMs=duration*(durationUnit==='days'?86400000:durationUnit==='hours'?3600000:60000);const now=Date.now();const row={title,category_id:aCat.value,condition:aCondition.value.trim(),description:aDesc.value.trim(),starting_bid:start,current_bid:start,starts_at:new Date(now).toISOString(),ends_at:new Date(now+durationMs).toISOString(),status:'live',shipping_available:aShipOn.checked,shipping_price:aShipOn.checked?Number(aShip.value||0):null,pickup_available:pickupOn,pickup_location:pickupOn?pickupLocation:null,pickup_instructions:pickupOn?aPickupInfo.value.trim():null};const{data:a,error}=await sb.from('auctions').insert(row).select('id').single();if(error)return alert(error.message);for(let i=0;i<pendingPhotos.length;i++){const f=pendingPhotos[i],raw=(f.name.split('.').pop()||'jpg').toLowerCase(),ext=raw.replace(/[^a-z0-9]/g,'')||'jpg',path=`${a.id}/${String(i).padStart(2,'0')}-${crypto.randomUUID()}.${ext}`;const{error:upErr}=await sb.storage.from('auction-images').upload(path,f,{contentType:f.type||undefined,upsert:false});if(upErr){alert(`Auction published, but photo ${i+1} failed: ${upErr.message}`);continue}const{error:dbErr}=await sb.from('auction_photos').insert({auction_id:a.id,storage_path:path,sort_order:i});if(dbErr)alert(`Photo ${i+1} uploaded but could not be attached: ${dbErr.message}`)}if(inventorySku){
+const title=aTitle.value.trim(),start=Number(aStart.value),duration=Number(aDuration.value),durationUnit=aDurationUnit.value,pickupOn=aPickup.checked,pickupLocation=aPickupLocation.value;if(!title||Number.isNaN(start)||!Number.isFinite(duration)||duration<1)return alert('Enter title, starting bid, and a valid duration.');if(!aShipOn.checked&&!pickupOn)return alert('At least one fulfillment option is required.');if(pickupOn&&!pickupLocation)return alert('Choose Camden, TN or Rock Hill, SC for local pickup.');const durationMs=duration*(durationUnit==='days'?86400000:durationUnit==='hours'?3600000:60000);const now=Date.now();const row={title,inventory_sku: inventorySku || null,category_id:aCat.value,condition:aCondition.value.trim(),description:aDesc.value.trim(),starting_bid:start,current_bid:start,starts_at:new Date(now).toISOString(),ends_at:new Date(now+durationMs).toISOString(),status:'live',shipping_available:aShipOn.checked,shipping_price:aShipOn.checked?Number(aShip.value||0):null,pickup_available:pickupOn,pickup_location:pickupOn?pickupLocation:null,pickup_instructions:pickupOn?aPickupInfo.value.trim():null};const{data:a,error}=await sb.from('auctions').insert(row).select('id').single();if(error)return alert(error.message);for(let i=0;i<pendingPhotos.length;i++){const f=pendingPhotos[i],raw=(f.name.split('.').pop()||'jpg').toLowerCase(),ext=raw.replace(/[^a-z0-9]/g,'')||'jpg',path=`${a.id}/${String(i).padStart(2,'0')}-${crypto.randomUUID()}.${ext}`;const{error:upErr}=await sb.storage.from('auction-images').upload(path,f,{contentType:f.type||undefined,upsert:false});if(upErr){alert(`Auction published, but photo ${i+1} failed: ${upErr.message}`);continue}const{error:dbErr}=await sb.from('auction_photos').insert({auction_id:a.id,storage_path:path,sort_order:i});if(dbErr)alert(`Photo ${i+1} uploaded but could not be attached: ${dbErr.message}`)}if(inventorySku){
   const {error:invErr}=await sb
     .from('inventory')
     .update({
