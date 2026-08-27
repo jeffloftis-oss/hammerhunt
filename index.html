@@ -2513,9 +2513,8 @@ const title=aTitle.value.trim(),start=Number(aStart.value),duration=Number(aDura
     alert('Auction published, but inventory status could not be updated: '+invErr.message);
   }
 }pendingPhotos=[];await loadData();alert('Auction published.');renderAdmin()}
-  const auctions = await sb.from('auctions').select('*');
 
-
+  
 
 
 function openPolicy(kind){
