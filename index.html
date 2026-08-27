@@ -2298,7 +2298,7 @@ function populateInventorySelect(){
   });
 }
 
-function onInventorySelect(){
+window.onInventorySelect=function(){
   const sel=document.getElementById('aInventory');
   if(!sel)return;
 
@@ -2319,7 +2319,7 @@ function onInventorySelect(){
   if(match)category.value=match.id;
 }
   if(start&&item.starting_bid!=null)start.value=item.starting_bid;
-}
+};
 function openEditAuction(id){
   const a=auctions.find(x=>x.id===id); if(!a)return;
   const remainingMs=Math.max(60000,new Date(a.ends_at).getTime()-Date.now());
