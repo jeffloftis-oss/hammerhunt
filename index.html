@@ -1534,8 +1534,9 @@ const qs=new URLSearchParams(location.search);
 if(session&&qs.get('reset')==='1'){showView('auctions');setTimeout(openNewPassword,50);return}
 if(session&&qs.get('checkout')==='success'&&qs.get('session_id')){await verifyWinnerPayment(qs.get('session_id'));history.replaceState({},'',location.pathname);showView('account');return}
 showView(location.search.includes('payment=')?'account':'auctions')}
+  let inventory=[];
 async function loadData(){
-  const [{data:c},{data:a},{data:p}] = await Promise.all([
+  const [{data:c},{data:a},{data:p},{data:i}] = await Promise.all([
     sb.from('categories')
       .select('*')
       .eq('is_active',true)
@@ -1546,7 +1547,11 @@ async function loadData(){
       .in('status',['scheduled','live','ended'])
       .order('ends_at'),
 
-    sb.from('auction_photos')
+    sb.from('auction_photos'),
+sb.from('inventory')
+  .select('*')
+  .eq('status','inventory')
+  .order('sku')
       .select('*')
       .order('sort_order')
       .order('created_at')
@@ -1554,6 +1559,7 @@ async function loadData(){
 
   categories = c || [];
   auctions = a || [];
+  inventory = i || [];
   photosByAuction = {};
 
   for(const ph of (p || [])){
@@ -2005,6 +2011,12 @@ document.getElementById('app').innerHTML=`
         <div class="adminDivider"></div>
         <div class="adminSectionTitle">Listing details</div>
         <div class="adminFormGrid">
+        <div>
+  <label>Inventory Item</label>
+  <select id="aInventory" onchange="onInventorySelect()">
+  <option value="">Select inventory item</option>
+</select>
+</div>
           <div><label>Title</label><input id="aTitle"></div>
           <div><label>Category</label><select id="aCat">${categories.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></div>
           <div><label>Condition</label><input id="aCondition"></div>
@@ -2241,6 +2253,7 @@ document.querySelectorAll('.refundDifferenceBtn').forEach(btn=>{
     }
   });
 });
+populateInventorySelect();
 document.querySelectorAll('.fulfillmentMethod').forEach(sel=>{
   sel.addEventListener('change',async()=>{
     const orderId=sel.dataset.orderId;
@@ -2270,7 +2283,37 @@ document.querySelectorAll('.adminEditAuctionBtn').forEach(btn=>btn.addEventListe
 document.querySelectorAll('.adminRelistAuctionBtn').forEach(btn=>btn.addEventListener('click',()=>openRelistAuction(btn.dataset.auctionId)));
 document.querySelectorAll('.adminDeleteAuctionBtn').forEach(btn=>btn.addEventListener('click',()=>deleteAuction(btn.dataset.auctionId)));
 }
+function populateInventorySelect(){
+  const sel=document.getElementById('aInventory');
+  if(!sel)return;
 
+  sel.innerHTML='<option value="">Select inventory item</option>';
+
+  inventory.forEach(item=>{
+    const opt=document.createElement('option');
+    opt.value=item.sku;
+    opt.textContent=`${item.sku} — ${item.title}`;
+    sel.appendChild(opt);
+  });
+}
+
+function onInventorySelect(){
+  const sel=document.getElementById('aInventory');
+  if(!sel)return;
+
+  const item=inventory.find(x=>String(x.sku)===String(sel.value));
+  if(!item)return;
+
+  const title=document.getElementById('aTitle');
+  const condition=document.getElementById('aCondition');
+  const desc=document.getElementById('aDesc');
+  const start=document.getElementById('aStart');
+
+  if(title)title.value=item.title||'';
+  if(condition)condition.value=item.condition||'';
+  if(desc)desc.value=item.description||'';
+  if(start&&item.starting_bid!=null)start.value=item.starting_bid;
+}
 function openEditAuction(id){
   const a=auctions.find(x=>x.id===id); if(!a)return;
   const remainingMs=Math.max(60000,new Date(a.ends_at).getTime()-Date.now());
@@ -2455,7 +2498,22 @@ async function updateFulfillment(orderId,hasTracking){
   }
 }
 
-async function createAuction(){const title=aTitle.value.trim(),start=Number(aStart.value),duration=Number(aDuration.value),durationUnit=aDurationUnit.value,pickupOn=aPickup.checked,pickupLocation=aPickupLocation.value;if(!title||Number.isNaN(start)||!Number.isFinite(duration)||duration<1)return alert('Enter title, starting bid, and a valid duration.');if(!aShipOn.checked&&!pickupOn)return alert('At least one fulfillment option is required.');if(pickupOn&&!pickupLocation)return alert('Choose Camden, TN or Rock Hill, SC for local pickup.');const durationMs=duration*(durationUnit==='days'?86400000:durationUnit==='hours'?3600000:60000);const now=Date.now();const row={title,category_id:aCat.value,condition:aCondition.value.trim(),description:aDesc.value.trim(),starting_bid:start,current_bid:start,starts_at:new Date(now).toISOString(),ends_at:new Date(now+durationMs).toISOString(),status:'live',shipping_available:aShipOn.checked,shipping_price:aShipOn.checked?Number(aShip.value||0):null,pickup_available:pickupOn,pickup_location:pickupOn?pickupLocation:null,pickup_instructions:pickupOn?aPickupInfo.value.trim():null};const{data:a,error}=await sb.from('auctions').insert(row).select('id').single();if(error)return alert(error.message);for(let i=0;i<pendingPhotos.length;i++){const f=pendingPhotos[i],raw=(f.name.split('.').pop()||'jpg').toLowerCase(),ext=raw.replace(/[^a-z0-9]/g,'')||'jpg',path=`${a.id}/${String(i).padStart(2,'0')}-${crypto.randomUUID()}.${ext}`;const{error:upErr}=await sb.storage.from('auction-images').upload(path,f,{contentType:f.type||undefined,upsert:false});if(upErr){alert(`Auction published, but photo ${i+1} failed: ${upErr.message}`);continue}const{error:dbErr}=await sb.from('auction_photos').insert({auction_id:a.id,storage_path:path,sort_order:i});if(dbErr)alert(`Photo ${i+1} uploaded but could not be attached: ${dbErr.message}`)}pendingPhotos=[];await loadData();alert('Auction published.');renderAdmin()}
+async function createAuction(){
+const inventorySku=document.getElementById('aInventory')?.value||'';
+const title=aTitle.value.trim(),start=Number(aStart.value),duration=Number(aDuration.value),durationUnit=aDurationUnit.value,pickupOn=aPickup.checked,pickupLocation=aPickupLocation.value;if(!title||Number.isNaN(start)||!Number.isFinite(duration)||duration<1)return alert('Enter title, starting bid, and a valid duration.');if(!aShipOn.checked&&!pickupOn)return alert('At least one fulfillment option is required.');if(pickupOn&&!pickupLocation)return alert('Choose Camden, TN or Rock Hill, SC for local pickup.');const durationMs=duration*(durationUnit==='days'?86400000:durationUnit==='hours'?3600000:60000);const now=Date.now();const row={title,category_id:aCat.value,condition:aCondition.value.trim(),description:aDesc.value.trim(),starting_bid:start,current_bid:start,starts_at:new Date(now).toISOString(),ends_at:new Date(now+durationMs).toISOString(),status:'live',shipping_available:aShipOn.checked,shipping_price:aShipOn.checked?Number(aShip.value||0):null,pickup_available:pickupOn,pickup_location:pickupOn?pickupLocation:null,pickup_instructions:pickupOn?aPickupInfo.value.trim():null};const{data:a,error}=await sb.from('auctions').insert(row).select('id').single();if(error)return alert(error.message);for(let i=0;i<pendingPhotos.length;i++){const f=pendingPhotos[i],raw=(f.name.split('.').pop()||'jpg').toLowerCase(),ext=raw.replace(/[^a-z0-9]/g,'')||'jpg',path=`${a.id}/${String(i).padStart(2,'0')}-${crypto.randomUUID()}.${ext}`;const{error:upErr}=await sb.storage.from('auction-images').upload(path,f,{contentType:f.type||undefined,upsert:false});if(upErr){alert(`Auction published, but photo ${i+1} failed: ${upErr.message}`);continue}const{error:dbErr}=await sb.from('auction_photos').insert({auction_id:a.id,storage_path:path,sort_order:i});if(dbErr)alert(`Photo ${i+1} uploaded but could not be attached: ${dbErr.message}`)}if(inventorySku){
+  const {error:invErr}=await sb
+    .from('inventory')
+    .update({
+      status:'auctioned',
+      updated_at:new Date().toISOString()
+    })
+    .eq('sku',inventorySku);
+
+  if(invErr){
+    alert('Auction published, but inventory status could not be updated: '+invErr.message);
+  }
+}pendingPhotos=[];await loadData();alert('Auction published.');renderAdmin()}
+  const auctions = await sb.from('auctions').select('*');
 
 
 
