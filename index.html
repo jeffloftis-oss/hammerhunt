@@ -2309,10 +2309,15 @@ function onInventorySelect(){
   const condition=document.getElementById('aCondition');
   const desc=document.getElementById('aDesc');
   const start=document.getElementById('aStart');
+  const category=document.getElementById('aCat');
 
   if(title)title.value=item.title||'';
   if(condition)condition.value=item.condition||'';
   if(desc)desc.value=item.description||'';
+  if(category && item.category){
+  const match=categories.find(c=>c.name===item.category);
+  if(match)category.value=match.id;
+}
   if(start&&item.starting_bid!=null)start.value=item.starting_bid;
 }
 function openEditAuction(id){
