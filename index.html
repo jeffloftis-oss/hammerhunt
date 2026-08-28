@@ -1545,7 +1545,7 @@ async function loadData(){
 
     sb.from('auctions')
       .select('*,categories(name)')
-      .in('status',['scheduled','live','ended'])
+      .in('status',['draft','scheduled','live','ended'])
       .order('ends_at'),
 
 sb.from('auction_photos')
