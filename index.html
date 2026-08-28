@@ -1972,10 +1972,11 @@ const filteredAuctions=auctions
   .sort((a,b)=>new Date(b.starts_at||b.ends_at)-new Date(a.starts_at||a.ends_at))
   .filter(a=>{
     const isCompleted=completedAuctionIds.has(a.id);
-    if(adminAuctionFilter==='current'&&isCompleted)return false;
+    if(adminAuctionFilter==='current'&&(isCompleted||a.status==='draft'))return false;
     if(adminAuctionFilter==='live'&&!isOpen(a))return false;
     if(adminAuctionFilter==='ended'&&(isOpen(a)||isCompleted))return false;
     if(adminAuctionFilter==='completed'&&!isCompleted)return false;
+    if(adminAuctionFilter==='draft'&&a.status!=='draft')return false;
     if(asq&&!String(a.title||'').toLowerCase().includes(asq)&&!String(a.description||'').toLowerCase().includes(asq))return false;
     return true;
   });
@@ -2147,6 +2148,7 @@ document.getElementById('app').innerHTML=`
       <div class="adminCardHead">
         <div><h3>Manage Auctions</h3><div class="opsCountLine">${filteredAuctions.length} shown</div></div>
         <div class="manageFilters">
+        <button class="manageFilter ${adminAuctionFilter==='draft'?'active':''}" data-admin-filter="draft">Drafts ${auctions.filter(a=>a.status==='draft').length}</button>
           <button class="manageFilter ${adminAuctionFilter==='current'?'active':''}" data-admin-filter="current">Current ${currentAuctions.length}</button>
           <button class="manageFilter ${adminAuctionFilter==='live'?'active':''}" data-admin-filter="live">Live ${liveAuctions.length}</button>
           <button class="manageFilter ${adminAuctionFilter==='ended'?'active':''}" data-admin-filter="ended">Ended ${endedAuctions.filter(a=>!completedAuctionIds.has(a.id)).length}</button>
