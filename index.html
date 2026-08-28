@@ -2614,7 +2614,7 @@ if(pendingPhotos.length){
     const path=`${newDraft.id}/${Date.now()}-${i}.${ext}`;
 
     const {error:uploadErr}=await sb.storage
-      .from('auction-photos')
+      .from('auction-images')
       .upload(path,file,{upsert:false});
 
     if(uploadErr){
@@ -2630,7 +2630,7 @@ if(pendingPhotos.length){
   }
 
   if(photoRows.length){
-    const {error:photoErr}=await sb.from('auction_photos').insert(photoRows);
+    const {error:photoErr}=await sb.from('auction_images').insert(photoRows);
     if(photoErr){
       alert('Draft saved, but photo records could not be saved: '+photoErr.message);
     }
