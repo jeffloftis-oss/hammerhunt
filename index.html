@@ -1953,7 +1953,7 @@ const completedOrders=orders.filter(o=>o.payment_status==='paid'&&(o.fulfillment
 const completedAuctionIds=new Set(completedOrders.map(o=>o.auction_id));
 const workingOrders=orders.filter(o=>!(o.payment_status==='paid'&&(o.fulfillment_status||'pending')==='completed'));
 
-const liveAuctions=auctions.filter(isOpen);
+const liveAuctions = auctions.filter(a => a.status === 'live' && isOpen(a));
 const endedAuctions=auctions.filter(a=>!isOpen(a));
 const completedAuctions=auctions.filter(a=>completedAuctionIds.has(a.id));
 const currentAuctions=auctions.filter(a=>!completedAuctionIds.has(a.id)&&a.status!=='draft');
