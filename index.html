@@ -1956,7 +1956,7 @@ const workingOrders=orders.filter(o=>!(o.payment_status==='paid'&&(o.fulfillment
 const liveAuctions=auctions.filter(isOpen);
 const endedAuctions=auctions.filter(a=>!isOpen(a));
 const completedAuctions=auctions.filter(a=>completedAuctionIds.has(a.id));
-const currentAuctions=auctions.filter(a=>!completedAuctionIds.has(a.id));
+const currentAuctions=auctions.filter(a=>!completedAuctionIds.has(a.id)&&a.status!=='draft');
 
 const readyToFulfill=workingOrders.filter(o=>o.payment_status==='paid'&&(o.fulfillment_status||'pending')!=='completed');
 const unpaidOrders=workingOrders.filter(o=>o.payment_status!=='paid');
@@ -2170,7 +2170,7 @@ document.getElementById('app').innerHTML=`
                 return `<tr>
                   <td>${p?`<img class="opsThumb" src="${photoUrl(p)}" alt="">`:''}</td>
                   <td><div class="opsTitle">${esc(a.title)}</div><div class="opsSub">${ended?'Ended':'Ends'} ${new Date(a.ends_at).toLocaleString()}</div></td>
-                  <td><span class="opsBadge ${isCompleted?'paid':ended?'':'live'}">${isCompleted?'COMPLETED':ended?'ENDED':'LIVE'}</span></td>
+                  <td><span class="opsBadge ${a.status==='draft'?'':isCompleted?'paid':ended?'':'live'}">${a.status==='draft'?'DRAFT':isCompleted?'COMPLETED':ended?'ENDED':'LIVE'}</span></td>
                   <td class="opsMoney">${money(a.current_bid)}</td>
                   <td>${ops}</td>
                   <td><div class="opsActions">
