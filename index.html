@@ -1593,7 +1593,7 @@ const bidStatusFor=a=>bidStatusMap[a.id]||'';
 
 async function renderAuctions(){
   await refreshBidStatuses();
-  const open=auctions.filter(isOpen);
+  const open=auctions.filter(a => a.status === 'live' && isOpen(a));
   const q=marketplaceQuery.trim().toLowerCase();
   const filtered=open.filter(a=>{
     const cat=String(a.categories?.name||'');
