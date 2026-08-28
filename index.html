@@ -2463,7 +2463,7 @@ function openEditAuction(id){
       return;
     }
 
-    const {error:photoErr}=await sb.from('auction_images').insert({
+    const {error:photoErr}=await sb.from('auction_photos').insert({
       auction_id:a.id,
       storage_path:path,
       sort_order:baseSort+i
@@ -2694,7 +2694,7 @@ if(pendingPhotos.length){
   }
 
   if(photoRows.length){
-    const {error:photoErr}=await sb.from('auction_images').insert(photoRows);
+    const {error:photoErr}=await sb.from('auction_photos').insert(photoRows);
     if(photoErr){
       alert('Draft saved, but photo records could not be saved: '+photoErr.message);
     }
