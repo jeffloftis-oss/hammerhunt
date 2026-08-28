@@ -2383,6 +2383,11 @@ function openEditAuction(id){
   <label>Title</label><input id="eTitle" value="${esc(a.title)}">
   <label>Condition</label><input id="eCondition" value="${esc(a.condition||'')}">
   <label>Description</label><textarea id="eDesc">${esc(a.description||'')}</textarea>
+  ${a.status==='draft'?`
+<label>Photos</label>
+<input id="ePhotos" type="file" accept="image/*" multiple>
+<div id="ePhotoPreview" class="photoPreview"></div>
+`:''}
   <label>Time remaining</label>
   <div class="durationRow">
     <input id="eDuration" type="number" min="1" step="1" value="${editDuration}">
@@ -2404,6 +2409,34 @@ function openEditAuction(id){
   <label>Pickup instructions</label><input id="ePickupInfo" value="${esc(a.pickup_instructions||'')}">
   <div style="display:flex;gap:8px;margin-top:14px"><button id="saveEditAuction" class="good">Save Changes</button><button class="light" onclick="closeModal()">Cancel</button></div>`;
   document.getElementById('modal').classList.add('show');
+  if(a.status==='draft'){
+  pendingPhotos=[];
+  const editPhotos=document.getElementById('ePhotos');
+  const editPreview=document.getElementById('ePhotoPreview');
+
+  editPhotos.onchange=(event)=>{
+    pendingPhotos=Array.from(event.target.files||[])
+      .filter(f=>f.type?.startsWith('image/'))
+      .slice(0,10);
+
+    editPreview.innerHTML='';
+
+    pendingPhotos.forEach((file,i)=>{
+      const box=document.createElement('div');
+      box.className='preview';
+
+      const img=document.createElement('img');
+      img.alt=`Auction photo ${i+1}`;
+
+      const url=URL.createObjectURL(file);
+      img.src=url;
+      img.onload=()=>URL.revokeObjectURL(url);
+
+      box.appendChild(img);
+      editPreview.appendChild(box);
+    });
+  };
+}
   document.getElementById('saveEditAuction').onclick=async()=>{
     const duration=Math.max(1,Number(document.getElementById('eDuration').value||1));
     const durationUnit=document.getElementById('eDurationUnit').value;
@@ -2413,6 +2446,37 @@ function openEditAuction(id){
     const patch={title:document.getElementById('eTitle').value.trim(),condition:document.getElementById('eCondition').value.trim(),description:document.getElementById('eDesc').value.trim(),starts_at:a.status==='draft'?new Date().toISOString():a.starts_at,ends_at:a.status==='ended'?a.ends_at:new Date(Date.now()+durationMs).toISOString(),shipping_available:document.getElementById('eShipOn').checked,shipping_price:document.getElementById('eShipOn').checked?Number(document.getElementById('eShip').value||0):null,pickup_available:pickupOn,pickup_location:pickupOn?pickupLocation:null,pickup_instructions:pickupOn?document.getElementById('ePickupInfo').value.trim():null};
     const {error}=await sb.from('auctions').update(patch).eq('id',id);
     if(error)return alert(error.message);
+    if(a.status==='draft' && pendingPhotos.length){
+  const baseSort=photosFor(a.id).length;
+
+  for(let i=0;i<pendingPhotos.length;i++){
+    const file=pendingPhotos[i];
+    const ext=(file.name.split('.').pop()||'jpg').toLowerCase();
+    const path=`${a.id}/${Date.now()}-${i}.${ext}`;
+
+    const {error:uploadErr}=await sb.storage
+      .from('auction-images')
+      .upload(path,file,{upsert:false});
+
+    if(uploadErr){
+      alert('Auction changes saved, but photo upload failed: '+uploadErr.message);
+      return;
+    }
+
+    const {error:photoErr}=await sb.from('auction_images').insert({
+      auction_id:a.id,
+      storage_path:path,
+      sort_order:baseSort+i
+    });
+
+    if(photoErr){
+      alert('Photo uploaded, but photo record could not be saved: '+photoErr.message);
+      return;
+    }
+  }
+
+  pendingPhotos=[];
+}
     closeModal(); await loadData(); renderAdmin();
   };
 }
