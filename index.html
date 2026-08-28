@@ -2288,6 +2288,7 @@ document.querySelectorAll('.trackingNumber').forEach(inp=>{
 });
 document.querySelectorAll('.adminEditAuctionBtn').forEach(btn=>btn.addEventListener('click',()=>openEditAuction(btn.dataset.auctionId)));
 document.querySelectorAll('.adminRelistAuctionBtn').forEach(btn=>btn.addEventListener('click',()=>openRelistAuction(btn.dataset.auctionId)));
+  document.querySelectorAll('.adminPublishDraftBtn').forEach(btn=>btn.addEventListener('click',()=>publishDraftAuction(btn.dataset.auctionId)));
 document.querySelectorAll('.adminDeleteAuctionBtn').forEach(btn=>btn.addEventListener('click',()=>deleteAuction(btn.dataset.auctionId)));
 }
 function populateInventorySelect(){
@@ -2326,6 +2327,50 @@ window.onInventorySelect=function(){
 }
   if(start)start.value=item.starting_bid!=null?item.starting_bid:'';
 };
+  async function publishDraftAuction(id){
+  const a=auctions.find(x=>x.id===id);
+  if(!a||a.status!=='draft')return;
+
+  const durationMs=Math.max(
+    60000,
+    new Date(a.ends_at).getTime()-new Date(a.starts_at).getTime()
+  );
+
+  const now=Date.now();
+
+  const {error}=await sb
+    .from('auctions')
+    .update({
+      status:'live',
+      starts_at:new Date(now).toISOString(),
+      ends_at:new Date(now+durationMs).toISOString(),
+      updated_at:new Date().toISOString()
+    })
+    .eq('id',id);
+
+  if(error){
+    alert('Draft could not be published: '+error.message);
+    return;
+  }
+
+  if(a.inventory_sku){
+    const {error:invErr}=await sb
+      .from('inventory')
+      .update({
+        status:'auctioned',
+        updated_at:new Date().toISOString()
+      })
+      .eq('sku',a.inventory_sku);
+
+    if(invErr){
+      alert('Auction published, but inventory status could not be updated: '+invErr.message);
+    }
+  }
+
+  alert('Draft published.');
+  await loadData();
+  renderAdmin();
+}
 function openEditAuction(id){
   const a=auctions.find(x=>x.id===id); if(!a)return;
   const remainingMs=Math.max(60000,new Date(a.ends_at).getTime()-(a.status==='draft'?new Date(a.starts_at).getTime():Date.now()));
