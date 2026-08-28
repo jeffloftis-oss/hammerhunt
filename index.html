@@ -2327,7 +2327,7 @@ window.onInventorySelect=function(){
 };
 function openEditAuction(id){
   const a=auctions.find(x=>x.id===id); if(!a)return;
-  const remainingMs=Math.max(60000,new Date(a.ends_at).getTime()-Date.now());
+  const remainingMs=Math.max(60000,new Date(a.ends_at).getTime()-(a.status==='draft'?new Date(a.starts_at).getTime():Date.now()));
   const remainingMinutes=Math.max(1,Math.round(remainingMs/60000));
   let editDuration=remainingMinutes,editUnit='minutes';
   if(remainingMinutes>=1440&&remainingMinutes%1440===0){editDuration=remainingMinutes/1440;editUnit='days'}
