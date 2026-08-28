@@ -2600,13 +2600,43 @@ async function saveAuctionDraft(){
       :null
   };
 
-  const {error}=await sb.from('auctions').insert(row);
+  const {data:newDraft,error}=await sb.from('auctions').insert(row).select('id').single();
 
   if(error){
     alert('Draft could not be saved: '+error.message);
     return;
   }
+if(pendingPhotos.length){
+  const photoRows=[];
+  for(let i=0;i<pendingPhotos.length;i++){
+    const file=pendingPhotos[i];
+    const ext=(file.name.split('.').pop()||'jpg').toLowerCase();
+    const path=`${newDraft.id}/${Date.now()}-${i}.${ext}`;
 
+    const {error:uploadErr}=await sb.storage
+      .from('auction-photos')
+      .upload(path,file,{upsert:false});
+
+    if(uploadErr){
+      alert('Draft saved, but photo upload failed: '+uploadErr.message);
+      break;
+    }
+
+    photoRows.push({
+      auction_id:newDraft.id,
+      storage_path:path,
+      sort_order:i
+    });
+  }
+
+  if(photoRows.length){
+    const {error:photoErr}=await sb.from('auction_photos').insert(photoRows);
+    if(photoErr){
+      alert('Draft saved, but photo records could not be saved: '+photoErr.message);
+    }
+  }
+}
+pendingPhotos=[];
   alert('Auction draft saved.');
   await loadData();
   renderAdmin();
