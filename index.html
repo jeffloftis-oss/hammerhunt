@@ -2175,6 +2175,7 @@ document.getElementById('app').innerHTML=`
                   <td>${ops}</td>
                   <td><div class="opsActions">
                     ${isCompleted?'':`<button class="light adminEditAuctionBtn" data-auction-id="${a.id}">Edit</button>`}
+                    ${a.status==='draft'?`<button class="goldBtn adminPublishDraftBtn" data-auction-id="${a.id}">Publish</button>`:''}
                     ${ended?`<button class="adminRelistAuctionBtn" data-auction-id="${a.id}" style="background:#087443">Relist</button>`:''}
                     ${isCompleted?'':`<button class="dangerGhost adminDeleteAuctionBtn" data-auction-id="${a.id}">Delete</button>`}
                   </div></td>
