@@ -1399,7 +1399,7 @@ window.setAdminAuctionFilter=v=>{adminAuctionFilter=String(v||'all');renderAdmin
   if(box)box.className='modalbox';
   document.getElementById('modal').classList.remove('show');
 };
-document.addEventListener('keydown',e=>{if(e.key==='Escape')window.closeModal()});window.signOutNow=async()=>{await sb.auth.signOut();session=null;profile=null;await boot()};window.cardSetup=cardSetup;window.createAuction=createAuction;window.openAuction=openAuction;window.placeNextBid=placeNextBid;window.galleryMove=galleryMove;window.galleryPick=galleryPick;window.onPhotoPick=onPhotoPick;window.winnerCheckout=winnerCheckout;window.updateFulfillment=updateFulfillment;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')window.closeModal()});window.signOutNow=async()=>{await sb.auth.signOut();session=null;profile=null;await boot()};window.cardSetup=cardSetup;window.createAuction=createAuction;window.saveAuctionDraft=saveAuctionDraft;window.openAuction=openAuction;window.placeNextBid=placeNextBid;window.galleryMove=galleryMove;window.galleryPick=galleryPick;window.onPhotoPick=onPhotoPick;window.winnerCheckout=winnerCheckout;window.updateFulfillment=updateFulfillment;
 function tickCountdowns(){
 let expired=false;
 document.querySelectorAll('[data-ends-at]').forEach(el=>{
