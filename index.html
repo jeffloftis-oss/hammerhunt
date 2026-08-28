@@ -2052,6 +2052,8 @@ document.getElementById('app').innerHTML=`
         </select>
         <label>Pickup instructions</label>
         <input id="aPickupInfo" placeholder="Optional pickup directions or hours">
+       <button class="light adminPublish" onclick="saveAuctionDraft()">Save Draft</button> 
+        
         <button class="goldBtn adminPublish" onclick="createAuction()">Publish Auction</button>
       </div>
     </section>
@@ -2517,7 +2519,50 @@ async function updateFulfillment(orderId,hasTracking){
     if(methodSelect)methodSelect.disabled=false;
   }
 }
+async function saveAuctionDraft(){
+  const inventorySku=document.getElementById('aInventory')?.value||null;
+  const title=document.getElementById('aTitle')?.value.trim()||'Untitled draft';
+  const start=Number(document.getElementById('aStart')?.value||0);
+  const duration=Number(document.getElementById('aDuration')?.value||24);
+  const durationUnit=document.getElementById('aDurationUnit')?.value||'hours';
+  const durationMs=duration*(durationUnit==='days'?86400000:durationUnit==='hours'?3600000:60000);
+  const now=Date.now();
 
+  const row={
+    title,
+    inventory_sku:inventorySku,
+    category_id:document.getElementById('aCat')?.value||null,
+    condition:document.getElementById('aCondition')?.value.trim()||null,
+    description:document.getElementById('aDesc')?.value.trim()||null,
+    starting_bid:start,
+    current_bid:start,
+    starts_at:new Date(now).toISOString(),
+    ends_at:new Date(now+durationMs).toISOString(),
+    status:'draft',
+    shipping_available:document.getElementById('aShipOn')?.checked||false,
+    shipping_price:document.getElementById('aShipOn')?.checked
+      ?Number(document.getElementById('aShip')?.value||0)
+      :null,
+    pickup_available:document.getElementById('aPickup')?.checked||false,
+    pickup_location:document.getElementById('aPickup')?.checked
+      ?document.getElementById('aPickupLocation')?.value||null
+      :null,
+    pickup_instructions:document.getElementById('aPickup')?.checked
+      ?document.getElementById('aPickupInfo')?.value.trim()||null
+      :null
+  };
+
+  const {error}=await sb.from('auctions').insert(row);
+
+  if(error){
+    alert('Draft could not be saved: '+error.message);
+    return;
+  }
+
+  alert('Auction draft saved.');
+  await loadData();
+  renderAdmin();
+}
 async function createAuction(){
 const inventorySku=document.getElementById('aInventory')?.value||'';
 const title=aTitle.value.trim(),start=Number(aStart.value),duration=Number(aDuration.value),durationUnit=aDurationUnit.value,pickupOn=aPickup.checked,pickupLocation=aPickupLocation.value;if(!title||Number.isNaN(start)||!Number.isFinite(duration)||duration<1)return alert('Enter title, starting bid, and a valid duration.');if(!aShipOn.checked&&!pickupOn)return alert('At least one fulfillment option is required.');if(pickupOn&&!pickupLocation)return alert('Choose Camden, TN or Rock Hill, SC for local pickup.');const durationMs=duration*(durationUnit==='days'?86400000:durationUnit==='hours'?3600000:60000);const now=Date.now();const row={title,inventory_sku: inventorySku || null,category_id:aCat.value,condition:aCondition.value.trim(),description:aDesc.value.trim(),starting_bid:start,current_bid:start,starts_at:new Date(now).toISOString(),ends_at:new Date(now+durationMs).toISOString(),status:'live',shipping_available:aShipOn.checked,shipping_price:aShipOn.checked?Number(aShip.value||0):null,pickup_available:pickupOn,pickup_location:pickupOn?pickupLocation:null,pickup_instructions:pickupOn?aPickupInfo.value.trim():null};const{data:a,error}=await sb.from('auctions').insert(row).select('id').single();if(error)return alert(error.message);for(let i=0;i<pendingPhotos.length;i++){const f=pendingPhotos[i],raw=(f.name.split('.').pop()||'jpg').toLowerCase(),ext=raw.replace(/[^a-z0-9]/g,'')||'jpg',path=`${a.id}/${String(i).padStart(2,'0')}-${crypto.randomUUID()}.${ext}`;const{error:upErr}=await sb.storage.from('auction-images').upload(path,f,{contentType:f.type||undefined,upsert:false});if(upErr){alert(`Auction published, but photo ${i+1} failed: ${upErr.message}`);continue}const{error:dbErr}=await sb.from('auction_photos').insert({auction_id:a.id,storage_path:path,sort_order:i});if(dbErr)alert(`Photo ${i+1} uploaded but could not be attached: ${dbErr.message}`)}if(inventorySku){
