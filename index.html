@@ -1973,8 +1973,8 @@ const filteredAuctions=auctions
   .filter(a=>{
     const isCompleted=completedAuctionIds.has(a.id);
     if(adminAuctionFilter==='current'&&(isCompleted||a.status==='draft'))return false;
-    if(adminAuctionFilter==='live'&&!isOpen(a))return false;
-    if(adminAuctionFilter==='ended'&&(isOpen(a)||isCompleted))return false;
+    if(adminAuctionFilter==='live'&&(a.status!=='live'||!isOpen(a)))return false;
+    if(adminAuctionFilter==='ended'&&(a.status==='draft'||isOpen(a)||isCompleted))return false;
     if(adminAuctionFilter==='completed'&&!isCompleted)return false;
     if(adminAuctionFilter==='draft'&&a.status!=='draft')return false;
     if(asq&&!String(a.title||'').toLowerCase().includes(asq)&&!String(a.description||'').toLowerCase().includes(asq))return false;
