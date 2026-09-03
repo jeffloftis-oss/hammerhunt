@@ -1973,7 +1973,7 @@ const filteredAuctions=auctions
   .sort((a,b)=>new Date(b.starts_at||b.ends_at)-new Date(a.starts_at||a.ends_at))
   .filter(a=>{
     const isCompleted=completedAuctionIds.has(a.id);
-    if(&&(isCompleted||a.status==='draft'))return false;
+    
     if(adminAuctionFilter==='live'&&(a.status!=='live'||!isOpen(a)))return false;
     if(adminAuctionFilter==='ended'&&(a.status==='draft'||isOpen(a)||isCompleted))return false;
     if(adminAuctionFilter==='completed'&&!isCompleted)return false;
