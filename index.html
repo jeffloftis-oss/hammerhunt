@@ -1956,7 +1956,7 @@ const workingOrders=orders.filter(o=>!(o.payment_status==='paid'&&(o.fulfillment
 const liveAuctions = auctions.filter(a => a.status === 'live' && isOpen(a));
 const endedAuctions=auctions.filter(a=>a.status!=='draft'&&!isOpen(a));
 const completedAuctions=auctions.filter(a=>completedAuctionIds.has(a.id));
-const currentAuctions=auctions.filter(a=>!completedAuctionIds.has(a.id)&&a.status!=='draft');
+
 
 const readyToFulfill=workingOrders.filter(o=>o.payment_status==='paid'&&(o.fulfillment_status||'pending')!=='completed');
 const unpaidOrders=workingOrders.filter(o=>o.payment_status!=='paid');
@@ -1967,12 +1967,13 @@ const visibleOrders=workingOrders.filter(o=>!fsq||[
 ].some(v=>String(v||'').toLowerCase().includes(fsq)));
 
 const asq=adminAuctionSearch.trim().toLowerCase();
+  if(adminAuctionFilter==='current')adminAuctionFilter='draft';
 const filteredAuctions=auctions
   .slice()
   .sort((a,b)=>new Date(b.starts_at||b.ends_at)-new Date(a.starts_at||a.ends_at))
   .filter(a=>{
     const isCompleted=completedAuctionIds.has(a.id);
-    if(adminAuctionFilter==='current'&&(isCompleted||a.status==='draft'))return false;
+    if(&&(isCompleted||a.status==='draft'))return false;
     if(adminAuctionFilter==='live'&&(a.status!=='live'||!isOpen(a)))return false;
     if(adminAuctionFilter==='ended'&&(a.status==='draft'||isOpen(a)||isCompleted))return false;
     if(adminAuctionFilter==='completed'&&!isCompleted)return false;
@@ -2149,7 +2150,7 @@ document.getElementById('app').innerHTML=`
         <div><h3>Manage Auctions</h3><div class="opsCountLine">${filteredAuctions.length} shown</div></div>
         <div class="manageFilters">
         <button class="manageFilter ${adminAuctionFilter==='draft'?'active':''}" data-admin-filter="draft">Drafts ${auctions.filter(a=>a.status==='draft').length}</button>
-          <button class="manageFilter ${adminAuctionFilter==='current'?'active':''}" data-admin-filter="current">Current ${currentAuctions.length}</button>
+          
           <button class="manageFilter ${adminAuctionFilter==='live'?'active':''}" data-admin-filter="live">Live ${liveAuctions.length}</button>
           <button class="manageFilter ${adminAuctionFilter==='ended'?'active':''}" data-admin-filter="ended">Ended ${endedAuctions.filter(a=>!completedAuctionIds.has(a.id)).length}</button>
           <button class="manageFilter ${adminAuctionFilter==='completed'?'active':''}" data-admin-filter="completed">Completed ${completedAuctions.length}</button>
